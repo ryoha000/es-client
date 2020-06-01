@@ -1,8 +1,8 @@
 <template>
   <div :class="$style.container">
-    <q-btn flat icon="keyboard_arrow_left"/>
-    <q-btn flat icon="keyboard_arrow_right"/>
-    <q-btn flat icon="home" />
+    <q-btn flat icon="keyboard_arrow_left" @click="back" />
+    <q-btn flat icon="keyboard_arrow_right" @click="next" />
+    <q-btn flat icon="home" @click="home" />
     <q-input :class="$style.input" rounded outlined v-model="searchString" dark>
       <template v-slot:prepend>
         <q-icon name="search" color="white" :class="$style.icon" />
@@ -20,9 +20,21 @@ export default defineComponent({
   },
   components: {
   },
-  setup() {
+  setup(_, context) {
     const searchString = ref('')
-    return { searchString }
+    const back = () => {
+      console.log('back header')
+      context.emit('back')
+    }
+    const next = () => {
+      console.log('next header')
+      context.emit('next')
+    }
+    const home = () => {
+      console.log('home header')
+      context.emit('home')
+    }
+    return { searchString, back, next, home }
   }
 });
 </script>

@@ -1,7 +1,7 @@
 <template>
   <div>
     <div :class="$style.title">キャンペーン名</div>
-    <horizontal-scroll />
+    <horizontal-scroll :cardInfo="[]" />
   </div>
 </template>
 

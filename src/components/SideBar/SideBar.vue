@@ -3,7 +3,7 @@
     <filter-game :class="$style.item" />
     <search :class="$style.item" />
     <add-game :class="$style.item"/>
-    <game-list-item :class="$style.item" title="さくら、もゆ。 -as the Night's, Reincarnation-" />
+    <game-list-item :class="$style.item" title="さくら、もゆ。 -as the Night's, Reincarnation-" @game="goDetail" />
   </div>
 </template>
 
@@ -24,8 +24,11 @@ export default defineComponent({
     GameListItem,
     AddGame
   },
-  setup() {
-    return
+  setup(_, context) {
+    const goDetail = (id: number) => {
+      context.emit('game', id)
+    }
+    return { goDetail }
   }
 });
 </script>

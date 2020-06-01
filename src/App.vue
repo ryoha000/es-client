@@ -1,9 +1,9 @@
 <template>
   <div id="q-app" :class="$style.app" :style="styles.app">
-    <side-bar :class="$style.sidebar"/>
+    <side-bar :class="$style.sidebar" @game="goDetail" />
     <div :class="$style.mainview">
       <q-btn @click="onClick">aaa</q-btn>
-      <main-view-header />
+      <main-view-header @next="next" @back="back" @home="goHome" />
       <home v-if="routeStack[routeIndex].type === 'Home'" />
       <game-detail v-if="routeStack[routeIndex].type === 'Game'" />
     </div>
@@ -15,9 +15,10 @@ import SideBar from './components/SideBar/SideBar.vue'
 import MainViewHeader from './components/MainView/Header/MainViewHeader.vue'
 import Home from './pages/Home.vue'
 import GameDetail from './pages/GameDetail.vue'
-import { defineComponent, reactive, computed, ref } from '@vue/composition-api'
+import { defineComponent, reactive, computed, ref, Ref } from '@vue/composition-api'
 import { StackType, Record, Game, Creator, Seiyu } from './types/root'
 import { makeStyles } from './lib/style'
+import useRouteStack from './components/use/useRouteStack'
 
 import * as FS from 'fs'
 import * as ChildProcess from 'child_process'
@@ -55,6 +56,7 @@ export default defineComponent ({
       routeStack.value.push({ type: 'Game', id: 123})
     }
     const styles = useStyles()
+    const { next, back, goHome, goDetail } = useRouteStack(routeIndex, routeStack)
     return {
       onClick,
       styles,
@@ -63,6 +65,10 @@ export default defineComponent ({
       games,
       creators,
       seiyus,
+      next,
+      back,
+      goHome,
+      goDetail
     }
   }
 })

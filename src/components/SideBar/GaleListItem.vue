@@ -1,9 +1,15 @@
 <template>
   <div :class="$style.container">
-    <q-avatar  size="32px">
-      <img src="https://cdn.quasar.dev/img/avatar5.jpg">
-    </q-avatar>
-    <span>{{ title }}</span>
+    <q-list dark bordered separator dense>
+      <q-item clickable v-ripple style="padding: 0;" @click="onClick">
+        <q-item-section style="padding-right: 0;min-width: 0;" avatar>
+          <q-avatar square>
+            <img src="https://cdn.quasar.dev/img/boy-avatar.png">
+          </q-avatar>
+        </q-item-section>
+        <q-item-section :class="$style.titleWrapper"><div :class="$style.title">{{ title }}</div></q-item-section>
+      </q-item>
+    </q-list>
   </div>
 </template>
 
@@ -17,8 +23,11 @@ export default defineComponent({
   },
   components: {
   },
-  setup() {
-    return
+  setup(_, context) {
+    const onClick = () => {
+      context.emit('game', 123)
+    }
+    return { onClick }
   }
 });
 </script>
@@ -26,10 +35,20 @@ export default defineComponent({
 <style lang="scss" module>
 .container {
   display: flex;
+  flex-direction: column;
   align-items: center;
 }
 
-.title {
-  font-size: 24px;
+.titleWrapper {
+  overflow: hidden;
+  width: 100%;
+  .title {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    margin-left: 8px;
+    font-size: 16px;
+  }
 }
+
 </style>

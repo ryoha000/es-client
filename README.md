@@ -22,5 +22,10 @@ npm run lint
 quasar build
 ```
 
+### debug on electron
+```bash
+quasar dev -m electron
+```
+
 ### Customize the configuration
 See [Configuring quasar.conf.js](https://quasar.dev/quasar-cli/quasar-conf-js).

@@ -16,13 +16,13 @@
       </template>
 
       <q-list>
-        <q-item clickable v-close-popup @click="onItemClick">
+        <q-item clickable v-close-popup>
           <q-item-section>
             <q-item-label>Photos</q-item-label>
           </q-item-section>
         </q-item>
 
-        <q-item clickable v-close-popup @click="onItemClick">
+        <q-item clickable v-close-popup>
           <q-item-section>
             <q-item-label>Vacation</q-item-label>
           </q-item-section>
