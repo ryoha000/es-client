@@ -1,23 +1,22 @@
 <template>
   <div :class="$style.container">
     <div :class="$style.title">キャンペーン情報</div>
-    <div :class="$style.gamecards">
-      <game-card />
-      <game-card />
-    </div>
+    <campaign-content />
+    <campaign-content />
+    <campaign-content />
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from '@vue/composition-api';
-import GameCard from '../../GameCard.vue'
+import CampaignContent from './CampaignContent.vue'
 
 export default defineComponent({
   name: 'Campaign',
   props: {
   },
   components: {
-    GameCard
+    CampaignContent
   },
   setup() {
     return
@@ -32,12 +31,5 @@ export default defineComponent({
   font-size: 22px;
   margin-left: 8px;
   margin-bottom: 8px;
-}
-.gamecards {
-  display: flex;
-  flex-wrap: wrap;
-  :nth-child(n) {
-    margin-right: 8px;
-  }
 }
 </style>
