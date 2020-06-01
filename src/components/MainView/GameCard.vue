@@ -1,15 +1,15 @@
 <template>
   <q-card dark :class="$style.container">
-    <img height="150px" width="250px" :src="cardInfo.image">
+    <q-img :src="cardInfo.image" :class="$style.image" />
     <q-card-section :class="$style.section">
-      <div ref="titleRef" :class="$style.title">{{ cardInfo.title }}</div>
-      <div ref="supplementRef" class="text-subtitle2">{{ cardInfo.supplement }}</div>
+      <div :class="$style.title">{{ cardInfo.title }}</div>
+      <div :class="$style.supplement">{{ cardInfo.supplement }}</div>
     </q-card-section>
   </q-card>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref, onMounted } from '@vue/composition-api';
+import { defineComponent, PropType } from '@vue/composition-api';
 import { CardInfo } from './HorizontalScroll.vue'
 
 export default defineComponent({
@@ -20,15 +20,7 @@ export default defineComponent({
   components: {
   },
   setup() {
-    const titleRef = ref<HTMLDivElement | undefined>()
-    const nowTitleHeight = ref(0)
-    const supplementRef = ref<HTMLDivElement | undefined>()
-    const nowSupplementHeight = ref(0)
-    onMounted(() => {
-      nowTitleHeight.value = titleRef.value?.getBoundingClientRect().height ?? 0
-      nowSupplementHeight.value = supplementRef.value?.getBoundingClientRect().height ?? 0
-    })
-    return {titleRef, supplementRef}
+    return
   }
 });
 </script>
@@ -41,9 +33,23 @@ export default defineComponent({
 .section {
   padding: 8px;
 }
+.image {
+  height: 150px;
+  width: 250px;
+}
 .title {
   font-size: 20px;
   font-weight: bold;
   word-wrap: none;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 240px;
+  text-overflow: ellipsis;
+}
+.supplement {
+  overflow: hidden;
+  white-space: nowrap;
+  width: 240px;
+  text-overflow: ellipsis;
 }
 </style>

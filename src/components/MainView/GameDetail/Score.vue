@@ -5,7 +5,7 @@
         <th colspan="1">
           <div class="row no-wrap items-center">
             <q-img
-              style="width: 40px"
+              style="width: 32px"
               :ratio="1"
               class="rounded-borders"
               src="../../../statics/icons/es_favicon.png"
@@ -54,12 +54,8 @@ export default defineComponent({
   box-shadow: none;
   border-collapse: separate;
   border-spacing: 0;
-  padding: 8px;
+  padding: 0 8px;
   border-radius: 8px;
-}
-
-.thread {
-  border-bottom: 100px solid rgba(0, 0, 0, 0.12);
 }
 
 .tbody {

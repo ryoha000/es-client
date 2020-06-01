@@ -36,7 +36,7 @@ export default defineComponent({
       title: '美少女万華鏡 -理と迷宮の少女-',
       supplement: '5本5,000円まとめ買いキャンペーン!!',
       //image: 'https://trap.jp/assets/logo/icon_blue.svg?v=3da93e42ac',
-      image: '../../assets/ESClient_demo_image.jpg'
+      image: '../../statics/icons/ESClient_demo_image.jpg'
     })
     return { demo }
   }

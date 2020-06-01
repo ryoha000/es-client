@@ -1,5 +1,7 @@
 import { store } from 'quasar/wrappers';
 import Vuex from 'vuex';
+import root from './root'
+import { RootStateInterface } from './root/state'
 
 // import example from './module-example';
 // import { ExampleStateInterface } from './module-example/state';
@@ -14,6 +16,7 @@ export interface StoreInterface {
   // example: ExampleStateInterface;
   // Declared as unknown to avoid linting issue. Best to strongly type as per the line above.
   example: unknown;
+  root: RootStateInterface
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -22,7 +25,8 @@ export default store(function ({ Vue }: any) {
 
   const Store = new Vuex.Store<StoreInterface>({
     modules: {
-      // example
+      //example
+      root
     },
 
     // enable strict mode (adds overhead!)

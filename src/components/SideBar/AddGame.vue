@@ -1,6 +1,9 @@
 <template>
   <div>
-    <q-btn icon="add_box" class="full-width"><div style="margin-left: 8px;" />ゲームを追加</q-btn>
+    <q-btn icon="add_box" class="full-width" >
+      <div style="margin-left: 8px;" />
+      ゲームを追加
+    </q-btn>
   </div>
 </template>
 

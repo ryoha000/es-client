@@ -5,7 +5,7 @@
       dark
       ref="scrollRef"
       @scroll="scrollarea"
-      style="height: 210px; width: 100%;"
+      style="height: 240px; width: 100%;;"
     >
       <div class="row no-wrap">
         <div v-for="n in 10" :key="n" :class="$style.card">
@@ -46,7 +46,7 @@ export default defineComponent({
       title: '美少女万華鏡 -理と迷宮の少女-',
       supplement: '5本5,000円まとめ買いキャンペーン!!',
       //image: 'https://trap.jp/assets/logo/icon_blue.svg?v=3da93e42ac',
-      image: '../../assets/ESClient_demo_image.jpg'
+      image: '../../statics/icons/ESClient_demo_image.jpg'
     })
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const scrollRef = ref<any | undefined>()
@@ -80,6 +80,7 @@ export default defineComponent({
   width: 260px;
   height: 250px;
   margin-right: 8px;
+  overflow: hidden;
 }
 .rightButton {
   position: absolute;
