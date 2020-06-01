@@ -1,5 +1,5 @@
 <template>
-  <div :class="$style.container">
+  <div>
     <div :class="$style.title">キャンペーン情報</div>
     <campaign-content />
     <campaign-content />
@@ -25,8 +25,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" module>
-.container {
-}
 .title {
   font-size: 22px;
   margin-left: 8px;

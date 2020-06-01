@@ -42,7 +42,13 @@ export default defineComponent({
   },
   components: { GameCard },
   setup() {
-    const demo: Ref<CardInfo> = ref({title: '美少女万華鏡 -理と迷宮の少女-', supplement: '5本5,000円まとめ買いキャンペーン!!', image: 'https://trap.jp/assets/logo/icon_blue.svg?v=3da93e42ac'})
+    const demo: Ref<CardInfo> = ref({
+      title: '美少女万華鏡 -理と迷宮の少女-',
+      supplement: '5本5,000円まとめ買いキャンペーン!!',
+      //image: 'https://trap.jp/assets/logo/icon_blue.svg?v=3da93e42ac',
+      image: '../../assets/ESClient_demo_image.jpg'
+    })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const scrollRef = ref<any | undefined>()
     const nowPosition = ref(0)
     const onRightClick = () => {
@@ -51,6 +57,7 @@ export default defineComponent({
     const onLeftClick = () => {
       scrollRef.value.setScrollPosition(nowPosition.value - 500)
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const scrollarea = (position: any) => {
       nowPosition.value = position.horizontalPosition
     }

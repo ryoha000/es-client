@@ -9,7 +9,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref, watchEffect, onMounted, watch } from '@vue/composition-api';
+import { defineComponent, PropType, ref, onMounted } from '@vue/composition-api';
 import { CardInfo } from './HorizontalScroll.vue'
 
 export default defineComponent({
