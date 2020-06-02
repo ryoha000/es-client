@@ -1,12 +1,15 @@
 <template>
   <div id="q-app" :class="$style.app" :style="styles.app">
-    <side-bar :class="$style.sidebar" @game="goDetail" />
+    <side-bar :class="$style.sidebar" @game="setGame" />
     <div :class="$style.mainview">
       <q-btn @click="onClick">aaa</q-btn>
       <input type="file" webkitdirectory  />
       <main-view-header @next="next" @back="back" @home="goHome" />
       <home v-if="routeStack[routeIndex].type === 'Home'" />
-      <game-detail v-if="routeStack[routeIndex].type === 'Game'" />
+      <game-detail
+        v-if="routeStack[routeIndex].type === 'Game'"
+        :game="game"
+      />
     </div>
   </div>
 </template>
@@ -25,6 +28,7 @@ import * as FS from 'fs'
 import * as Path from 'path'
 import * as ChildProcess from 'child_process'
 import { remote } from 'electron'
+import * as regedit from 'regedit'
 
 const useStyles = () => 
   reactive({
@@ -45,6 +49,7 @@ export default defineComponent ({
   setup() {
     const routeIndex = ref(0)
     const routeStack = ref<StackType[]>([{ type: 'Home', id: 0 }])
+    const game = ref<Game | null>(null)
     const games = ref<Record<number, Game>>({})
 
     const showFiles = (dirpath: string, callback: (fp: string) => void) => {
@@ -86,19 +91,32 @@ export default defineComponent ({
       for (const filePath of result.filePaths) {
         showFiles(filePath, console.log)
       }
+      // const vbsDirectory = Path.join(Path.dirname(remote.app.getPath('exe')), './resources/my-location');
+      // regedit.setExternalVBSLocation(vbsDirectory)
+      regedit.list(['HKCU\\SOFTWARE\\3rdEye\\レイルロアの略奪者　ＤＬ版'])
+        .on('data', function(entry: any) {
+          console.log(entry.key)
+          console.log(entry.data)
+        })
     }
     const styles = useStyles()
     const { next, back, goHome, goDetail } = useRouteStack(routeIndex, routeStack)
+    const setGame = (selectGame: Game) => {
+      game.value = selectGame
+      goDetail(selectGame.id)
+    }
     return {
       onClick,
       styles,
       routeIndex,
       routeStack,
+      game,
       games,
       next,
       back,
       goHome,
-      goDetail
+      goDetail,
+      setGame
     }
   }
 })

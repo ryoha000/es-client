@@ -10,7 +10,6 @@
               class="rounded-borders"
               src="../../../statics/icons/es_favicon.png"
             />
-
             <div class="text-h4 q-ml-md">Score</div>
           </div>
         </th>
@@ -19,26 +18,36 @@
     <tbody :class="$style.tbody">
       <tr>
         <td>中央値</td>
-        <td>159</td>
+        <td>{{ score.median }}</td>
       </tr>
       <tr>
         <td>平均値</td>
-        <td>237</td>
+        <td>{{ score.average }}</td>
       </tr>
       <tr>
         <td>データ数</td>
-        <td>262</td>
+        <td>{{ score.count }}</td>
       </tr>
     </tbody>
   </table>
 </template>
 
 <script lang="ts">
-import { defineComponent } from '@vue/composition-api';
+import { defineComponent, PropType } from '@vue/composition-api';
+
+export interface Score {
+  median: number,
+  average: number,
+  count: number
+}
 
 export default defineComponent({
   name: 'Score',
   props: {
+    score: {
+      type: Object as PropType<Score>,
+      required: true
+    }
   },
   setup() {
     return

@@ -6,21 +6,61 @@
       <div>声優:</div>
     </div>
     <div :class="$style.value">
-      <div>八宝備仁</div>
-      <div>吉祥寺ドロレス</div>
-      <div>杏子御津(覡 夕摩) , 篠原ゆみ(覡 夕莉) , ヒマリ(陽茉莉)(御殿場 鏡子) , 葵時緒(稲森 はる) , 真中海(蓮華) , 榛名れん(藤堂 咲) , 越雪光(覡 礼次郎) , このは(声優)(鈴森 いちか)</div>
+      <div :class="$style.wrapper">
+        <link-c
+          v-for="(genga, i) in creators.gengas" :key="i"
+          :title="genga.name"
+          :icon="false"
+          :fontSize="18"
+        />
+      </div>
+      <div :class="$style.wrapper">
+        <link-c
+          v-for="(sinario, i) in creators.sinarios" :key="i"
+          :title="sinario.name"
+          :icon="false"
+          :fontSize="18"
+        />
+      </div>
+      <div :class="$style.wrapper">
+        <div :class="$style.wrapper" v-for="(seiyu, i) in creators.seiyus" :key="i">
+          <link-c
+            :title="seiyu.name"
+            :icon="false"
+            :fontSize="18"
+          />
+          <span v-if="seiyu.importance === 0" :class="$style.role0">({{ seiyu.role }})</span>
+          <span v-if="seiyu.importance === 1" :class="$style.role1">({{ seiyu.role }})</span>
+          <span v-if="seiyu.importance === 2" :class="$style.role2">({{ seiyu.role }})</span>
+          <span v-if="creators.seiyus.length !== i + 1"> , </span>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from '@vue/composition-api';
+import { defineComponent, PropType } from '@vue/composition-api';
+import { Creator, Seiyu } from '../../../types/root'
+import LinkC from './Link.vue'
+
+export interface CreatorInfo {
+  gengas: Creator[]
+  sinarios: Creator[]
+  seiyus: Seiyu[]
+}
 
 export default defineComponent({
   name: 'GameInfo',
   props: {
+    creators: {
+      types: Object as PropType<CreatorInfo>,
+      required: true
+    }
   },
-  components: {  },
+  components: {
+    LinkC
+  },
   setup() {
     return
   }
@@ -41,5 +81,18 @@ export default defineComponent({
 }
 .value {
   flex: 1 1 calc( 100% - 96px );
+}
+.wrapper {
+  display: flex;
+  flex-wrap: wrap;
+}
+.role0 {
+  font-weight: bold;
+}
+.role1 {
+  color: white;
+}
+.role2 {
+  color: gray;
 }
 </style>

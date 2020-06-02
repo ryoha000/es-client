@@ -3,7 +3,7 @@
     <filter-game :class="$style.item" />
     <search :class="$style.item" />
     <add-game :class="$style.item"/>
-    <game-list-item :class="$style.item" title="さくら、もゆ。 -as the Night's, Reincarnation-" @game="goDetail" />
+    <game-list-item :class="$style.item" title="さくら、もゆ。 -as the Night's, Reincarnation-" @game="setGame" />
   </div>
 </template>
 
@@ -13,6 +13,7 @@ import FilterGame from './FilterGame.vue'
 import Search from './Search.vue'
 import GameListItem from './GaleListItem.vue'
 import AddGame from './AddGame.vue'
+import { Game } from '../../types/root';
 
 export default defineComponent({
   name: 'SideBar',
@@ -25,10 +26,10 @@ export default defineComponent({
     AddGame
   },
   setup(_, context) {
-    const goDetail = (id: number) => {
-      context.emit('game', id)
+    const setGame = (game: Game) => {
+      context.emit('game', game)
     }
-    return { goDetail }
+    return { setGame }
   }
 });
 </script>

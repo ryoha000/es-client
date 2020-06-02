@@ -5,45 +5,56 @@
     </div>
     <div :class="$style.Link">
       <link-c
+        v-for="(link, i) in links" :key="i"
+        :url="link.url"
+        :title="link.title"
         :class="$style.item"
-        title="ErogameSpace"
-        url="https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/"
-      />
-      <link-c
-        :class="$style.item"
-        title="誠也の部屋"
-        url="https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/"
-      />
-      <link-c
-        :class="$style.item"
-        title="OHP"
-        url="https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/"
       />
     </div>
-    <game-info :class="$style.gameInfo" />
-    <score :class="$style.score" />
+    <game-info :class="$style.gameInfo" :creators="creators" />
+    <score-c :class="$style.score" :score="score "/>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from '@vue/composition-api';
+import { defineComponent, PropType, computed } from '@vue/composition-api';
 import LinkC from './Link.vue'
 import PlayButton from './PlayButton.vue'
-import GameInfo from './GameInfo.vue'
-import Score from './Score.vue'
+import GameInfo, { CreatorInfo } from './GameInfo.vue'
+import ScoreC, { Score } from './Score.vue'
+import { Game } from '../../../types/root';
 
 export default defineComponent({
   name: 'MainWrapper',
   props: {
+    game: {
+      type: Object as PropType<Game>,
+      required: true
+    }
   },
   components: {
     LinkC,
     PlayButton,
     GameInfo,
-    Score
+    ScoreC
   },
-  setup() {
-    return
+  setup(props) {
+    const links = computed(() => [
+      { title: 'OHP', url: props.game.officialHomePage },
+      { title: 'ErogameSpace', url: `https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=${props.game.id}` },
+      { title: '誠也の部屋', url: '' }
+    ])
+    const score = computed<Score>(() => ({
+      median: props.game.median,
+      average: props.game.average,
+      count: props.game.count
+    }))
+    const creators = computed<CreatorInfo>(() => ({
+      gengas: props.game.gengas,
+      sinarios: props.game.sinarios,
+      seiyus: props.game.seiyus
+    }))
+    return { links, score, creators }
   }
 });
 </script>
