@@ -32,7 +32,7 @@
           <span v-if="seiyu.importance === 0" :class="$style.role0">({{ seiyu.role }})</span>
           <span v-if="seiyu.importance === 1" :class="$style.role1">({{ seiyu.role }})</span>
           <span v-if="seiyu.importance === 2" :class="$style.role2">({{ seiyu.role }})</span>
-          <span v-if="creators.seiyus.length !== i + 1"> , </span>
+          <span v-if="creators.seiyus.length !== i + 1">&nbsp;,&nbsp;</span>
         </div>
       </div>
     </div>

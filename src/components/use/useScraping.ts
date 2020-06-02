@@ -56,7 +56,7 @@ const useScraping = () => {
         const color = spanTags[i].getAttribute('style')
         const seiyu: Seiyu = {
           ...creator,
-          role: spanTags[i].innerHTML,
+          role: spanTags[i].innerHTML.slice(1, -1),
           importance: color?.includes('bold') ? 0 : color?.includes('black') ? 1 : 2
         }
         creators.push(seiyu)
