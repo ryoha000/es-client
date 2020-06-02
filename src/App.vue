@@ -3,6 +3,7 @@
     <side-bar :class="$style.sidebar" @game="goDetail" />
     <div :class="$style.mainview">
       <q-btn @click="onClick">aaa</q-btn>
+      <input type="file" webkitdirectory  />
       <main-view-header @next="next" @back="back" @home="goHome" />
       <home v-if="routeStack[routeIndex].type === 'Home'" />
       <game-detail v-if="routeStack[routeIndex].type === 'Game'" />
@@ -21,7 +22,9 @@ import { makeStyles } from './lib/style'
 import useRouteStack from './components/use/useRouteStack'
 
 import * as FS from 'fs'
+import * as Path from 'path'
 import * as ChildProcess from 'child_process'
+import { remote } from 'electron'
 
 const useStyles = () => 
   reactive({
@@ -43,17 +46,46 @@ export default defineComponent ({
     const routeIndex = ref(0)
     const routeStack = ref<StackType[]>([{ type: 'Home', id: 0 }])
     const games = ref<Record<number, Game>>({})
-    const creators = ref<Record<number, Creator>>({})
-    const seiyus = ref<Record<number, Seiyu>>({})
-    const onClick = () => {
+
+    const showFiles = (dirpath: string, callback: (fp: string) => void) => {
+      FS.readdir(dirpath, {withFileTypes: true}, (err, dirents) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+        for (const dirent of dirents) {
+          const fp = Path.join(dirpath, dirent.name);
+          if (dirent.name.endsWith('.exe')) {
+            callback(fp)
+            break
+          }
+          if (dirent.isDirectory()) {
+            showFiles(fp, callback);
+          } else {
+            callback(fp);
+          }
+        }
+      });
+    }
+
+    const onClick = async () => {
       // ChildProcess.spawn('powershell.exe', ['cd \'E:\\Program Files (x86)\\Whirlpool\\KUJIRA\' ; powershell Start-Process kujira.exe -verb runas'])
       // // TODO: Get Icon, ref: https://github.com/mtojo/node-system-icon, require rebuild
       // FS.stat('E:\\Program Files (x86)\\Whirlpool\\KUJIRA\\kujira.exe', (err, stat) => {
       //   console.log(stat)
       // })
       console.log('ido')
-      routeIndex.value += 1
-      routeStack.value.push({ type: 'Game', id: 123})
+      const dialog = remote.dialog
+      const result = await dialog.showOpenDialog({
+        properties: ['openDirectory', 'multiSelections'],
+        title: 'フォルダ(複数選択)',
+        defaultPath: '.'
+      })
+      FS.readdir
+      console.log(result.filePaths)
+      for (const filePath of result.filePaths) {
+        showFiles(filePath, console.log)
+      }
     }
     const styles = useStyles()
     const { next, back, goHome, goDetail } = useRouteStack(routeIndex, routeStack)
@@ -63,8 +95,6 @@ export default defineComponent ({
       routeIndex,
       routeStack,
       games,
-      creators,
-      seiyus,
       next,
       back,
       goHome,

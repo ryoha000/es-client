@@ -14,9 +14,10 @@ import useScraping from '../use/useScraping'
 export default defineComponent({
   name: 'AddGame',
   setup() {
-    const { getTitle } = useScraping()
+    const { getTitle, getGameDetail } = useScraping()
     const onClick = async () => {
       console.log(await getTitle())
+      console.log(await getGameDetail(123))
     }
     return { onClick }
   }

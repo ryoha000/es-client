@@ -2,9 +2,15 @@
 
 A Quasar Framework app
 
+commands are [here](https://quasar.dev/quasar-cli/developing-electron-apps/build-commands)
 ## Install the dependencies
 ```bash
 npm install
+```
+
+### **debug on electron**
+```bash
+quasar dev -m electron
 ```
 
 ### Start the app in development mode (hot-code reloading, error reporting, etc.)
@@ -20,11 +26,6 @@ npm run lint
 ### Build the app for production
 ```bash
 quasar build
-```
-
-### debug on electron
-```bash
-quasar dev -m electron
 ```
 
 ### Customize the configuration

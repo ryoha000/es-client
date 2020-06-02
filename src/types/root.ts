@@ -15,7 +15,9 @@ export interface Game {
   median: number
   average: number
   count: number
-  creatorIds: number[]
+  gengas: Creator[]
+  sinarios: Creator[]
+  seiyus: Seiyu[]
   createdAt: Date
 }
 

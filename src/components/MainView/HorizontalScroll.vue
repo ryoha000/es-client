@@ -5,7 +5,8 @@
       dark
       ref="scrollRef"
       @scroll="scrollarea"
-      style="height: 240px; width: 100%;;"
+      style="height: 240px; width: 100%;"
+      :class="$style.scrollContainer"
     >
       <div class="row no-wrap">
         <div v-for="n in 10" :key="n" :class="$style.card">
@@ -93,5 +94,10 @@ export default defineComponent({
   left: 0;
   top: 0;
   height: 100%;
+}
+.scrollContainer {
+  :first-child {
+    overflow: hidden;
+  }
 }
 </style>
