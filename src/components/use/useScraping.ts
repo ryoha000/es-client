@@ -1,6 +1,6 @@
 import * as Request from 'request-promise-native';
-//import * as Charset from 'chardet';
-//import * as iconv   from 'iconv-lite';
+import * as Charset from 'chardet';
+import * as iconv   from 'iconv-lite';
 import { JSDOM }    from 'jsdom';
 
 const baseURL = 'https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki'
@@ -14,14 +14,14 @@ const useScraping = () => {
     const response = await Request.get(option);
   
     // 文字コード判別
-    // const encoding = Charset.detect(response)?.toString();
-    // if(!encoding) throw new Error();
+    const encoding = Charset.detect(response)?.toString();
+    if(!encoding) throw new Error();
   
     // 文字コード変換
-    //const html: string = iconv.decode(response, encoding);
+    const html: string = iconv.decode(response, encoding);
   
     // HTMLパース
-    const jsdom = new JSDOM(response);
+    const jsdom = new JSDOM(html);
     return jsdom.window.document;
   }
   const getTitle = async () => {
