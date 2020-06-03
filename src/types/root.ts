@@ -59,3 +59,9 @@ export interface Campaign {
   url: string
   games: CampaignGame[]
 }
+
+export type ListGame = {
+  id: number
+  path: string
+  icon?: string
+}

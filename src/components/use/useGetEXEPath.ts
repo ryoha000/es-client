@@ -4,13 +4,13 @@ import * as iconv from 'iconv-lite'
 
 const useGetEXEPath = () => {
   function getCommand (lnkFile: string) {
-    const normalizedFile = path.normalize(path.resolve(lnkFile))
+    const normalizedFile = path.normalize(path.resolve(lnkFile)).replace(/\'/g,'\'\'')
     const getCOM = '(New-Object -COM WScript.Shell)'
   
     return `${getCOM}.CreateShortcut('${normalizedFile}').TargetPath;`
   }
   
-  function getPath (lnkFile: Array<string> | string) {
+  function getPath (lnkFile: Array<string> | string): Promise<string[]> {
     return new Promise((resolve, reject) => {
       const commands: string[] = []
   
@@ -34,18 +34,19 @@ const useGetEXEPath = () => {
           return reject(err)
         }
         const str = iconv.decode(stdout, 'shiftjis')
-        const result = str.split('\r\n').filter((v) => !!v)
+        const result = str.replace(/\r/g,'').split('\n').filter((v) => !!v)
   
         if (result.length === 1) {
-          resolve(result[0])
+          resolve([result[0]])
         } else if (result.length === 0) {
-          resolve(null)
+          resolve([''])
         } else {
           resolve(result)
         }
       })
     })
   }
+
   return { getPath }
 }
 

@@ -3,19 +3,21 @@
     <filter-game :class="$style.item" />
     <search :class="$style.item" />
     <add-game :class="$style.item"/>
-    <game-list-item :class="$style.item" title="さくら、もゆ。 -as the Night's, Reincarnation-" @game="setGame" />
+    <game-list-item :class="$style.item" @game="setGame" :games="gameInList"/>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from '@vue/composition-api';
+import { defineComponent, PropType } from '@vue/composition-api';
 import FilterGame from './FilterGame.vue'
 import Search from './Search.vue'
 import GameListItem from './GaleListItem.vue'
 import AddGame from './AddGame.vue'
+import { ListGame } from '../../types/root';
 export default defineComponent({
   name: 'SideBar',
   props: {
+    gameInList: { type: Array as PropType<ListGame[]>, default: [] }
   },
   components: {
     FilterGame,

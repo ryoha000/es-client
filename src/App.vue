@@ -1,6 +1,6 @@
 <template>
   <div id="q-app" :class="$style.app" :style="styles.app">
-    <side-bar :class="$style.sidebar" @game="setGame" />
+    <side-bar :class="$style.sidebar" @game="setGame" :gameInList="gamaInList" />
     <div :class="$style.mainview">
       <q-btn @click="onClick">aaa</q-btn>
       <input type="file" webkitdirectory  />
@@ -24,10 +24,10 @@ import MainViewHeader from './components/MainView/Header/MainViewHeader.vue'
 import Home from './pages/Home.vue'
 import GameDetail from './pages/GameDetail.vue'
 import { defineComponent, reactive, computed, ref, Ref, onMounted } from '@vue/composition-api'
-import { StackType, Record, Game, Creator, Seiyu, Campaign } from './types/root'
+import { StackType, Record, Game, Creator, Seiyu, Campaign, ListGame } from './types/root'
 import { makeStyles } from './lib/style'
 import useRouteStack from './components/use/useRouteStack'
-import useGetEXEPath from './components/use/useGetEXEPath'
+import useDictionary from './components/use/useDictionary'
 
 import * as FS from 'fs'
 import * as Path from 'path'
@@ -36,7 +36,7 @@ import { remote } from 'electron'
 import * as regedit from 'regedit'
 import * as Iconv from 'iconv-lite'
 import useScraping from './components/use/useScraping'
-import useDictionary from './components/use/useDictionary'
+import useJudgeGame from './components/use/useJudgeGame'
 
 const useStyles = () => 
   reactive({
@@ -61,32 +61,21 @@ export default defineComponent ({
     const games = ref<Record<number, Game>>({})
     const gameId = ref(0)
     const campaigns = ref<Campaign[]>([])
+    const gamaInList = ref<Record<number, ListGame>>([])
     const isLoading = ref(true)
-
-    const showFiles = (dirpath: string, callback: (fp: string) => void) => {
-      FS.readdir(dirpath, {withFileTypes: true}, (err, dirents) => {
-        if (err) {
-          console.error(err);
-          return;
-        }
-        for (const dirent of dirents) {
-          const fp = Path.join(dirpath, dirent.name);
-          if (dirent.name.endsWith('.exe')) {
-            callback(fp)
-            break
-          }
-          if (dirent.isDirectory()) {
-            showFiles(fp, callback);
-          } else {
-            callback(fp);
-          }
-        }
-      });
-    }
 
     const onClick = async () => {
       // ChildProcess.spawn('powershell.exe', ['cd \'E:\\Program Files (x86)\\Whirlpool\\KUJIRA\' ; powershell Start-Process kujira.exe -verb runas'])
       // // TODO: Get Icon, ref: https://github.com/mtojo/node-system-icon, require rebuild
+      // FS.stat('E:\\Program Files (x86)\\Whirlpool\\KUJIRA\\kujira.exe', (err, stat) => {
+      //   console.log(stat)
+      // })
+      // ChildProcess.exec('powershell.exe -command start-process \'powershell.exe\' \'-command Install-Module IconExport\' -verb runas', (err, stdout, stderr) => {
+      //   console.log(stdout)
+      //   console.log(stderr)
+      //   console.log(err)
+      // })
+      // TODO: Get Icon, ref: https://github.com/mtojo/node-system-icon, require rebuild
       // FS.stat('E:\\Program Files (x86)\\Whirlpool\\KUJIRA\\kujira.exe', (err, stat) => {
       //   console.log(stat)
       // })
@@ -97,23 +86,9 @@ export default defineComponent ({
       //   title: 'フォルダ(複数選択)',
       //   defaultPath: '.'
       // })
-      // FS.readdir
       // console.log(result.filePaths)
-      // for (const filePath of result.filePaths) {
-      //   showFiles(filePath, console.log)
-      // }
-      // // const vbsDirectory = Path.join(Path.dirname(remote.app.getPath('exe')), './resources/my-location');
-      // // regedit.setExternalVBSLocation(vbsDirectory)
-      // regedit.list(['HKCU\\SOFTWARE\\3rdEye\\レイルロアの略奪者　ＤＬ版'])
-      //   .on('data', function(entry: any) {
-      //     console.log(entry.key)
-      //     console.log(entry.data)
-      //   })
-      const { getPath } = useGetEXEPath()
-      getPath('E:\\Users\\ユウヤ\\Desktop\\らぶおぶ恋愛皇帝ofLOVE!.lnk')
-      .then((actualPath) => {
-        console.log(actualPath)
-      });
+      const { getEXE } = useJudgeGame()
+      gamaInList.value = (await getEXE())
     }
     const styles = useStyles()
     const { next, back, goHome, goDetail } = useRouteStack(routeIndex, routeStack)
@@ -143,6 +118,7 @@ export default defineComponent ({
       isLoading,
       games,
       gameId,
+      gamaInList,
       next,
       back,
       goHome,
@@ -163,7 +139,6 @@ export default defineComponent ({
 }
 
 .sidebar {
-  width: 520px;
   flex: 0 0 240px;
 }
 
