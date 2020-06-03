@@ -10,7 +10,7 @@ npm install
 
 ### **debug on electron**
 ```bash
-quasar dev -m electron
+quasar dev -m electron --modern
 ```
 
 ### Start the app in development mode (hot-code reloading, error reporting, etc.)

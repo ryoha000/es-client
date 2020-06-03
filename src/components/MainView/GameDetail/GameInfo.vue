@@ -12,6 +12,8 @@
           :title="genga.name"
           :icon="false"
           :fontSize="18"
+          url=""
+          style="margin-right: 8px;"
         />
       </div>
       <div :class="$style.wrapper">
@@ -20,6 +22,8 @@
           :title="sinario.name"
           :icon="false"
           :fontSize="18"
+          style="margin-right: 8px;"
+          url=""
         />
       </div>
       <div :class="$style.wrapper">

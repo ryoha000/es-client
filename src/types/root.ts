@@ -65,3 +65,9 @@ export type ListGame = {
   path: string
   icon?: string
 }
+
+export interface List {
+  id: number,
+  name: string
+  games: ListGame[]
+}

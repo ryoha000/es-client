@@ -1,6 +1,6 @@
 <template>
   <div id="q-app" :class="$style.app" :style="styles.app">
-    <side-bar :class="$style.sidebar" @game="setGame" :gameInList="gamaInList" />
+    <side-bar :class="$style.sidebar" @game="setGame" :gameInList="gameInList" />
     <div :class="$style.mainview">
       <q-btn @click="onClick">aaa</q-btn>
       <input type="file" webkitdirectory  />
@@ -11,6 +11,7 @@
           v-if="routeStack[routeIndex].type === 'Game'"
           :games="games"
           :id="gameId"
+          :gameInList="gameInList"
         />
       </div>
       <div v-else>Now Loading...</div>
@@ -24,12 +25,13 @@ import MainViewHeader from './components/MainView/Header/MainViewHeader.vue'
 import Home from './pages/Home.vue'
 import GameDetail from './pages/GameDetail.vue'
 import { defineComponent, reactive, computed, ref, Ref, onMounted } from '@vue/composition-api'
-import { StackType, Record, Game, Creator, Seiyu, Campaign, ListGame } from './types/root'
+import { StackType, Record, Game, Creator, Seiyu, Campaign, ListGame, List } from './types/root'
 import { makeStyles } from './lib/style'
 import useRouteStack from './components/use/useRouteStack'
 import useDictionary from './components/use/useDictionary'
+import useJson from './components/use/useJson'
 
-import * as FS from 'fs'
+import * as fs from 'fs'
 import * as Path from 'path'
 import * as ChildProcess from 'child_process'
 import { remote } from 'electron'
@@ -61,24 +63,13 @@ export default defineComponent ({
     const games = ref<Record<number, Game>>({})
     const gameId = ref(0)
     const campaigns = ref<Campaign[]>([])
-    const gamaInList = ref<Record<number, ListGame>>([])
+    const gameInList = ref<Record<number, ListGame>>({})
+    const lists = ref<List[]>([])
     const isLoading = ref(true)
 
+    const { jsonSetup, updateOrInsertList, readFileConsoleErr, getHaveGame } = useJson()
+    const { getEXE } = useJudgeGame()
     const onClick = async () => {
-      // ChildProcess.spawn('powershell.exe', ['cd \'E:\\Program Files (x86)\\Whirlpool\\KUJIRA\' ; powershell Start-Process kujira.exe -verb runas'])
-      // // TODO: Get Icon, ref: https://github.com/mtojo/node-system-icon, require rebuild
-      // FS.stat('E:\\Program Files (x86)\\Whirlpool\\KUJIRA\\kujira.exe', (err, stat) => {
-      //   console.log(stat)
-      // })
-      // ChildProcess.exec('powershell.exe -command start-process \'powershell.exe\' \'-command Install-Module IconExport\' -verb runas', (err, stdout, stderr) => {
-      //   console.log(stdout)
-      //   console.log(stderr)
-      //   console.log(err)
-      // })
-      // TODO: Get Icon, ref: https://github.com/mtojo/node-system-icon, require rebuild
-      // FS.stat('E:\\Program Files (x86)\\Whirlpool\\KUJIRA\\kujira.exe', (err, stat) => {
-      //   console.log(stat)
-      // })
       // console.log('ido')
       // const dialog = remote.dialog
       // const result = await dialog.showOpenDialog({
@@ -87,8 +78,11 @@ export default defineComponent ({
       //   defaultPath: '.'
       // })
       // console.log(result.filePaths)
-      const { getEXE } = useJudgeGame()
-      gamaInList.value = (await getEXE())
+      const listGames = await getEXE()
+      listGames.forEach(element => {
+        gameInList.value[element.id] = element
+      })
+      updateOrInsertList({id: 0, name: '所持ゲーム', games: listGames})
     }
     const styles = useStyles()
     const { next, back, goHome, goDetail } = useRouteStack(routeIndex, routeStack)
@@ -105,9 +99,15 @@ export default defineComponent ({
     // eslint-disable-next-line @typescript-eslint/require-await
     onMounted(async () => {
       isLoading.value = true
-      if (campaigns.value.length === 0) {
-        //campaigns.value = await getHome()
+      jsonSetup()
+      try {
+        const nowLists: List[] = JSON.parse(await readFileConsoleErr('setting/lists.json'))
+        lists.value = nowLists
+        gameInList.value = getHaveGame(nowLists)
+      } catch(e) {
+        console.error(e)
       }
+      //campaigns.value = await getHome()
       isLoading.value = false
     })
     return {
@@ -118,7 +118,7 @@ export default defineComponent ({
       isLoading,
       games,
       gameId,
-      gamaInList,
+      gameInList,
       next,
       back,
       goHome,

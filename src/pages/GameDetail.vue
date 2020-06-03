@@ -7,14 +7,14 @@
       <div :class="$style.titleInfo"><div>{{ game.brandName }}</div></div>
       <div :class="$style.titleInfo"><div>({{ game.sellday }})</div></div>
     </div>
-    <main-wrapper :game="game" />
+    <main-wrapper :game="game" :gameInList="gameInList" />
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType, ref, computed } from '@vue/composition-api';
 import MainWrapper from '../components/MainView/GameDetail/MainWrapper.vue'
-import { Game, Record } from '../types/root';
+import { Game, Record, ListGame } from '../types/root';
 
 export default defineComponent({
   name: 'GameDetail',
@@ -25,6 +25,10 @@ export default defineComponent({
     },
     id: {
       type: Number,
+      required: true
+    },
+    gameInList: {
+      type: Object as PropType<Record<number, ListGame>>,
       required: true
     }
   },

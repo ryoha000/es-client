@@ -1,7 +1,10 @@
 <template>
   <div :class="$style.container">
     <div :class="$style.button">
-      <play-button  />
+      <play-button
+        :gameInList="gameInList"
+        :game="game"
+      />
     </div>
     <div :class="$style.Link">
       <link-c
@@ -22,13 +25,17 @@ import LinkC from './Link.vue'
 import PlayButton from './PlayButton.vue'
 import GameInfo, { CreatorInfo } from './GameInfo.vue'
 import ScoreC, { Score } from './Score.vue'
-import { Game } from '../../../types/root';
+import { Game, ListGame } from '../../../types/root';
 
 export default defineComponent({
   name: 'MainWrapper',
   props: {
     game: {
       type: Object as PropType<Game>,
+      required: true
+    },
+    gameInList :{
+      type: Object as PropType<Record<number, ListGame>>,
       required: true
     }
   },

@@ -17,7 +17,7 @@ import { ListGame } from '../../types/root';
 export default defineComponent({
   name: 'SideBar',
   props: {
-    gameInList: { type: Array as PropType<ListGame[]>, default: [] }
+    gameInList: { type: Object as PropType<Record<number, ListGame>>, required: true }
   },
   components: {
     FilterGame,

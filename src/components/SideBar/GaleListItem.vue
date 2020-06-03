@@ -1,7 +1,13 @@
 <template>
   <div :class="$style.container">
     <q-list dark bordered separator dense>
-      <q-item v-for="(path, i) in games" :key="i" clickable v-ripple style="padding: 0;width: 231px;" @click="onClick">
+      <q-item
+        v-for="(path, i) in listGames" :key="i"
+        clickable
+        v-ripple
+        style="padding: 0;width: 231px;"
+        @click="onClick(path.id)"
+      >
         <q-item-section style="padding-right: 0;min-width: 0;" avatar>
           <q-avatar square>
             <img :src="'data:image/png;base64,' + path.icon">
@@ -14,22 +20,22 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from '@vue/composition-api';
+import { defineComponent, PropType, computed } from '@vue/composition-api';
 import { ListGame } from '../../types/root';
 
 export default defineComponent({
   name: 'GameListItem',
   props: {
-    title: { type: String, required: true },
-    games: { type: Array as PropType<ListGame[]>, default: [] }
+    games: { type: Object as PropType<Record<number, ListGame>>, required: true }
   },
   components: {
   },
-  setup(_, context) {
-    const onClick = () => {
-      context.emit('game', 28992)
+  setup(props, context) {
+    const onClick = (id: number) => {
+      context.emit('game', id)
     }
-    return { onClick }
+    const listGames = computed(() => props.games)
+    return { onClick, listGames }
   }
 });
 </script>
