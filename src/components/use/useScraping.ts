@@ -2,7 +2,7 @@ import * as Request from 'request-promise-native';
 import * as Charset from 'chardet';
 import * as iconv   from 'iconv-lite';
 import { JSDOM }    from 'jsdom';
-import { Game, Creator, Seiyu } from '../../types/root'
+import { Game, Creator, Seiyu, Campaign, CampaignGame } from '../../types/root'
 
 const baseURL = 'https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki'
 
@@ -69,6 +69,7 @@ const useScraping = () => {
     return document.title
   }
   const getGameDetail = async (id: number) => {
+    console.log('getGameDetail start')
     const url = baseURL + `/game.php?game=${id}`
     const doc = await getDocument(url)
     const gameTitle = doc.getElementById('game_title');
@@ -93,10 +94,62 @@ const useScraping = () => {
       seiyus: seiyus ? getSeiyu(seiyus) : [],
       createdAt: new Date()
     }
+    console.log('getGameDetail', game)
     return game
   }
-  
-  return { getTitle, getGameDetail }
+  const getCampaign = (document: Document) => {
+    const campaign: Campaign[] = []
+    const campaignNameList = document.getElementById('campaignlist')?.getElementsByTagName('dt')
+    const campaignGameTable = document.getElementById('campaignlist')?.getElementsByTagName('dd')
+    if (!campaignNameList) {
+      return campaign
+    }
+    for (let i = 0; i < campaignNameList.length; i++ ) {
+      const nameATag = campaignNameList[i].getElementsByTagName('a')[0]
+      const name = nameATag.innerHTML
+      const url = nameATag.getAttribute('href') ?? ''
+
+      const campaignGameTR = campaignGameTable?.[i].getElementsByTagName('tr')
+      const games: CampaignGame[] = []
+      if (!campaignGameTR) continue
+      for (let j = 0; j < campaignGameTR?.length ?? 0; j++ ) {
+        if (j === 0) continue
+        const campaignGameTD = campaignGameTR[j].getElementsByTagName('td')
+        const game: CampaignGame = {id: 0, title: '', url: '', content: '', median: 0}
+        for (let k = 0; k < campaignGameTD.length; k++ ) {
+          const td = campaignGameTD[k]
+          if (k === 1) {
+            game.median = +(td.innerHTML)
+            continue
+          }
+          const gameATag = td.getElementsByTagName('a')[0]
+          if (k === 0) {
+            game.title = gameATag.innerHTML
+            game.id = +(gameATag.getAttribute('href')?.replace('game.php?game=', '') ?? '0')
+          }
+          if (k === 2) {
+            game.url = gameATag.getAttribute('href') ?? ''
+            game.content = gameATag.innerHTML
+          }
+        }
+        games.push(game)
+      }
+      campaign.push({
+        name: name,
+        url: url,
+        games: games
+      })
+    }
+    return campaign
+  }
+  const getHome = async () => {
+    const document = await getDocument(baseURL)
+    const campaign = getCampaign(document)
+    console.log(campaign)
+    console.log('getHome')
+    return campaign
+  }
+  return { getTitle, getGameDetail, getHome }
 }
 
 export default useScraping

@@ -15,7 +15,6 @@
 
 <script lang="ts">
 import { defineComponent } from '@vue/composition-api';
-import useScraping from '../use/useScraping'
 
 export default defineComponent({
   name: 'GameListItem',
@@ -25,11 +24,8 @@ export default defineComponent({
   components: {
   },
   setup(_, context) {
-    const { getGameDetail } = useScraping()
-    const onClick = async () => {
-      const game = await getGameDetail(28992)
-      console.log(game)
-      context.emit('game', game)
+    const onClick = () => {
+      context.emit('game', 28992)
     }
     return { onClick }
   }

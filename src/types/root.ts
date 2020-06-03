@@ -3,7 +3,7 @@ export interface StackType {
   id: number
 }
 
-export interface Game {
+export type Game = {
   id: number
   name: string
   furigana: string
@@ -45,3 +45,17 @@ export interface Brand {
 export type Record<K extends keyof any, T> = {
   [P in K]: T;
 };
+
+export interface CampaignGame {
+  id: number
+  title: string
+  median: number
+  content: string
+  url: string
+}
+
+export interface Campaign {
+  name: string
+  url: string
+  games: CampaignGame[]
+}

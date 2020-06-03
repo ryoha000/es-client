@@ -13,8 +13,6 @@ import FilterGame from './FilterGame.vue'
 import Search from './Search.vue'
 import GameListItem from './GaleListItem.vue'
 import AddGame from './AddGame.vue'
-import { Game } from '../../types/root';
-
 export default defineComponent({
   name: 'SideBar',
   props: {
@@ -26,8 +24,8 @@ export default defineComponent({
     AddGame
   },
   setup(_, context) {
-    const setGame = (game: Game) => {
-      context.emit('game', game)
+    const setGame = (id: number) => {
+      context.emit('game', id)
     }
     return { setGame }
   }

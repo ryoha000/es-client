@@ -9,8 +9,8 @@
       :class="$style.scrollContainer"
     >
       <div class="row no-wrap">
-        <div v-for="n in 10" :key="n" :class="$style.card">
-          <game-card :cardInfo="demo" />
+        <div v-for="(cardInfo, i) in cardInfos" :key="i" :class="$style.card">
+          <game-card :cardInfo="cardInfo" />
         </div>
       </div>
     </q-scroll-area>
@@ -31,6 +31,8 @@ export interface CardInfo {
   title: string
   supplement: string
   image: string
+  url: string
+  contentUrl?: string
 }
 
 export default defineComponent({
@@ -43,12 +45,6 @@ export default defineComponent({
   },
   components: { GameCard },
   setup() {
-    const demo: Ref<CardInfo> = ref({
-      title: '美少女万華鏡 -理と迷宮の少女-',
-      supplement: '5本5,000円まとめ買いキャンペーン!!',
-      //image: 'https://trap.jp/assets/logo/icon_blue.svg?v=3da93e42ac',
-      image: '../../statics/icons/ESClient_demo_image.jpg'
-    })
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const scrollRef = ref<any | undefined>()
     const nowPosition = ref(0)
@@ -63,7 +59,6 @@ export default defineComponent({
       nowPosition.value = position.horizontalPosition
     }
     return {
-      demo,
       onRightClick,
       onLeftClick,
       scrollRef,

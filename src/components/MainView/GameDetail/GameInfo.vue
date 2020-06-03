@@ -27,6 +27,7 @@
           <link-c
             :title="seiyu.name"
             :icon="false"
+            url=""
             :fontSize="18"
           />
           <span v-if="seiyu.importance === 0" :class="$style.role0">({{ seiyu.role }})</span>

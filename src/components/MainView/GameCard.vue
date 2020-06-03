@@ -1,7 +1,7 @@
 <template>
-  <q-card dark :class="$style.container">
+  <q-card dark :class="$style.container" @click="onClick">
     <q-img :src="cardInfo.image" :class="$style.image" />
-    <q-card-section :class="$style.section">
+    <q-card-section :class="$style.section" @click.stop="onClickContent">
       <div :class="$style.title">{{ cardInfo.title }}</div>
       <div :class="$style.supplement">{{ cardInfo.supplement }}</div>
     </q-card-section>
@@ -19,8 +19,14 @@ export default defineComponent({
   },
   components: {
   },
-  setup() {
-    return
+  setup(props) {
+    const onClick = () => {
+      window.open(props.cardInfo.url)
+    }
+    const onClickContent = (e: MouseEvent) => {
+      window.open(props.cardInfo.contentUrl ?? props.cardInfo.url)
+    }
+    return { onClick, onClickContent }
   }
 });
 </script>
@@ -29,6 +35,7 @@ export default defineComponent({
 .container {
   max-height: 220px;
   max-width: 250px;
+  cursor: pointer;
 }
 .section {
   padding: 8px;

@@ -43,6 +43,7 @@ export default defineComponent({
   cursor: pointer;
   height: 28px;
   padding-bottom: -1px;
+  display: inline-block;
   :hover {
     color: navy;
     border-bottom: thin solid navy;

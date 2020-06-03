@@ -12,23 +12,31 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from '@vue/composition-api';
+import { defineComponent, PropType, ref, computed } from '@vue/composition-api';
 import MainWrapper from '../components/MainView/GameDetail/MainWrapper.vue'
-import { Game } from '../types/root';
+import { Game, Record } from '../types/root';
 
 export default defineComponent({
   name: 'GameDetail',
   props: {
-    game: {
-      type: Object as PropType<Game | null>,
+    games: {
+      type: Object as PropType<Record<number, Game>>,
+      required: true
+    },
+    id: {
+      type: Number,
       required: true
     }
   },
   components: {
     MainWrapper
   },
-  setup() {
-    return
+  setup(props) {
+    const game = computed(() => {
+      console.log(props.games[props.id], props.games, props.id)
+      return props.games[props.id]
+    })
+    return { game }
   }
 });
 </script>
