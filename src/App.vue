@@ -27,12 +27,14 @@ import { defineComponent, reactive, computed, ref, Ref, onMounted } from '@vue/c
 import { StackType, Record, Game, Creator, Seiyu, Campaign } from './types/root'
 import { makeStyles } from './lib/style'
 import useRouteStack from './components/use/useRouteStack'
+import useGetEXEPath from './components/use/useGetEXEPath'
 
 import * as FS from 'fs'
 import * as Path from 'path'
 import * as ChildProcess from 'child_process'
 import { remote } from 'electron'
 import * as regedit from 'regedit'
+import * as Iconv from 'iconv-lite'
 import useScraping from './components/use/useScraping'
 import useDictionary from './components/use/useDictionary'
 
@@ -53,7 +55,7 @@ export default defineComponent ({
     GameDetail
   },
   setup() {
-    const { getHome, getGameDetail } = useScraping()
+    const { getHome } = useScraping()
     const routeIndex = ref(0)
     const routeStack = ref<StackType[]>([{ type: 'Home', id: 0 }])
     const games = ref<Record<number, Game>>({})
@@ -107,7 +109,11 @@ export default defineComponent ({
       //     console.log(entry.key)
       //     console.log(entry.data)
       //   })
-      console.log(await getHome())
+      const { getPath } = useGetEXEPath()
+      getPath('E:\\Users\\ユウヤ\\Desktop\\らぶおぶ恋愛皇帝ofLOVE!.lnk')
+      .then((actualPath) => {
+        console.log(actualPath)
+      });
     }
     const styles = useStyles()
     const { next, back, goHome, goDetail } = useRouteStack(routeIndex, routeStack)
@@ -121,6 +127,7 @@ export default defineComponent ({
       goDetail(id)
     }
 
+    // eslint-disable-next-line @typescript-eslint/require-await
     onMounted(async () => {
       isLoading.value = true
       if (campaigns.value.length === 0) {
