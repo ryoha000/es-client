@@ -52,6 +52,7 @@ export interface CampaignGame {
   median: number
   content: string
   url: string
+  imgUrl?: string
 }
 
 export interface Campaign {
@@ -70,4 +71,12 @@ export interface List {
   id: number,
   name: string
   games: ListGame[]
+}
+
+export interface DMM {
+  id: number
+  name: string
+  dmm_genre: string
+  dmm_genre_2: string
+  dmm: string
 }

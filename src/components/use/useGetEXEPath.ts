@@ -10,7 +10,7 @@ const useGetEXEPath = () => {
     return `${getCOM}.CreateShortcut('${normalizedFile}').TargetPath;`
   }
   
-  function getPath (lnkFile: Array<string> | string): Promise<string[]> {
+  function getPath (lnkFile: Array<{id: number, path: string}> | {id: number, path: string}): Promise<{id: number, path: string}[]> {
     return new Promise((resolve, reject) => {
       const commands: string[] = []
   
@@ -20,10 +20,10 @@ const useGetEXEPath = () => {
   
       if (Array.isArray(lnkFile)) {
         for (const lnk of lnkFile) {
-          commands.push(getCommand(lnk))
+          commands.push(getCommand(lnk.path))
         }
-      } else if (typeof lnkFile === 'string') {
-        commands.push(getCommand(lnkFile))
+      } else if (typeof lnkFile === 'object') {
+        commands.push(getCommand(lnkFile.path))
       } else {
         console.log(typeof lnkFile)
         return reject(new Error('Input is neither string nor array!'))
@@ -37,11 +37,17 @@ const useGetEXEPath = () => {
         const result = str.replace(/\r/g,'').split('\n').filter((v) => !!v)
   
         if (result.length === 1) {
-          resolve([result[0]])
+          if (Array.isArray(lnkFile)){
+            resolve([{id: lnkFile[0].id, path: result[0]}])
+          } else {
+            resolve([{id: lnkFile.id, path: result[0]}])
+          }
         } else if (result.length === 0) {
-          resolve([''])
+          resolve([{id: 0, path: ''}])
         } else {
-          resolve(result)
+          if (Array.isArray(lnkFile)) {
+            resolve(result.map((res, i) => ({id: lnkFile[i].id, path: res})))
+          }
         }
       })
     })

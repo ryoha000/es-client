@@ -33,7 +33,7 @@ export default defineComponent({
       props.campaign.games.map(game => ({
         title: game.title,
         supplement: game.content,
-        image: '',
+        image: game.imgUrl,
         contentUrl: `https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=${game.id}`
       }))
     )

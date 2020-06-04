@@ -30,3 +30,27 @@ quasar build
 
 ### Customize the configuration
 See [Configuring quasar.conf.js](https://quasar.dev/quasar-cli/quasar-conf-js).
+
+```
+SELECT id, gname, dmm_genre, dmm_genre_2, dmm
+FROM gamelist
+
+const games = []
+let g = {}
+$$("tr > td").map(v => v.innerHTML).forEach((v, i) => {
+if (i % 5 === 0) {
+if (i !==  0) {
+games.push(g)
+g = {}
+}
+g.id = +(v)
+} else if (i % 5 === 1) {
+g.name = v
+} else if (i % 5 === 2) {
+g.dmm_genre = v
+} else if (i % 5 === 3) {
+g.dmm_genre_2 = v
+} else {
+g.dmm = v
+}})
+```

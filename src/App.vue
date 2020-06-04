@@ -2,7 +2,7 @@
   <div id="q-app" :class="$style.app" :style="styles.app">
     <side-bar :class="$style.sidebar" @game="setGame" :gameInList="gameInList" />
     <div :class="$style.mainview">
-      <q-btn @click="onClick">aaa</q-btn>
+      <q-btn @click="addGameFolder">aaa</q-btn>
       <input type="file" webkitdirectory  />
       <main-view-header @next="next" @back="back" @home="goHome" />
       <div v-if="!isLoading">
@@ -25,7 +25,7 @@ import MainViewHeader from './components/MainView/Header/MainViewHeader.vue'
 import Home from './pages/Home.vue'
 import GameDetail from './pages/GameDetail.vue'
 import { defineComponent, reactive, computed, ref, Ref, onMounted } from '@vue/composition-api'
-import { StackType, Record, Game, Creator, Seiyu, Campaign, ListGame, List } from './types/root'
+import { StackType, Record, Game, Creator, Seiyu, Campaign, ListGame, List, DMM } from './types/root'
 import { makeStyles } from './lib/style'
 import useRouteStack from './components/use/useRouteStack'
 import useDictionary from './components/use/useDictionary'
@@ -39,6 +39,7 @@ import * as regedit from 'regedit'
 import * as Iconv from 'iconv-lite'
 import useScraping from './components/use/useScraping'
 import useJudgeGame from './components/use/useJudgeGame'
+import { editONP } from './components/use/useEditDistance'
 
 const useStyles = () => 
   reactive({
@@ -57,7 +58,7 @@ export default defineComponent ({
     GameDetail
   },
   setup() {
-    const { getHome } = useScraping()
+    const { getCampaignWithImage } = useScraping()
     const routeIndex = ref(0)
     const routeStack = ref<StackType[]>([{ type: 'Home', id: 0 }])
     const games = ref<Record<number, Game>>({})
@@ -66,10 +67,11 @@ export default defineComponent ({
     const gameInList = ref<Record<number, ListGame>>({})
     const lists = ref<List[]>([])
     const isLoading = ref(true)
+    const allDMM = ref<Record<number, DMM>>({})
 
     const { jsonSetup, updateOrInsertList, readFileConsoleErr, getHaveGame } = useJson()
-    const { getEXE } = useJudgeGame()
-    const onClick = async () => {
+    const { getEXE } = useJudgeGame(allDMM)
+    const addGameFolder = async () => {
       // console.log('ido')
       // const dialog = remote.dialog
       // const result = await dialog.showOpenDialog({
@@ -83,6 +85,7 @@ export default defineComponent ({
         gameInList.value[element.id] = element
       })
       updateOrInsertList({id: 0, name: '所持ゲーム', games: listGames})
+      //console.log(editONP('金色ラブリッチェ -GOLDEN TIME-', '金色ラブリッチェ-GOLDENTIME-'))
     }
     const styles = useStyles()
     const { next, back, goHome, goDetail } = useRouteStack(routeIndex, routeStack)
@@ -108,10 +111,16 @@ export default defineComponent ({
         console.error(e)
       }
       //campaigns.value = await getHome()
+      try {
+        //campaigns.value = await getCampaignWithImage(allDMM)
+        await getCampaignWithImage(allDMM)
+      } catch (e) {
+        console.error(e)
+      }
       isLoading.value = false
     })
     return {
-      onClick,
+      addGameFolder,
       styles,
       routeIndex,
       routeStack,

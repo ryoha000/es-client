@@ -2,7 +2,8 @@ import * as Request from 'request-promise-native';
 import * as Charset from 'chardet';
 import * as iconv   from 'iconv-lite';
 import { JSDOM }    from 'jsdom';
-import { Game, Creator, Seiyu, Campaign, CampaignGame } from '../../types/root'
+import { Game, Creator, Seiyu, Campaign, CampaignGame, DMM } from '../../types/root'
+import { Ref } from '@vue/composition-api';
 
 const baseURL = 'https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki'
 
@@ -149,7 +150,28 @@ const useScraping = () => {
     console.log('getHome')
     return campaign
   }
-  return { getTitle, getGameDetail, getHome }
+  const getCampaignWithImage = async (all: Ref<Record<number, DMM>>) => {
+    // const noImageCampaign = await getHome()
+    const document = await getDocument('http://es-server.ryoha.trap.show/dmm.json')
+    const dmm = JSON.parse(document.getElementsByTagName('body')[0].innerHTML)
+    const dmmRecord: Record<number, DMM> = {}
+    dmm.games.forEach((d: DMM) => {
+      dmmRecord[d.id] = d
+    })
+    all.value = dmmRecord
+    // noImageCampaign.forEach((c, i) => c.games.forEach((c, j) => {
+    //   noImageCampaign[i].games[j] = {
+    //     id: c.id,
+    //     title: c.title,
+    //     median: c.median,
+    //     url: c.url,
+    //     content: c.content,
+    //     imgUrl: `https://pics.dmm.co.jp/${dmmRecord[c.id].dmm_genre}/pcgame/${dmmRecord[c.id].dmm}/${dmmRecord[c.id].dmm}pl.jpg`
+    //   }
+    // }))
+    // return noImageCampaign
+  }
+  return { getTitle, getGameDetail, getHome, getCampaignWithImage }
 }
 
 export default useScraping

@@ -3,7 +3,6 @@ import * as path from 'path'
 
 const useGetFile = () => {
   const showFilesDepth1 = async (dirpath: string) => {
-    const paths: string[] = []
     return await fs.promises.readdir(dirpath, {withFileTypes: true});
   }
   const showFiles = async (dirpath: string) => {
@@ -17,24 +16,45 @@ const useGetFile = () => {
         break
       }
       for (const searchPath of searchPaths) {
-        const dirents = await showFilesDepth1(searchPath)
-        for (const dirent of dirents) {
-          const fp = path.join(searchPath, dirent.name);
-          if (dirent.isDirectory()) {
-            nextSearchPaths.push(fp)
-          } else {
-            if (!fp.endsWith('.ini')) {
-              paths.push(fp)
+        try {
+          const dirents = await showFilesDepth1(searchPath)
+          for (const dirent of dirents) {
+            const fp = path.join(searchPath, dirent.name);
+            if (dirent.name === 'Whirlpool') console.log(fp)
+            if (dirent.isDirectory()) {
+              nextSearchPaths.push(fp)
+            } else {
+              if (fp.endsWith('.lnk') || fp.endsWith('.LNK')) {
+                paths.push(fp)
+              } else {
+                console.log(fp)
+              }
             }
           }
+        } catch(e) {
+          console.error(e)
+          continue
         }
       }
-      searchPaths = [...nextSearchPaths]
+      searchPaths = nextSearchPaths.slice()
       nextSearchPaths = []
     }
     return paths
   }
-  return { showFiles }
+  const getUserInstallFile = async (userDirpath: string) => {
+    const paths: string[] = []
+    try {
+      const userDirs = await showFilesDepth1(userDirpath)
+      for (const userDir of userDirs) {
+        paths.push(...await showFiles(path.join(userDirpath, userDir.name, 'AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs')))
+        console.log(path.join(userDirpath, userDir.name, 'AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs'))
+      }
+    } catch (e) {
+      console.error(e)
+    }
+    return paths
+  }
+  return { showFiles, getUserInstallFile }
 }
 
 export default useGetFile

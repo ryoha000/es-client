@@ -1,116 +1,184 @@
 import useGetFiles from './useGetFiles'
 import getEXEPath from './useGetEXEPath'
 import useGetFileIcon from './useGetFileIcon'
-import { ListGame } from '../../types/root'
+import { ListGame, DMM } from '../../types/root'
+import { editONP } from './useEditDistance'
+import { Ref } from '@vue/composition-api'
 
 
-const useJudgeGame = () => {
+const useJudgeGame = (allDMM: Ref<Record<number, DMM>>) => {
+  const toLowerAndHankaku = (str: string) => {
+    const retStr = str.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s) {
+      return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
+    });
+    return retStr.toLowerCase()
+  }
+  const isLinkAsGame = (linkName: string) => {
+    let id = 0
+    let cleanLinkName = toLowerAndHankaku(linkName)
+    const notGameString: string[] = ['マニュアル', '詳細設定', 'はじめに', 'サポート', 'セーブデータ', 'アンインストール', '体験版', 'uninstall', '削除']
+    for (const str of notGameString) {
+      if (cleanLinkName.includes(str)) {
+        return 0
+      }
+    }
+    const validateString = ['を起動', 'の起動', '_単独動作版', '「', '」', ' ', '　']
+    validateString.forEach(v => {
+      cleanLinkName = cleanLinkName.replace(v, '')
+    })
+    for (const dmm of Object.entries(allDMM.value)) {
+      const gameTitle = toLowerAndHankaku(dmm[1].name)
+      if (cleanLinkName.length > 5 && gameTitle.includes(cleanLinkName)) {
+        console.log(cleanLinkName, gameTitle)
+        id = dmm[1].id
+        break
+      }
+      if (editONP(cleanLinkName, gameTitle) > 0.8) {
+        id = dmm[1].id
+        break
+      }
+    }
+    return id
+  }
   const getEXE = async () => {
+    // 計測開始
     const start = (new Date()).getTime()
     console.log('start')
-    const { showFiles } = useGetFiles()
+
+    // .lnkの探索のための関数
+    const { showFiles, getUserInstallFile } = useGetFiles()
 
     // .lnkの探索
     const linkPaths: string[] = await showFiles('C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs')
+    linkPaths.push(...await getUserInstallFile('C:\\Users'))
     const paths: ListGame[] = []
     
-    // 紐づいたファイルの探索Promise
+    // .lnkの先のファイルをとってくる関数
     const { getPath } = getEXEPath()
-    const promises: Promise<string[]>[] = []
-    let batch: string[] = []
+
+    // 紐づいたファイルの探索Promise
+    const promises: Promise<{id: number, path: string}[]>[] = []
+    let batch: {id: number, path: string}[] = []
     let i = 0
-    console.log(linkPaths.length)
     for (const linkPath of linkPaths) {
-      i++
-      batch.push(linkPath)
+      const linkName = linkPath.split('\\').pop()
+      if (!linkName) continue
+
+      const id = isLinkAsGame(linkName.replace(/\.[^/.]+$/, ''))
+      // 拡張子を取り除いてGameかどうか判別
+      if (id !== 0) {
+        i++
+        batch.push({id: id, path: linkPath})
+      }
+
+      // batch上限は21個
       if (i > 20) {
         i = 0
+        console.log(batch)
         promises.push(getPath(batch))
         batch = []
       }
+
+      // 最後が切れないように
+      if (linkPaths[linkPaths.length] === linkPath) {
+        promises.push(getPath(batch))
+      }
     }
+
+    // とりあえず、ゲーム起動と紐づいてると思われる .lnk のPathをあつめたときの処理時間を出力
     console.log('finish prepare promise')
     console.log(`finish: ${(new Date()).getTime() - start}`)
 
-    // .lnkに紐づいたファイルの探索
+    // .lnkに紐づいたファイルの探索関数
     const { getIcon } = useGetFileIcon()
-    let promisesI: Promise<{ filePath: string, icon: string}[]>[] = []
+
+    // IconをとってくるPromiseの配列を準備
+    const promisesI: Promise<{id: number, path: string, icon: string}[]>[] = []
+
+    // つくってた、 .lnk に紐づいてるファイルの Path をとってくるPromiseの解決
     const promiseResultPath = await Promise.allSettled(promises)
 
-    // 結果からアイコンの探索Promiseの作成
-    const games: string[] = []
-    promiseResultPath.forEach((element, i: number) => {
-      if (i === 0) console.log(element)
+    // とってきた .lnk の先のファイルPathを入れていく配列の準備
+    const games: {id: number, path: string}[] = []
+    promiseResultPath.forEach((element) => {
+      // ちゃんとPathをとれてたとき
       if (element.value !== undefined) {
-        // TODO: ゲームかどうかの判定
+        console.log('batch')
         for (const val of element.value) {
-          if (val.startsWith('file://')) {
-            games.push(val.replace('file://', ''))
+          if (val.path.startsWith('file://')) {
+            games.push({id: val.id, path: val.path.replace('file://', '')})
             continue
           }
-          if (val.startsWith('http')) {
+          if (val.path.startsWith('http')) {
             continue
           }
           games.push(val)
         }
-        //promisesI.push(getIcon(games))
       } else {
+        // Pathが取れてなかったとき
         console.log(element.status)
         console.log(element.value)
       }
     })
 
-    let gameBach: string[] = []
-    i = 0
-    for (const game of games) {
-      i++
-      if (i === 10) {
-        i = 0
-        promisesI.push(getIcon(gameBach))
-        gameBach = []
-        continue
-      }
-      gameBach.push(game)
-    }
-    
-    let promiseResultIcon = await Promise.allSettled(promisesI)
-    promisesI = []
-    promiseResultIcon.forEach((element, i: number) => {
-      if (i === 4) console.log(element)
-      if (element.value?.[0].icon) {
-        console.log('success')
-        paths.push(...element.value.map(v => ({ id: Math.ceil( Math.random()*20000 ), path: v.filePath, icon: v.icon})))
-      } else if (element.value) {
-        for (const p of element.value) {
-          promisesI.push(getIcon([p.filePath]))
-        }
-      } else {
-        console.log(element.status)
-        console.log(element.value)
-      }
-    });
+    games.forEach((v) => {
+      // 複数やるとバグるからひとつずつPromise解決
+      promisesI.push(getIcon([v]))
+    })
+    // // 全てのファイルPathからアイコンの探索Promiseを作って、バッチに分けてPromise配列に追加
+    // batch = []
+    // games.forEach((v, i, arr) => {
+    //   batch.push(v)
 
-    promiseResultIcon = await Promise.allSettled(promisesI)
-    promiseResultIcon.forEach((element, i: number) => {
-      if (i === 4) console.log(element)
+    //   // 失敗する要素が多いため最大バッチ数は10に
+    //   if (i % 10 === 9) {
+    //     promisesI.push(getIcon(batch))
+    //     batch = []
+    //   }
+
+    //   // 最後が切れないように
+    //   if (i === arr.length - 1) {
+    //     promisesI.push(getIcon(batch))
+    //   }
+    // })
+
+    // つくってた、ファイルのアイコンをとってくるPromise配列の解決
+    const promiseResultIcon = await Promise.allSettled(promisesI)
+
+    // // バッチで失敗したものは、今度は個別でとってくるためPromise配列を初期化
+    // promisesI = []
+
+    // // アイコンをとってきた結果から、returnの配列か、個別にとってくるPromise配列に追加
+    // promiseResultIcon.forEach((element) => {
+    //   // うまく取れたものはreturnの配列に
+    //   if (element.value?.[0].icon) {
+    //     console.log('success')
+    //     paths.push(...element.value.map(v => ({ id: v.id, path: v.path, icon: v.icon})))
+    //   } else if (element.value) {
+    //     // うまく取れなかったのは個別に取ってくるPromise配列に
+    //     for (const p of element.value) {
+    //       promisesI.push(getIcon([{id: p.id, path: p.path}]))
+    //     }
+    //   } else {
+    //     console.log(element.status)
+    //     console.log(element.value)
+    //   }
+    // });
+
+    // promiseResultIcon = []
+    // promiseResultIcon = await Promise.allSettled(promisesI)
+    promiseResultIcon.forEach((element) => {
       if (element.value?.[0].icon) {
         console.log('success')
-        paths.push(...element.value.map(v => ({ id: Math.ceil( Math.random()*20000 ), path: v.filePath, icon: v.icon})))
+        paths.push(...element.value.map(v => ({ id: v.id, path: v.path, icon: v.icon})))
       } else if (element.value) {
         console.log('結局ダメ＞＜', element.value)
+        paths.push(...element.value.map(v => ({ id: v.id, path: v.path, icon: v.icon})))
       } else {
-
         console.log(element.status)
         console.log(element.value)
       }
     });
-
-    i = 0
-    for (const a of paths) {
-      i++
-      if (i>100 && i<110) console.log(a)
-      if (!a.icon) console.log('icon nothing', a)
-    }
 
     console.log('paths.length=', paths.length)
     console.log(`finish: ${(new Date()).getTime() - start}`)
