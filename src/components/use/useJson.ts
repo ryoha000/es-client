@@ -61,7 +61,7 @@ const useJson = () => {
     })
     return haveGame
   }
-  return { jsonSetup, updateOrInsertList, readFileConsoleErr, getHaveGame }
+  return { jsonSetup, updateOrInsertList, readFileConsoleErr, getHaveGame, override }
 }
 
 export default useJson

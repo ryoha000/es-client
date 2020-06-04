@@ -21,7 +21,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType, computed } from '@vue/composition-api';
-import { ListGame, Game, DMM } from '../../types/root';
+import { ListGame, DMM } from '../../types/root';
 
 export default defineComponent({
   name: 'GameListItem',
@@ -36,7 +36,10 @@ export default defineComponent({
       context.emit('game', id)
     }
     const gameName = (id: number) => {
-      return props.allGames[id]?.name
+      if (props.allGames[id]) {
+        return props.allGames[id].name
+      }
+      return ''
     }
     const listGames = computed(() => props.games)
     return { onClick, listGames, gameName }

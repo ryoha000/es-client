@@ -3,6 +3,7 @@ import getEXEPath from './useGetEXEPath'
 import useGetFileIcon from './useGetFileIcon'
 import { ListGame, DMM } from '../../types/root'
 import { editONP } from './useEditDistance'
+import useJson from './useJson'
 import { Ref } from '@vue/composition-api'
 
 
@@ -49,7 +50,10 @@ const useJudgeGame = (allDMM: Ref<Record<number, DMM>>) => {
 
     // .lnkの探索
     const linkPaths: string[] = await showFiles('C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs')
+
+    const { override } = useJson()
     linkPaths.push(...await getUserInstallFile('C:\\Users'))
+    await override('setting/memory.json', JSON.stringify(linkPaths))
     const paths: ListGame[] = []
     
     // .lnkの先のファイルをとってくる関数
@@ -175,16 +179,22 @@ const useJudgeGame = (allDMM: Ref<Record<number, DMM>>) => {
     // promiseResultIcon = []
     // promiseResultIcon = await Promise.allSettled(promisesI)
     promiseResultIcon.forEach((element) => {
-      if (element.value?.[0].path === 'E:\\Program Files (x86)\\Aonatsu\\Launcher.exe') console.log(element)
-      if (element.value?.[0].icon) {
-        console.log('success')
-        paths.push(...element.value.map(v => ({ id: v.id, path: v.path, icon: v.icon})))
-      } else if (element.value) {
-        console.log('結局ダメ＞＜', element.value)
-        paths.push(...element.value.map(v => ({ id: v.id, path: v.path, icon: v.icon})))
-      } else {
+      if (!element.value) {
         console.log(element.status)
         console.log(element.value)
+      } else {
+        if (element.value.length > 0) {
+          if (element.value[0].icon) {
+            console.log('success')
+            paths.push(...element.value.map(v => ({ id: v.id, path: v.path, icon: v.icon})))
+          } else if (element.value) {
+            console.log('結局ダメ＞＜', element.value)
+            paths.push(...element.value.map(v => ({ id: v.id, path: v.path, icon: v.icon})))
+          } else {
+            console.log(element.status)
+            console.log(element.value)
+          }
+        }
       }
     });
 

@@ -34,6 +34,7 @@ export default defineComponent({
         title: game.title,
         supplement: game.content,
         image: game.imgUrl,
+        url: game.url,
         contentUrl: `https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=${game.id}`
       }))
     )

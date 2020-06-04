@@ -31,15 +31,9 @@ import useRouteStack from './components/use/useRouteStack'
 import useDictionary from './components/use/useDictionary'
 import useJson from './components/use/useJson'
 
-import * as fs from 'fs'
-import * as Path from 'path'
-import * as ChildProcess from 'child_process'
 import { remote } from 'electron'
-import * as regedit from 'regedit'
-import * as Iconv from 'iconv-lite'
 import useScraping from './components/use/useScraping'
 import useJudgeGame from './components/use/useJudgeGame'
-import { editONP } from './components/use/useEditDistance'
 
 const useStyles = () => 
   reactive({
@@ -58,7 +52,6 @@ export default defineComponent ({
     GameDetail
   },
   setup() {
-    const { getCampaignWithImage } = useScraping()
     const routeIndex = ref(0)
     const routeStack = ref<StackType[]>([{ type: 'Home', id: 0 }])
     const games = ref<Record<number, Game>>({})
@@ -81,11 +74,11 @@ export default defineComponent ({
       //   defaultPath: '.'
       // })
       // console.log(result.filePaths)
-      // const listGames = await getEXE()
-      // listGames.forEach(element => {
-      //   gameInList.value[element.id] = element
-      // })
-      // updateOrInsertList({id: 0, name: '所持ゲーム', games: listGames})
+      const listGames = await getEXE()
+      listGames.forEach(element => {
+        gameInList.value[element.id] = element
+      })
+      updateOrInsertList({id: 0, name: '所持ゲーム', games: listGames})
       //console.log(editONP('金色ラブリッチェ -GOLDEN TIME-', '金色ラブリッチェ-GOLDENTIME-'))
     }
     const styles = useStyles()
@@ -100,7 +93,7 @@ export default defineComponent ({
       goDetail(id)
     }
 
-    const { getHome, getSchedule } = useScraping()
+    const { getCampaignWithImage, getSchedule } = useScraping()
     // eslint-disable-next-line @typescript-eslint/require-await
     onMounted(async () => {
       isLoading.value = true
@@ -114,9 +107,8 @@ export default defineComponent ({
       }
       //campaigns.value = await getHome()
       try {
-        //campaigns.value = await getCampaignWithImage(allDMM)
-        //sellSchedules.value = await getSchedule()
-        //await getCampaignWithImage(allDMM)
+        campaigns.value = await getCampaignWithImage(allDMM)
+        sellSchedules.value = await getSchedule()
       } catch (e) {
         console.error(e)
       }

@@ -28,7 +28,7 @@ function editDistanceONP(str1: string, str2: string) {
       de = dd + 1,
       max =len1 + len2 + 3
   //fp = new Array(max);
-  let fp = [];
+  const fp = [];
 
   for (p=0; p<max; p++) {
     //fp[p] = -1;

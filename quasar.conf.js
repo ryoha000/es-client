@@ -96,6 +96,25 @@ module.exports = configure(function (ctx) {
           exclude: /node_modules/
         })
         }
+        cfg.module.rules.push({
+          test: /\.(tsx|ts)$/,
+          exclude: /node_modules/,
+          use: [
+            {
+              loader: 'babel-loader',
+              options: {
+                plugins: ['@babel/plugin-proposal-optional-chaining']
+              }
+            },
+            {
+              loader: 'ts-loader',
+              options: {
+                transpileOnly: true,
+                happyPackMode: true
+              }
+            }
+          ]
+        })
       },
     },
 

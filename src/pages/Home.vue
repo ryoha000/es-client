@@ -9,7 +9,6 @@
 import { defineComponent, ref, PropType } from '@vue/composition-api';
 import CampaignC from '../components/MainView/Home/Campaign/Campaign.vue'
 import Schedule from '../components/MainView/Home/Schedule/Schedule.vue'
-import { Promised } from 'vue-promised';
 import useScraping from '../components/use/useScraping'
 import { Campaign, SellSchedule } from '../types/root';
 
@@ -25,7 +24,7 @@ export default defineComponent({
       default: []
     }
   },
-  components: { CampaignC, Schedule, Promised },
+  components: { CampaignC, Schedule },
   setup() {
     return
   }

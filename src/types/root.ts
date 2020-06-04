@@ -92,3 +92,8 @@ export interface SellSchedule {
     image: string
   }[]
 }
+
+export interface Directory {
+  dirPath: string
+  children: Directory[]
+}
