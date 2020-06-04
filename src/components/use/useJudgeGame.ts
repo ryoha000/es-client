@@ -29,7 +29,6 @@ const useJudgeGame = (allDMM: Ref<Record<number, DMM>>) => {
     for (const dmm of Object.entries(allDMM.value)) {
       const gameTitle = toLowerAndHankaku(dmm[1].name)
       if (cleanLinkName.length > 5 && gameTitle.includes(cleanLinkName)) {
-        console.log(cleanLinkName, gameTitle)
         id = dmm[1].id
         break
       }
@@ -100,11 +99,19 @@ const useJudgeGame = (allDMM: Ref<Record<number, DMM>>) => {
 
     // とってきた .lnk の先のファイルPathを入れていく配列の準備
     const games: {id: number, path: string}[] = []
+
+    // 何故かここでいくつかのObjectのidとpathが入れ替わる。()はバッチでのインデックス
+    // いつも入れ替わってるからランダムではなさそう
+    // バッチの後ろの方が入れ替わってる気がするけど入れ替わってないのもある
+    // 例) {id: 27418, path: 'E:\\Program Files (x86)\\Aonatsu\\Launcher.exe'}(20) と {id: 20228, path: "C:\Users\ユウヤ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\feng\彼女のセイイキ.lnk"}(18 or 19)
+    // 例) {id: 23425, path: "C:\Users\ユウヤ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\ゆずソフト\千恋＊万花.lnk"}(20) と {id: 27319, path: "C:\Users\ユウヤ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\インサルトオーダー\インサルトオーダー.lnk"}(19)
+
     promiseResultPath.forEach((element) => {
       // ちゃんとPathをとれてたとき
       if (element.value !== undefined) {
         console.log('batch')
         for (const val of element.value) {
+          if (val.path === 'E:\\Program Files (x86)\\Aonatsu\\Launcher.exe') console.log(val) // 変わってる
           if (val.path.startsWith('file://')) {
             games.push({id: val.id, path: val.path.replace('file://', '')})
             continue
@@ -122,7 +129,7 @@ const useJudgeGame = (allDMM: Ref<Record<number, DMM>>) => {
     })
 
     games.forEach((v) => {
-      // 複数やるとバグるからひとつずつPromise解決
+      // 複数やるとバグるからとりあえずひとつずつPromise解決
       promisesI.push(getIcon([v]))
     })
     // // 全てのファイルPathからアイコンの探索Promiseを作って、バッチに分けてPromise配列に追加
@@ -168,6 +175,7 @@ const useJudgeGame = (allDMM: Ref<Record<number, DMM>>) => {
     // promiseResultIcon = []
     // promiseResultIcon = await Promise.allSettled(promisesI)
     promiseResultIcon.forEach((element) => {
+      if (element.value?.[0].path === 'E:\\Program Files (x86)\\Aonatsu\\Launcher.exe') console.log(element)
       if (element.value?.[0].icon) {
         console.log('success')
         paths.push(...element.value.map(v => ({ id: v.id, path: v.path, icon: v.icon})))

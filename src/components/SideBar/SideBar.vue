@@ -3,7 +3,7 @@
     <filter-game :class="$style.item" />
     <search :class="$style.item" />
     <add-game :class="$style.item"/>
-    <game-list-item :class="$style.item" @game="setGame" :games="gameInList"/>
+    <game-list-item :class="$style.item" @game="setGame" :games="gameInList" :allGames="games"/>
   </div>
 </template>
 
@@ -13,11 +13,12 @@ import FilterGame from './FilterGame.vue'
 import Search from './Search.vue'
 import GameListItem from './GaleListItem.vue'
 import AddGame from './AddGame.vue'
-import { ListGame } from '../../types/root';
+import { ListGame, Game, DMM } from '../../types/root';
 export default defineComponent({
   name: 'SideBar',
   props: {
-    gameInList: { type: Object as PropType<Record<number, ListGame>>, required: true }
+    gameInList: { type: Object as PropType<Record<number, ListGame>>, required: true },
+    games: { type: Object as PropType<Record<number, DMM>>, required: true }
   },
   components: {
     FilterGame,

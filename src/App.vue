@@ -1,12 +1,12 @@
 <template>
   <div id="q-app" :class="$style.app" :style="styles.app">
-    <side-bar :class="$style.sidebar" @game="setGame" :gameInList="gameInList" />
+    <side-bar :class="$style.sidebar" @game="setGame" :gameInList="gameInList" :games="allDMM" />
     <div :class="$style.mainview">
       <q-btn @click="addGameFolder">aaa</q-btn>
       <input type="file" webkitdirectory  />
       <main-view-header @next="next" @back="back" @home="goHome" />
       <div v-if="!isLoading">
-        <home v-if="routeStack[routeIndex].type === 'Home'" :campaigns="campaigns" />
+        <home v-if="routeStack[routeIndex].type === 'Home'" :campaigns="campaigns" :sellSchedules="sellSchedules" />
         <game-detail
           v-if="routeStack[routeIndex].type === 'Game'"
           :games="games"
@@ -25,7 +25,7 @@ import MainViewHeader from './components/MainView/Header/MainViewHeader.vue'
 import Home from './pages/Home.vue'
 import GameDetail from './pages/GameDetail.vue'
 import { defineComponent, reactive, computed, ref, Ref, onMounted } from '@vue/composition-api'
-import { StackType, Record, Game, Creator, Seiyu, Campaign, ListGame, List, DMM } from './types/root'
+import { StackType, Record, Game, Creator, Seiyu, Campaign, ListGame, List, DMM, SellSchedule } from './types/root'
 import { makeStyles } from './lib/style'
 import useRouteStack from './components/use/useRouteStack'
 import useDictionary from './components/use/useDictionary'
@@ -64,6 +64,7 @@ export default defineComponent ({
     const games = ref<Record<number, Game>>({})
     const gameId = ref(0)
     const campaigns = ref<Campaign[]>([])
+    const sellSchedules = ref<SellSchedule[]>([])
     const gameInList = ref<Record<number, ListGame>>({})
     const lists = ref<List[]>([])
     const isLoading = ref(true)
@@ -99,6 +100,7 @@ export default defineComponent ({
       goDetail(id)
     }
 
+    const { getHome, getSchedule } = useScraping()
     // eslint-disable-next-line @typescript-eslint/require-await
     onMounted(async () => {
       isLoading.value = true
@@ -113,7 +115,8 @@ export default defineComponent ({
       //campaigns.value = await getHome()
       try {
         //campaigns.value = await getCampaignWithImage(allDMM)
-        await getCampaignWithImage(allDMM)
+        sellSchedules.value = await getSchedule()
+        //await getCampaignWithImage(allDMM)
       } catch (e) {
         console.error(e)
       }
@@ -133,7 +136,9 @@ export default defineComponent ({
       goHome,
       goDetail,
       setGame,
-      campaigns
+      campaigns,
+      sellSchedules,
+      allDMM
     }
   }
 })

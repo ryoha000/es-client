@@ -1,34 +1,28 @@
 <template>
   <div :class="$style.container">
     <div :class="$style.day">
-      <span :class="$style.sellday">2020-5-29 (12)</span>
+      <span :class="$style.sellday">{{ schedule.dayAndCount }}</span>
       <q-icon name="keyboard_arrow_down" :class="$style.icon" size="24px"/>
     </div>
-    <div :class="$style.gameCards">
-      <game-card :cardInfo="demo" :class="$style.gameCard"/>
-      <game-card :cardInfo="demo" :class="$style.gameCard"/>
-      <game-card :cardInfo="demo" :class="$style.gameCard"/>
-      <game-card :cardInfo="demo" :class="$style.gameCard"/>
-      <game-card :cardInfo="demo" :class="$style.gameCard"/>
-      <game-card :cardInfo="demo" :class="$style.gameCard"/>
-      <game-card :cardInfo="demo" :class="$style.gameCard"/>
-      <game-card :cardInfo="demo" :class="$style.gameCard"/>
-      <game-card :cardInfo="demo" :class="$style.gameCard"/>
-      <game-card :cardInfo="demo" :class="$style.gameCard"/>
-      <game-card :cardInfo="demo" :class="$style.gameCard"/>
-      <game-card :cardInfo="demo" :class="$style.gameCard"/>
+    <div :class="$style.gameCards" >
+      <game-card :cardInfo="createCardInfo(game)" :class="$style.gameCard" v-for="(game, i) in schedule.games" :key="i"/>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, Ref, ref } from '@vue/composition-api';
+import { defineComponent, Ref, ref, PropType } from '@vue/composition-api';
 import GameCard from '../../GameCard.vue'
 import { CardInfo } from '../../HorizontalScroll.vue'
+import { SellSchedule } from '../../../../types/root';
 
 export default defineComponent({
   name: 'ScheduleDay',
   props: {
+    schedule: {
+      type: Object as PropType<SellSchedule>,
+      required: true
+    }
   },
   components: { GameCard },
   setup() {
@@ -37,9 +31,18 @@ export default defineComponent({
       supplement: '5本5,000円まとめ買いキャンペーン!!',
       //image: 'https://trap.jp/assets/logo/icon_blue.svg?v=3da93e42ac',
       image: '../../statics/icons/ESClient_demo_image.jpg',
-      url: "https://www.dlsite.com/maniax/campaign/matome202005"
+      url: 'https://www.dlsite.com/maniax/campaign/matome202005'
     })
-    return { demo }
+    const createCardInfo = (game: {id: number, name: string, brandId: number, brandName: string, isMasterup: boolean, image: string}) => {
+      return {
+        title: game.name,
+        supplement: game.brandName,
+        image: game.image,
+        url: `https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=${game.id}`,
+        contain: true
+      }
+    }
+    return { demo, createCardInfo }
   }
 });
 </script>

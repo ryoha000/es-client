@@ -1,7 +1,7 @@
 <template>
   <div>
     <campaign-c :class="$style.item" :campaigns="campaigns" />
-    <schedule :class="$style.item" />
+    <schedule :class="$style.item" :sellSchedules="sellSchedules" />
   </div>
 </template>
 
@@ -11,13 +11,17 @@ import CampaignC from '../components/MainView/Home/Campaign/Campaign.vue'
 import Schedule from '../components/MainView/Home/Schedule/Schedule.vue'
 import { Promised } from 'vue-promised';
 import useScraping from '../components/use/useScraping'
-import { Campaign } from '../types/root';
+import { Campaign, SellSchedule } from '../types/root';
 
 export default defineComponent({
   name: 'Home',
   props: {
     campaigns: {
-      types: Array as PropType<Campaign[]>,
+      type: Array as PropType<Campaign[]>,
+      default: []
+    },
+    sellSchedules: {
+      type: Array as PropType<SellSchedule[]>,
       default: []
     }
   },

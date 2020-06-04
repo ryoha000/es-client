@@ -33,6 +33,7 @@ export interface CardInfo {
   image: string
   url: string
   contentUrl?: string
+  contain?: boolean
 }
 
 export default defineComponent({

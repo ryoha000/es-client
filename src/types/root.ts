@@ -80,3 +80,15 @@ export interface DMM {
   dmm_genre_2: string
   dmm: string
 }
+
+export interface SellSchedule {
+  dayAndCount: string
+  games: {
+    id: number
+    name: string
+    brandId: number
+    brandName: string
+    isMasterup: boolean
+    image: string
+  }[]
+}

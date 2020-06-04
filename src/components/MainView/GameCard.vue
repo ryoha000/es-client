@@ -1,6 +1,6 @@
 <template>
   <q-card dark :class="$style.container" @click="onClick">
-    <q-img :src="cardInfo.image" :class="$style.image" />
+    <q-img :src="cardInfo.image" :class="$style.image" :contain="cardInfo.contain" />
     <q-card-section :class="$style.section" @click.stop="onClickContent">
       <div :class="$style.title">{{ cardInfo.title }}</div>
       <div :class="$style.supplement">{{ cardInfo.supplement }}</div>

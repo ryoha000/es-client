@@ -13,7 +13,7 @@
             <img :src="'data:image/png;base64,' + path.icon">
           </q-avatar>
         </q-item-section>
-        <q-item-section :class="$style.titleWrapper"><div :class="$style.title">{{ path.path }}</div></q-item-section>
+        <q-item-section :class="$style.titleWrapper"><div :class="$style.title">{{ gameName(path.id) }}</div></q-item-section>
       </q-item>
     </q-list>
   </div>
@@ -21,12 +21,13 @@
 
 <script lang="ts">
 import { defineComponent, PropType, computed } from '@vue/composition-api';
-import { ListGame } from '../../types/root';
+import { ListGame, Game, DMM } from '../../types/root';
 
 export default defineComponent({
   name: 'GameListItem',
   props: {
-    games: { type: Object as PropType<Record<number, ListGame>>, required: true }
+    games: { type: Object as PropType<Record<number, ListGame>>, required: true },
+    allGames: { type: Object as PropType<Record<number, DMM>>, required: true }
   },
   components: {
   },
@@ -34,8 +35,11 @@ export default defineComponent({
     const onClick = (id: number) => {
       context.emit('game', id)
     }
+    const gameName = (id: number) => {
+      return props.allGames[id]?.name
+    }
     const listGames = computed(() => props.games)
-    return { onClick, listGames }
+    return { onClick, listGames, gameName }
   }
 });
 </script>

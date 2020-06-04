@@ -2,7 +2,7 @@ import * as Request from 'request-promise-native';
 import * as Charset from 'chardet';
 import * as iconv   from 'iconv-lite';
 import { JSDOM }    from 'jsdom';
-import { Game, Creator, Seiyu, Campaign, CampaignGame, DMM } from '../../types/root'
+import { Game, Creator, Seiyu, Campaign, CampaignGame, DMM, SellSchedule } from '../../types/root'
 import { Ref } from '@vue/composition-api';
 
 const baseURL = 'https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki'
@@ -80,15 +80,15 @@ const useScraping = () => {
     const seiyus = doc.getElementById('seiyu')?.getElementsByTagName('td')[0]
     const game: Game = {
       id: id,
-      name: gameTitle?.getElementsByTagName('a')[0].innerHTML ?? '',
+      name: gameTitle?.getElementsByTagName('a')[0]?.innerHTML ?? '',
       furigana: '',
       brandId: +(softTitle?.getElementsByTagName('a')[0]?.getAttribute('href')?.replace('brand.php?brand=', '') ?? '0'),
-      brandName: softTitle?.getElementsByTagName('a')[0].innerHTML ?? '',
+      brandName: softTitle?.getElementsByTagName('a')[0]?.innerHTML ?? '',
       sellday: softTitle?.getElementsByTagName('a')[1].innerHTML ?? '2030-01-01',
-      officialHomePage: gameTitle?.getElementsByTagName('a')[0].getAttribute('href') ?? '',
-      median: +(doc.getElementById('median')?.getElementsByTagName('td')[0].innerHTML ?? '0'),
-      count: +(doc.getElementById('count')?.getElementsByTagName('td')[0].innerHTML ?? '0'),
-      average: +(doc.getElementById('average')?.getElementsByTagName('td')[0].innerHTML ?? '0'),
+      officialHomePage: gameTitle?.getElementsByTagName('a')[0]?.getAttribute('href') ?? '',
+      median: +(doc.getElementById('median')?.getElementsByTagName('td')[0]?.innerHTML ?? '0'),
+      count: +(doc.getElementById('count')?.getElementsByTagName('td')[0]?.innerHTML ?? '0'),
+      average: +(doc.getElementById('average')?.getElementsByTagName('td')[0]?.innerHTML ?? '0'),
       imgUrl: doc.getElementById('main_image')?.getElementsByTagName('img')[0]?.getAttribute('src') ?? '',
       gengas: gengas ? getCreator(gengas) : [],
       sinarios: sinarios ? getCreator(sinarios) : [],
@@ -153,7 +153,7 @@ const useScraping = () => {
   const getCampaignWithImage = async (all: Ref<Record<number, DMM>>) => {
     // const noImageCampaign = await getHome()
     const document = await getDocument('http://es-server.ryoha.trap.show/dmm.json')
-    const dmm = JSON.parse(document.getElementsByTagName('body')[0].innerHTML)
+    const dmm = JSON.parse(document.getElementsByTagName('body')[0]?.innerHTML)
     const dmmRecord: Record<number, DMM> = {}
     dmm.games.forEach((d: DMM) => {
       dmmRecord[d.id] = d
@@ -171,7 +171,35 @@ const useScraping = () => {
     // }))
     // return noImageCampaign
   }
-  return { getTitle, getGameDetail, getHome, getCampaignWithImage }
+  const getSchedule = async () => {
+    const schedules: SellSchedule[] = []
+    const document = await getDocument(`${baseURL}/before_hatubai_yotei.php`)
+    // 両端は違う情報
+    const selldays = document.getElementsByTagName('h3')
+    const tables = document.getElementsByTagName('tbody')
+    for (let i = 0; i < tables.length; i++ ) {
+      const tableTR = tables[i]?.getElementsByTagName('tr')
+      const scheduleAndCount = selldays[i+1]?.innerHTML
+      const games: {id: number, name: string, brandId: number, brandName: string, isMasterup: boolean, image: string}[] = []
+      for (let j = 1; j < tableTR.length; j++ ) {
+        const tds = tableTR[j]?.getElementsByTagName('td')
+        const id = +(tds[0]?.getElementsByTagName('a')[0]?.getAttribute('href')?.replace('game.php?game=', '').replace('#ad', '') ?? '0')
+        const game = {
+          id: id,
+          name: tds[0]?.getElementsByTagName('a')[0]?.innerHTML,
+          brandId: +(tds[1]?.getElementsByTagName('a')?.[0]?.getAttribute('href')?.replace('brand.php?brand=', '') ?? '0'),
+          brandName: tds[1]?.getElementsByTagName('a')?.[0]?.innerHTML,
+          isMasterup: tds[0]?.getElementsByTagName('span')?.[1]?.innerHTML === '(マスターアップ)',
+          image: document.getElementsByClassName(`tooltip tooltip_gameid_${id}`)?.[0]?.getElementsByTagName('img')[0]?.getAttribute('src') ?? ''
+        }
+        games.push(game)
+      }
+      schedules.push({dayAndCount: scheduleAndCount, games: games})
+    }
+    console.log(schedules)
+    return schedules
+  }
+  return { getTitle, getGameDetail, getHome, getCampaignWithImage, getSchedule }
 }
 
 export default useScraping
