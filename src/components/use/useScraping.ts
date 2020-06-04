@@ -4,6 +4,7 @@ import * as iconv   from 'iconv-lite';
 import { JSDOM }    from 'jsdom';
 import { Game, Creator, Seiyu, Campaign, CampaignGame, DMM, SellSchedule } from '../../types/root'
 import { Ref } from '@vue/composition-api';
+import { editONP } from './useEditDistance'
 
 const baseURL = 'https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki'
 
@@ -199,7 +200,37 @@ const useScraping = () => {
     console.log(schedules)
     return schedules
   }
-  return { getTitle, getGameDetail, getHome, getCampaignWithImage, getSchedule }
+  const getSeiyaGames = async (seiya: Ref<{createdNow: number, games: {name: string, url: string}[]}>) => {
+    const document = await getDocument('https://seiya-saiga.com/game/kouryaku.html')
+    const trs = document.getElementsByTagName('tr')
+    const games: {name: string, url: string}[] = []
+    for (const tr of trs) {
+      games.push({
+        name: tr.getElementsByTagName('a')?.[0]?.innerHTML,
+        url: 'https://seiya-saiga.com/game/' + tr.getElementsByTagName('a')?.[0]?.getAttribute('href') ?? ''
+      })
+    }
+    console.log(games)
+    seiya.value = {createdNow: Date.now(), games: games}
+  }
+  const getSeiyaURL = (gameName: string, seiya: Ref<{createdNow: number, games: {name: string, url: string}[]}>) => {
+    console.log(gameName)
+    for (const game of seiya.value.games) {
+      if (game.name === gameName) {
+        console.log(game.url)
+        return game.url
+      }
+    }
+    for (const game of seiya.value.games) {
+      if (!game.name || !gameName) continue
+      if (editONP(gameName, game.name) > 0.8) {
+        console.log(game.url)
+        return game.url
+      }
+    }
+    return ''
+  }
+  return { getTitle, getGameDetail, getHome, getCampaignWithImage, getSchedule, getSeiyaURL, getSeiyaGames }
 }
 
 export default useScraping

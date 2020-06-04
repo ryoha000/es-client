@@ -81,11 +81,11 @@ export default defineComponent ({
       //   defaultPath: '.'
       // })
       // console.log(result.filePaths)
-      const listGames = await getEXE()
-      listGames.forEach(element => {
-        gameInList.value[element.id] = element
-      })
-      updateOrInsertList({id: 0, name: '所持ゲーム', games: listGames})
+      // const listGames = await getEXE()
+      // listGames.forEach(element => {
+      //   gameInList.value[element.id] = element
+      // })
+      // updateOrInsertList({id: 0, name: '所持ゲーム', games: listGames})
       //console.log(editONP('金色ラブリッチェ -GOLDEN TIME-', '金色ラブリッチェ-GOLDENTIME-'))
     }
     const styles = useStyles()
@@ -115,7 +115,7 @@ export default defineComponent ({
       //campaigns.value = await getHome()
       try {
         //campaigns.value = await getCampaignWithImage(allDMM)
-        sellSchedules.value = await getSchedule()
+        //sellSchedules.value = await getSchedule()
         //await getCampaignWithImage(allDMM)
       } catch (e) {
         console.error(e)

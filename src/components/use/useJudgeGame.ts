@@ -10,7 +10,7 @@ const useJudgeGame = (allDMM: Ref<Record<number, DMM>>) => {
   const toLowerAndHankaku = (str: string) => {
     const retStr = str.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s) {
       return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
-    });
+    })
     return retStr.toLowerCase()
   }
   const isLinkAsGame = (linkName: string) => {
