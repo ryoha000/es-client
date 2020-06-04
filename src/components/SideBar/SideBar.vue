@@ -3,18 +3,30 @@
     <filter-game :class="$style.item" @sortByLastAccess="sortByLastAccess" :isSortByLastAccess="isSortByLastAccess" />
     <search :class="$style.item" />
     <add-game :class="$style.item"/>
-    <game-list-item :class="$style.item" @game="setGame" :games="arrayList" :allGames="games"/>
+    <q-scroll-area :style="styles.scrollArea" dark>
+      <game-list-item :class="$style.item" @game="setGame" :games="arrayList" :allGames="games"/>
+    </q-scroll-area>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, computed, ref } from '@vue/composition-api';
+import { defineComponent, PropType, computed, ref, reactive, Ref } from '@vue/composition-api';
 import FilterGame from './FilterGame.vue'
 import Search from './Search.vue'
 import GameListItem from './GaleListItem.vue'
 import AddGame from './AddGame.vue'
 import { ListGame, Game, DMM } from '../../types/root';
+import { makeStyles } from '../../lib/style'
 import * as fs from 'fs'
+
+const useStyles = (height: Readonly<Ref<number>>) => 
+  reactive({
+    scrollArea: makeStyles(theme => ({
+        height: `calc( ${height.value}px - 172px )`,
+        minHeight: '610px'
+      })
+    )
+  })
 
 export default defineComponent({
   name: 'SideBar',
@@ -34,6 +46,8 @@ export default defineComponent({
     }
     const isSortByLastAccess = ref(false)
     const lastAccessTime = ref<Record<number, Date>>({})
+    const windowHeight = computed(() => window.innerHeight)
+    const styles = useStyles(windowHeight)
     const sortByLastAccess = async () => {
       // TODO 並列
       for (const listGame of Object.entries(props.gameInList)) {
@@ -67,7 +81,7 @@ export default defineComponent({
       }
       return arrayListGame
     })
-    return { setGame, sortByLastAccess, lastAccessTime, arrayList, isSortByLastAccess }
+    return { setGame, sortByLastAccess, lastAccessTime, arrayList, isSortByLastAccess, styles }
   }
 });
 </script>

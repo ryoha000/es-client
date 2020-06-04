@@ -1,6 +1,6 @@
 <template>
   <div :class="$style.container">
-    <q-list dark bordered separator dense>
+    <q-list dark  separator dense>
       <q-item
         v-for="(path, i) in listGames" :key="i"
         clickable
