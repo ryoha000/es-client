@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, computed, ref, reactive, Ref } from '@vue/composition-api';
+import { defineComponent, PropType, computed, ref, reactive, Ref, onMounted } from '@vue/composition-api';
 import FilterGame from './FilterGame.vue'
 import Search from './Search.vue'
 import GameListItem from './GaleListItem.vue'
@@ -19,7 +19,7 @@ import { ListGame, Game, DMM } from '../../types/root';
 import { makeStyles } from '../../lib/style'
 import * as fs from 'fs'
 
-const useStyles = (height: Readonly<Ref<number>>) => 
+const useStyles = (height: Ref<number>) => 
   reactive({
     scrollArea: makeStyles(theme => ({
         height: `calc( ${height.value}px - 172px )`,
@@ -46,7 +46,12 @@ export default defineComponent({
     }
     const isSortByLastAccess = ref(false)
     const lastAccessTime = ref<Record<number, Date>>({})
-    const windowHeight = computed(() => window.innerHeight)
+    const windowHeight = ref(window.innerHeight)
+    onMounted(() => {
+      window.addEventListener('resize', () => {
+        windowHeight.value = window.innerHeight
+      })
+    })
     const styles = useStyles(windowHeight)
     const sortByLastAccess = async () => {
       // TODO 並列
