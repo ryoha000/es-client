@@ -40,20 +40,11 @@ const useJudgeGame = (allDMM: Ref<Record<number, DMM>>) => {
     }
     return id
   }
-  const getEXE = async () => {
+  const getEXE = async (linkPaths: string[]) => {
     // 計測開始
     const start = (new Date()).getTime()
     console.log('start')
 
-    // .lnkの探索のための関数
-    const { showFiles, getUserInstallFile } = useGetFiles()
-
-    // .lnkの探索
-    const linkPaths: string[] = await showFiles('C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs')
-
-    const { override } = useJson()
-    linkPaths.push(...await getUserInstallFile('C:\\Users'))
-    await override('setting/memory.json', JSON.stringify(linkPaths))
     const paths: ListGame[] = []
     
     // .lnkの先のファイルをとってくる関数
@@ -66,12 +57,14 @@ const useJudgeGame = (allDMM: Ref<Record<number, DMM>>) => {
     for (const linkPath of linkPaths) {
       const linkName = linkPath.split('\\').pop()
       if (!linkName) continue
-
+      if(linkName.includes('美少女')) console.log(linkName)
       const id = isLinkAsGame(linkName.replace(/\.[^/.]+$/, ''))
+      if(linkName.includes('美少女')) console.log(id)
       // 拡張子を取り除いてGameかどうか判別
       if (id !== 0) {
         i++
-        batch.push({id: id, path: linkPath})
+        //batch.push({id: id, path: linkPath})
+        promises.push(getPath([{id: id, path: linkPath}]))
       }
 
       // batch上限は21個
@@ -110,7 +103,7 @@ const useJudgeGame = (allDMM: Ref<Record<number, DMM>>) => {
     // 例) {id: 27418, path: 'E:\\Program Files (x86)\\Aonatsu\\Launcher.exe'}(20) と {id: 20228, path: "C:\Users\ユウヤ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\feng\彼女のセイイキ.lnk"}(18 or 19)
     // 例) {id: 23425, path: "C:\Users\ユウヤ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\ゆずソフト\千恋＊万花.lnk"}(20) と {id: 27319, path: "C:\Users\ユウヤ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\インサルトオーダー\インサルトオーダー.lnk"}(19)
 
-    promiseResultPath.forEach((element) => {
+    promiseResultPath.forEach((element, i) => {
       // ちゃんとPathをとれてたとき
       if (element.value !== undefined) {
         console.log('batch')
@@ -202,7 +195,56 @@ const useJudgeGame = (allDMM: Ref<Record<number, DMM>>) => {
     console.log(`finish: ${(new Date()).getTime() - start}`)
     return paths
   }
-  return { getEXE }
+  const searchAll = async() => {
+    // .lnkの探索のための関数
+    const { showFiles, getUserInstallFile } = useGetFiles()
+
+    // .lnkの探索
+    const linkPaths: string[] = await showFiles('C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs')
+
+    const { override, updateOrInsertList } = useJson()
+    linkPaths.push(...await getUserInstallFile('C:\\Users'))
+    await override('setting/memory.json', JSON.stringify(linkPaths))
+    const paths = await getEXE(linkPaths)
+    await updateOrInsertList({id: 0, name: '所持ゲーム', games: paths})
+    return paths
+  }
+  const searchDifference = async () => {
+    // .lnkの探索のための関数
+    const { showFiles, getUserInstallFile } = useGetFiles()
+
+    // .lnkの探索
+    const linkPaths: string[] = await showFiles('C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs')
+
+    const { override, readFileConsoleErr, updateOrInsertList, readListGames } = useJson()
+    linkPaths.push(...await getUserInstallFile('C:\\Users'))
+    try {
+      const prevPaths = JSON.parse(await readFileConsoleErr('setting/memory.json'))
+      let differencePaths: string[] = []
+      if (Array.isArray(prevPaths)) {
+        for (const linkPath of linkPaths) {
+          if (!prevPaths.includes(linkPath)) {
+            differencePaths.push(linkPath)
+          }
+        }
+      } else {
+        differencePaths = linkPaths
+      }
+      await override('setting/memory.json', JSON.stringify(linkPaths))
+      const paths = await getEXE(differencePaths)
+      const games = await readListGames(0)
+      games.push(...paths)
+      await updateOrInsertList({id: 0, name: '所持ゲーム', games: games})
+      return games
+    } catch (e) {
+      console.error(e)
+      await override('setting/memory.json', JSON.stringify(linkPaths))
+      const paths = await getEXE(linkPaths)
+      await updateOrInsertList({id: 0, name: '所持ゲーム', games: paths})
+      return paths
+    }
+  }
+  return { searchAll, searchDifference }
 }
 
 export default useJudgeGame
