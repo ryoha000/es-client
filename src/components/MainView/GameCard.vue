@@ -23,7 +23,7 @@ export default defineComponent({
     const onClick = () => {
       window.open(props.cardInfo.url)
     }
-    const onClickContent = (e: MouseEvent) => {
+    const onClickContent = () => {
       window.open(props.cardInfo.contentUrl ?? props.cardInfo.url)
     }
     return { onClick, onClickContent }

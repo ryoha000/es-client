@@ -7,7 +7,7 @@
       <div :class="$style.titleInfo"><div>{{ game.brandName }}</div></div>
       <div :class="$style.titleInfo"><div>({{ game.sellday }})</div></div>
     </div>
-    <main-wrapper :game="game" :gameInList="gameInList" />
+    <main-wrapper :game="game" :gameInList="gameInList" :seiya="seiya" />
   </div>
 </template>
 
@@ -29,6 +29,10 @@ export default defineComponent({
     },
     gameInList: {
       type: Object as PropType<Record<number, ListGame>>,
+      required: true
+    },
+    seiya: {
+      type: Object as PropType<{createdNow: number, games: {name: string, url: string}}[]>,
       required: true
     }
   },

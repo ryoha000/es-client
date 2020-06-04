@@ -30,23 +30,29 @@ const useJson = () => {
     }
   }
   const updateOrInsertList = async (list: List) => {
-    const prevLists = JSON.parse(await readFileConsoleErr('setting/lists.json'))
-    if (!Array.isArray(prevLists)) await override('setting/lists.json', JSON.stringify([list]))
-    else {
-      let exist = false
-      const newList: List[] = []
-      for (const prevList of prevLists) {
-        if (prevList.name === list.name) {
-          newList.push(list)
-          exist = true
-        } else {
-          newList.push(prevList)
+    const prevLists: List[] = []
+    try {
+      const jsonLists = JSON.parse(await readFileConsoleErr('setting/lists.json'))
+      if (!Array.isArray(jsonLists)) await override('setting/lists.json', JSON.stringify([list]))
+      else {
+        let exist = false
+        const newList: List[] = []
+        for (const prevList of prevLists) {
+          if (prevList.name === list.name) {
+            newList.push(list)
+            exist = true
+          } else {
+            newList.push(prevList)
+          }
         }
+        if (!exist) {
+          newList.push(list)
+        }
+        await override('setting/lists.json', JSON.stringify(newList))
       }
-      if (!exist) {
-        newList.push(list)
-      }
-      await override('setting/lists.json', JSON.stringify(newList))
+    } catch(e) {
+      console.error(e)
+      await override('setting/lists.json', JSON.stringify([list]))
     }
   }
   const getHaveGame = (lists: List[]) => {
@@ -61,7 +67,23 @@ const useJson = () => {
     })
     return haveGame
   }
-  return { jsonSetup, updateOrInsertList, readFileConsoleErr, getHaveGame, override }
+  const readListGames = async (id: number) => {
+    const listGames: ListGame[] = []
+    try {
+      const jsonLists: List[] = JSON.parse(await readFileConsoleErr('setting/lists.json'))
+      if (!Array.isArray(jsonLists)) throw new Error()
+      for (const jsonList of jsonLists) {
+        if (jsonList.id === id) {
+          listGames.push(...jsonList.games)
+          break
+        }
+      }
+    } catch (e) {
+      console.error(e)
+    }
+    return listGames
+  }
+  return { jsonSetup, updateOrInsertList, readFileConsoleErr, getHaveGame, override, readListGames }
 }
 
 export default useJson

@@ -39,6 +39,10 @@ export default defineComponent({
     gameInList :{
       type: Object as PropType<Record<number, ListGame>>,
       required: true
+    },
+    seiya: {
+      type: Object as PropType<{createdNow: number, games: {name: string, url: string}[]}>,
+      required: true
     }
   },
   components: {
@@ -48,12 +52,11 @@ export default defineComponent({
     ScoreC
   },
   setup(props) {
-    const seiya = ref<{createdNow: number, games: {name: string, url: string}[]}>({createdNow: Date.now(), games: []})
-    const { getSeiyaURL, getSeiyaGames } = useScraping()
+    const { getSeiyaURL } = useScraping()
     const links = computed(() => [
       { title: 'OHP', url: props.game.officialHomePage },
       { title: 'ErogameSpace', url: `https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=${props.game.id}` },
-      { title: '誠也の部屋', url: getSeiyaURL(props.game.name, seiya) }
+      { title: '誠也の部屋', url: getSeiyaURL(props.game.name, props.seiya.games) }
     ])
     const score = computed<Score>(() => ({
       median: props.game.median,
@@ -65,11 +68,6 @@ export default defineComponent({
       sinarios: props.game.sinarios,
       seiyus: props.game.seiyus
     }))
-    onMounted(async () => {
-      if (seiya.value.games.length === 0 || Date.now() - seiya.value.createdNow > 1000*60*60*24) {
-        await getSeiyaGames(seiya)
-      }
-    })
     return { links, score, creators }
   }
 });

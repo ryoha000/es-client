@@ -26,7 +26,7 @@ import { ListGame, DMM } from '../../types/root';
 export default defineComponent({
   name: 'GameListItem',
   props: {
-    games: { type: Object as PropType<Record<number, ListGame>>, required: true },
+    games: { type: Array as PropType<ListGame[]>, required: true },
     allGames: { type: Object as PropType<Record<number, DMM>>, required: true }
   },
   components: {
@@ -35,14 +35,15 @@ export default defineComponent({
     const onClick = (id: number) => {
       context.emit('game', id)
     }
+    const allDmmGames = computed(() => props.allGames)
     const gameName = (id: number) => {
-      if (props.allGames[id]) {
-        return props.allGames[id].name
+      if (allDmmGames.value[id]) {
+        return allDmmGames.value[id].name
       }
       return ''
     }
     const listGames = computed(() => props.games)
-    return { onClick, listGames, gameName }
+    return { onClick, listGames, gameName, allDmmGames }
   }
 });
 </script>

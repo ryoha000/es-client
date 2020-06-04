@@ -3,7 +3,6 @@
     <side-bar :class="$style.sidebar" @game="setGame" :gameInList="gameInList" :games="allDMM" />
     <div :class="$style.mainview">
       <q-btn @click="addGameFolder">aaa</q-btn>
-      <input type="file" webkitdirectory  />
       <main-view-header @next="next" @back="back" @home="goHome" />
       <div v-if="!isLoading">
         <home v-if="routeStack[routeIndex].type === 'Home'" :campaigns="campaigns" :sellSchedules="sellSchedules" />
@@ -12,6 +11,7 @@
           :games="games"
           :id="gameId"
           :gameInList="gameInList"
+          :seiya="seiya"
         />
       </div>
       <div v-else>Now Loading...</div>
@@ -24,8 +24,8 @@ import SideBar from './components/SideBar/SideBar.vue'
 import MainViewHeader from './components/MainView/Header/MainViewHeader.vue'
 import Home from './pages/Home.vue'
 import GameDetail from './pages/GameDetail.vue'
-import { defineComponent, reactive, computed, ref, Ref, onMounted } from '@vue/composition-api'
-import { StackType, Record, Game, Creator, Seiyu, Campaign, ListGame, List, DMM, SellSchedule } from './types/root'
+import { defineComponent, reactive, ref, onMounted } from '@vue/composition-api'
+import { StackType, Record, Game, Campaign, ListGame, List, DMM, SellSchedule } from './types/root'
 import { makeStyles } from './lib/style'
 import useRouteStack from './components/use/useRouteStack'
 import useDictionary from './components/use/useDictionary'
@@ -62,9 +62,10 @@ export default defineComponent ({
     const lists = ref<List[]>([])
     const isLoading = ref(true)
     const allDMM = ref<Record<number, DMM>>({})
+    const seiya = ref<{createdNow: number, games: {name: string, url: string}[]}>({createdNow: Date.now(), games: []})
 
     const { jsonSetup, updateOrInsertList, readFileConsoleErr, getHaveGame } = useJson()
-    const { getEXE } = useJudgeGame(allDMM)
+    const { searchAll, searchDifference } = useJudgeGame(allDMM)
     const addGameFolder = async () => {
       // console.log('ido')
       // const dialog = remote.dialog
@@ -74,11 +75,12 @@ export default defineComponent ({
       //   defaultPath: '.'
       // })
       // console.log(result.filePaths)
-      const listGames = await getEXE()
+      const gl: Record<number, ListGame> = {}
+      const listGames = (await searchDifference())
       listGames.forEach(element => {
-        gameInList.value[element.id] = element
+        gl[element.id] = element
       })
-      updateOrInsertList({id: 0, name: '所持ゲーム', games: listGames})
+      gameInList.value = gl
       //console.log(editONP('金色ラブリッチェ -GOLDEN TIME-', '金色ラブリッチェ-GOLDENTIME-'))
     }
     const styles = useStyles()
@@ -93,7 +95,8 @@ export default defineComponent ({
       goDetail(id)
     }
 
-    const { getCampaignWithImage, getSchedule } = useScraping()
+    const { getCampaignWithImage, getSchedule, getSeiyaGames } = useScraping()
+    
     // eslint-disable-next-line @typescript-eslint/require-await
     onMounted(async () => {
       isLoading.value = true
@@ -107,8 +110,17 @@ export default defineComponent ({
       }
       //campaigns.value = await getHome()
       try {
-        campaigns.value = await getCampaignWithImage(allDMM)
-        sellSchedules.value = await getSchedule()
+        const a = JSON.parse(await readFileConsoleErr('setting/dmm.json'))
+        const ad: Record<number, DMM> = {}
+        for (const d of a.games) {
+          ad[d.id] = d
+        }
+        allDMM.value = ad
+        // if (seiya.value.games.length === 0 || Date.now() - seiya.value.createdNow > 1000*60*60*24) {
+        //   await getSeiyaGames(seiya)
+        // }
+        // campaigns.value = await getCampaignWithImage(allDMM)
+        // sellSchedules.value = await getSchedule()
       } catch (e) {
         console.error(e)
       }
@@ -130,7 +142,8 @@ export default defineComponent ({
       setGame,
       campaigns,
       sellSchedules,
-      allDMM
+      allDMM,
+      seiya
     }
   }
 })

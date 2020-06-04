@@ -152,7 +152,7 @@ const useScraping = () => {
     return campaign
   }
   const getCampaignWithImage = async (all: Ref<Record<number, DMM>>) => {
-    // const noImageCampaign = await getHome()
+    const noImageCampaign = await getHome()
     const document = await getDocument('http://es-server.ryoha.trap.show/dmm.json')
     const dmm = JSON.parse(document.getElementsByTagName('body')[0]?.innerHTML)
     const dmmRecord: Record<number, DMM> = {}
@@ -160,17 +160,17 @@ const useScraping = () => {
       dmmRecord[d.id] = d
     })
     all.value = dmmRecord
-    // noImageCampaign.forEach((c, i) => c.games.forEach((c, j) => {
-    //   noImageCampaign[i].games[j] = {
-    //     id: c.id,
-    //     title: c.title,
-    //     median: c.median,
-    //     url: c.url,
-    //     content: c.content,
-    //     imgUrl: `https://pics.dmm.co.jp/${dmmRecord[c.id].dmm_genre}/pcgame/${dmmRecord[c.id].dmm}/${dmmRecord[c.id].dmm}pl.jpg`
-    //   }
-    // }))
-    // return noImageCampaign
+    noImageCampaign.forEach((c, i) => c.games.forEach((c, j) => {
+      noImageCampaign[i].games[j] = {
+        id: c.id,
+        title: c.title,
+        median: c.median,
+        url: c.url,
+        content: c.content,
+        imgUrl: `https://pics.dmm.co.jp/${dmmRecord[c.id].dmm_genre}/pcgame/${dmmRecord[c.id].dmm}/${dmmRecord[c.id].dmm}pl.jpg`
+      }
+    }))
+    return noImageCampaign
   }
   const getSchedule = async () => {
     const schedules: SellSchedule[] = []
@@ -213,22 +213,22 @@ const useScraping = () => {
     console.log(games)
     seiya.value = {createdNow: Date.now(), games: games}
   }
-  const getSeiyaURL = (gameName: string, seiya: Ref<{createdNow: number, games: {name: string, url: string}[]}>) => {
+  const getSeiyaURL = (gameName: string, games: {name: string, url: string}[]) => {
     console.log(gameName)
-    for (const game of seiya.value.games) {
+    for (const game of games) {
       if (game.name === gameName) {
         console.log(game.url)
         return game.url
       }
     }
-    for (const game of seiya.value.games) {
+    for (const game of games) {
       if (!game.name || !gameName) continue
       if (editONP(gameName, game.name) > 0.8) {
         console.log(game.url)
         return game.url
       }
     }
-    return ''
+    return 'https://seiya-saiga.com/game/kouryaku.html'
   }
   return { getTitle, getGameDetail, getHome, getCampaignWithImage, getSchedule, getSeiyaURL, getSeiyaGames }
 }

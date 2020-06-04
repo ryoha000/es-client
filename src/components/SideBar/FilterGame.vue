@@ -12,6 +12,8 @@
       :class="$style.icon"
       name="schedule"
       size="24px"
+      :color="isSortByLastAccess ? 'blue' : 'snow'"
+      @click="sortAccessTime"
     />
   </div>
 </template>
@@ -22,13 +24,19 @@ import { defineComponent, ref } from '@vue/composition-api';
 export default defineComponent({
   name: 'FilterGame',
   props: {
+    isSortByLastAccess: {
+      type: Boolean, required: true
+    }
   },
-  setup() {
+  setup(props, context) {
     const model = ref(null)
     const options = ref([
         'Google', 'Facebook', 'Twitter', 'Apple', 'Oracle'
       ])
-    return { model, options }
+    const sortAccessTime = () => {
+      context.emit('sortByLastAccess')
+    }
+    return { model, options, sortAccessTime }
   }
 });
 </script>
@@ -50,5 +58,6 @@ export default defineComponent({
   margin: 8px;
   margin-left: 4px;
   margin-top: 12px;
+  cursor: pointer;
 }
 </style>
