@@ -92,7 +92,6 @@ export default defineComponent({
 
     const arrayList = computed(() => {
       let arrayListGame = props.lists.find(v => v.id === filterListId.value)?.games ?? (Object.entries(props.haveGame)).map(v => v[1])
-      arrayListGame.sort()
       if (isSortByLastAccess.value) {
         arrayListGame.sort((a, b) => {
           const aTime = lastAccessTime.value[a.id]
@@ -107,6 +106,8 @@ export default defineComponent({
             return aTime > bTime ? -1 : 1
           }
         })
+      } else {
+        arrayListGame.sort()
       }
       if (searchString.value !== '') {
         arrayListGame = arrayListGame.filter(v => props.games?.[v.id]?.name.toLowerCase().includes(searchString.value.toLowerCase()))

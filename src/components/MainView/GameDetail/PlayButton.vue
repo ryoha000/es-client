@@ -17,38 +17,21 @@
       </template>
 
       <q-list>
-        <q-item clickable v-close-popup>
+        <q-item clickable v-close-popup @click="openRelationDialog">
           <q-item-section>
             <q-item-label>関連付けの変更</q-item-label>
           </q-item-section>
         </q-item>
-
-        <q-item clickable v-close-popup>
-          <q-item-section>
-            <q-item-label>Vacation</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item clickable v-close-popup>
-          <q-item-section>
-            <q-item-label>Vacation</q-item-label>
-          </q-item-section>
-        </q-item><q-item clickable v-close-popup>
-          <q-item-section>
-            <q-item-label>Vacation</q-item-label>
-          </q-item-section>
-        </q-item><q-item clickable v-close-popup>
-          <q-item-section>
-            <q-item-label>Vacation</q-item-label>
-          </q-item-section>
-        </q-item>
       </q-list>
     </q-btn-dropdown>
+    <change-relation @close="closeRelationDialog" :isOpen="isOpenRelationDialog" :listGame="gameInList[game.id]" />
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from '@vue/composition-api';
+import { defineComponent, PropType, ref } from '@vue/composition-api';
 import { ListGame, Game } from '../../../types/root';
+import ChangeRelation from './ChangeRelation.vue'
 import * as ChileProcess from 'child_process'
 import * as iconv from 'iconv-lite'
 import * as path from 'path'
@@ -65,7 +48,7 @@ export default defineComponent({
       required: true
     }
   },
-  components: {},
+  components: { ChangeRelation },
   setup(props) {
     const startProcess = () => {
       const listGame = props.gameInList[props.game.id]
@@ -85,7 +68,14 @@ export default defineComponent({
       })
       }
     }
-    return { startProcess }
+    const isOpenRelationDialog = ref(false)
+    const closeRelationDialog = () => {
+      isOpenRelationDialog.value = false
+    }
+    const openRelationDialog = () => {
+      isOpenRelationDialog.value = true
+    }
+    return { startProcess, isOpenRelationDialog, openRelationDialog, closeRelationDialog }
   }
 });
 </script>

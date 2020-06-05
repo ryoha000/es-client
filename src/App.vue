@@ -104,7 +104,7 @@ export default defineComponent ({
       lists.value = JSON.parse(await readFileConsoleErr('setting/lists.json'))
     }
 
-    const { getCampaignWithImage, getSchedule, getSeiyaGames } = useScraping()
+    const { getCampaignWithImage, getSchedule, getSeiyaGames, getAllDMM } = useScraping()
     
     // eslint-disable-next-line @typescript-eslint/require-await
     onMounted(async () => {
@@ -117,20 +117,20 @@ export default defineComponent ({
       } catch(e) {
         console.error(e)
       }
-      //campaigns.value = await getHome()
       try {
-        const a = JSON.parse(await readFileConsoleErr('setting/dmm.json'))
-        const ad: Record<number, DMM> = {}
-        for (const d of a.games) {
-          ad[d.id] = d
+        // const a = JSON.parse(await readFileConsoleErr('setting/dmm.json'))
+        // const ad: Record<number, DMM> = {}
+        // for (const d of a.games) {
+        //   ad[d.id] = d
 
-        }
-        allDMM.value = ad
-        // if (seiya.value.games.length === 0 || Date.now() - seiya.value.createdNow > 1000*60*60*24) {
-        //   await getSeiyaGames(seiya)
         // }
-        // campaigns.value = await getCampaignWithImage(allDMM)
-        // sellSchedules.value = await getSchedule()
+        // allDMM.value = ad
+        if (seiya.value.games.length === 0 || Date.now() - seiya.value.createdNow > 1000*60*60*24) {
+          await getSeiyaGames(seiya)
+        }
+        allDMM.value = await getAllDMM()
+        campaigns.value = await getCampaignWithImage(allDMM)
+        sellSchedules.value = await getSchedule()
       } catch (e) {
         console.error(e)
       }

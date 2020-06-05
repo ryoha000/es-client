@@ -6,7 +6,7 @@
         clickable
         v-ripple
         style="padding: 0;width: 231px;"
-        @click="onClick(path)"
+        @click="onClick(path.id)"
         @click.right.prevent="rightClick(path)"
       >
         <q-item-section style="padding-right: 0;min-width: 0;" avatar>

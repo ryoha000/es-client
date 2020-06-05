@@ -151,15 +151,17 @@ const useScraping = () => {
     console.log('getHome')
     return campaign
   }
-  const getCampaignWithImage = async (all: Ref<Record<number, DMM>>) => {
-    const noImageCampaign = await getHome()
+  const getAllDMM = async() => {
     const document = await getDocument('http://es-server.ryoha.trap.show/dmm.json')
     const dmm = JSON.parse(document.getElementsByTagName('body')[0]?.innerHTML)
     const dmmRecord: Record<number, DMM> = {}
     dmm.games.forEach((d: DMM) => {
       dmmRecord[d.id] = d
     })
-    all.value = dmmRecord
+    return dmmRecord
+  }
+  const getCampaignWithImage = async (all: Ref<Record<number, DMM>>) => {
+    const noImageCampaign = await getHome()
     noImageCampaign.forEach((c, i) => c.games.forEach((c, j) => {
       noImageCampaign[i].games[j] = {
         id: c.id,
@@ -167,7 +169,7 @@ const useScraping = () => {
         median: c.median,
         url: c.url,
         content: c.content,
-        imgUrl: `https://pics.dmm.co.jp/${dmmRecord[c.id].dmm_genre}/pcgame/${dmmRecord[c.id].dmm}/${dmmRecord[c.id].dmm}pl.jpg`
+        imgUrl: `https://pics.dmm.co.jp/${all.value[c.id].dmm_genre}/pcgame/${all.value[c.id].dmm}/${all.value[c.id].dmm}pl.jpg`
       }
     }))
     return noImageCampaign
@@ -230,7 +232,7 @@ const useScraping = () => {
     }
     return 'https://seiya-saiga.com/game/kouryaku.html'
   }
-  return { getTitle, getGameDetail, getHome, getCampaignWithImage, getSchedule, getSeiyaURL, getSeiyaGames }
+  return { getTitle, getGameDetail, getHome, getCampaignWithImage, getSchedule, getSeiyaURL, getSeiyaGames, getAllDMM }
 }
 
 export default useScraping

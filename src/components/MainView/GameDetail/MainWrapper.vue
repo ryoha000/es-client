@@ -49,7 +49,7 @@ export default defineComponent({
     LinkC,
     PlayButton,
     GameInfo,
-    ScoreC
+    ScoreC,
   },
   setup(props) {
     const { getSeiyaURL } = useScraping()
