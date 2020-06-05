@@ -1,8 +1,8 @@
 <template>
   <div>
     <filter-game :class="$style.item" @sortByLastAccess="sortByLastAccess" :isSortByLastAccess="isSortByLastAccess" />
-    <search :class="$style.item" />
-    <add-game :class="$style.item"/>
+    <search :class="$style.search" />
+    <add-game :class="$style.item" :allDMM="games" @addGame="addGame" />
     <q-scroll-area :style="styles.scrollArea" dark>
       <game-list-item :class="$style.item" @game="setGame" :games="arrayList" :allGames="games"/>
     </q-scroll-area>
@@ -22,8 +22,7 @@ import * as fs from 'fs'
 const useStyles = (height: Ref<number>) => 
   reactive({
     scrollArea: makeStyles(theme => ({
-        height: `calc( ${height.value}px - 172px )`,
-        minHeight: '610px'
+        height: `calc( ${height.value}px - 138px )`,
       })
     )
   })
@@ -31,7 +30,7 @@ const useStyles = (height: Ref<number>) =>
 export default defineComponent({
   name: 'SideBar',
   props: {
-    gameInList: { type: Object as PropType<Record<number, ListGame>>, required: true },
+    haveGame: { type: Object as PropType<Record<number, ListGame>>, required: true },
     games: { type: Object as PropType<Record<number, DMM>>, required: true }
   },
   components: {
@@ -55,10 +54,9 @@ export default defineComponent({
     const styles = useStyles(windowHeight)
     const sortByLastAccess = async () => {
       // TODO 並列
-      for (const listGame of Object.entries(props.gameInList)) {
+      for (const listGame of Object.entries(props.haveGame)) {
         try {
           const stats = await fs.promises.stat(listGame[1].path)
-          console.log(stats.birthtime)
           lastAccessTime.value[listGame[1].id] = stats.birthtime
         } catch (e) {
           console.error(e)
@@ -68,7 +66,7 @@ export default defineComponent({
       isSortByLastAccess.value = !isSortByLastAccess.value
     }
     const arrayList = computed(() => {
-      const arrayListGame = Object.entries(props.gameInList).map(v => v[1])
+      const arrayListGame = Object.entries(props.haveGame).map(v => v[1])
       if (isSortByLastAccess.value) {
         arrayListGame.sort((a, b) => {
           const aTime = lastAccessTime.value[a.id]
@@ -86,7 +84,10 @@ export default defineComponent({
       }
       return arrayListGame
     })
-    return { setGame, sortByLastAccess, lastAccessTime, arrayList, isSortByLastAccess, styles }
+    const addGame = () => {
+      context.emit('addGame')
+    }
+    return { setGame, sortByLastAccess, lastAccessTime, arrayList, isSortByLastAccess, styles, addGame }
   }
 });
 </script>
@@ -98,5 +99,9 @@ export default defineComponent({
   :first {
     margin-top: 0px;
   }
+}
+.search {
+  margin-top: 0px;
+  margin-left: 8px;
 }
 </style>

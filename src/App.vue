@@ -1,8 +1,7 @@
 <template>
   <div id="q-app" :class="$style.app" :style="styles.app">
-    <side-bar :class="$style.sidebar" @game="setGame" :gameInList="gameInList" :games="allDMM" />
+    <side-bar :class="$style.sidebar" @game="setGame" :haveGame="haveGame" :games="allDMM" @addGame="addGame" />
     <div :class="$style.mainview">
-      <q-btn @click="addGameFolder">aaa</q-btn>
       <main-view-header @next="next" @back="back" @home="goHome" />
       <div v-if="!isLoading">
         <home v-if="routeStack[routeIndex].type === 'Home'" :campaigns="campaigns" :sellSchedules="sellSchedules" />
@@ -10,7 +9,7 @@
           v-if="routeStack[routeIndex].type === 'Game'"
           :games="games"
           :id="gameId"
-          :gameInList="gameInList"
+          :haveGame="haveGame"
           :seiya="seiya"
         />
       </div>
@@ -58,14 +57,14 @@ export default defineComponent ({
     const gameId = ref(0)
     const campaigns = ref<Campaign[]>([])
     const sellSchedules = ref<SellSchedule[]>([])
-    const gameInList = ref<Record<number, ListGame>>({})
+    const haveGame = ref<Record<number, ListGame>>({})
     const lists = ref<List[]>([])
     const isLoading = ref(true)
     const allDMM = ref<Record<number, DMM>>({})
     const seiya = ref<{createdNow: number, games: {name: string, url: string}[]}>({createdNow: Date.now(), games: []})
 
-    const { jsonSetup, updateOrInsertList, readFileConsoleErr, getHaveGame } = useJson()
-    const { searchAll, searchDifference } = useJudgeGame(allDMM)
+    const { jsonSetup, readListGames, readFileConsoleErr, getHaveGame } = useJson()
+    const { searchAll, searchDifference } = useJudgeGame(allDMM.value)
     const addGameFolder = async () => {
       // console.log('ido')
       // const dialog = remote.dialog
@@ -80,7 +79,7 @@ export default defineComponent ({
       listGames.forEach(element => {
         gl[element.id] = element
       })
-      gameInList.value = gl
+      haveGame.value = gl
       //console.log(editONP('金色ラブリッチェ -GOLDEN TIME-', '金色ラブリッチェ-GOLDENTIME-'))
     }
     const styles = useStyles()
@@ -95,6 +94,10 @@ export default defineComponent ({
       goDetail(id)
     }
 
+    const addGame = async () => {
+      haveGame.value = await readListGames(0)
+    }
+
     const { getCampaignWithImage, getSchedule, getSeiyaGames } = useScraping()
     
     // eslint-disable-next-line @typescript-eslint/require-await
@@ -104,7 +107,7 @@ export default defineComponent ({
       try {
         const nowLists: List[] = JSON.parse(await readFileConsoleErr('setting/lists.json'))
         lists.value = nowLists
-        gameInList.value = getHaveGame(nowLists)
+        haveGame.value = getHaveGame(nowLists)
       } catch(e) {
         console.error(e)
       }
@@ -134,7 +137,7 @@ export default defineComponent ({
       isLoading,
       games,
       gameId,
-      gameInList,
+      haveGame,
       next,
       back,
       goHome,
@@ -143,7 +146,8 @@ export default defineComponent ({
       campaigns,
       sellSchedules,
       allDMM,
-      seiya
+      seiya,
+      addGame
     }
   }
 })
@@ -155,6 +159,7 @@ export default defineComponent ({
   display: flex;
   flex-direction: row;
   height: 100%;
+  overflow: hidden;
 }
 
 .sidebar {
@@ -165,5 +170,6 @@ export default defineComponent ({
   flex: 1, 1, calc( 100% - 240px );
   width: 100%;
   padding: 8px;
+  padding-bottom: 0;
 }
 </style>

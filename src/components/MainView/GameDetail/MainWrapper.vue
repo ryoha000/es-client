@@ -91,6 +91,7 @@ export default defineComponent({
 }
 .gameInfo {
   margin-top: 16px;
+  margin-bottom: 8px;
 }
 .score {
   position: absolute;

@@ -7,7 +7,7 @@ import useJson from './useJson'
 import { Ref } from '@vue/composition-api'
 
 
-const useJudgeGame = (allDMM: Ref<Record<number, DMM>>) => {
+const useJudgeGame = (allDMM: Record<number, DMM>) => {
   const toLowerAndHankaku = (str: string) => {
     const retStr = str.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s) {
       return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
@@ -27,7 +27,7 @@ const useJudgeGame = (allDMM: Ref<Record<number, DMM>>) => {
     validateString.forEach(v => {
       cleanLinkName = cleanLinkName.replace(v, '')
     })
-    for (const dmm of Object.entries(allDMM.value)) {
+    for (const dmm of Object.entries(allDMM)) {
       const gameTitle = toLowerAndHankaku(dmm[1].name)
       if (cleanLinkName.length > 5 && gameTitle.includes(cleanLinkName)) {
         id = dmm[1].id
@@ -233,9 +233,10 @@ const useJudgeGame = (allDMM: Ref<Record<number, DMM>>) => {
       await override('setting/memory.json', JSON.stringify(linkPaths))
       const paths = await getEXE(differencePaths)
       const games = await readListGames(0)
-      games.push(...paths)
-      await updateOrInsertList({id: 0, name: '所持ゲーム', games: games})
-      return games
+      const listGames = Object.entries(games).map(v => v[1])
+      listGames.push(...paths)
+      await updateOrInsertList({id: 0, name: '所持ゲーム', games: listGames})
+      return paths
     } catch (e) {
       console.error(e)
       await override('setting/memory.json', JSON.stringify(linkPaths))

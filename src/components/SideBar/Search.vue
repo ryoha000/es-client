@@ -10,7 +10,7 @@
         <q-icon name="search" :class="$style.icon" />
       </template>
     </q-input>
-    <q-icon :class="$style.button" size="24px" name="tune"/>
+    <q-icon :class="$style.button" size="22px" name="tune"/>
   </div>
 </template>
 
@@ -37,10 +37,17 @@ export default defineComponent({
   width: 100%;
 }
 .input {
-  width: calc( 100% - 40px );
+  width: calc( 100% - 28px );
+  height: 32px;
+  :nth-child(n) {
+    padding: 0px;
+    line-height: 32px;
+    height: 32px;
+    min-height: 32px !important;
+  }
   .icon {
     width: 16px;
-    margin-right: 0;
+    margin-right: 8px;
   }
 }
 .button {

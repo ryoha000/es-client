@@ -3,7 +3,6 @@
     <q-select
       :class="$style.select"
       dark
-      color="white"
       v-model="model"
       :options="options"
       
@@ -11,7 +10,7 @@
     <q-icon
       :class="$style.icon"
       name="schedule"
-      size="24px"
+      size="22px"
       :color="isSortByLastAccess ? 'blue' : 'snow'"
       @click="sortAccessTime"
     />
@@ -51,7 +50,15 @@ export default defineComponent({
 }
 
 .select {
-  width: calc( 100% - 40px );
+  width: calc( 100% - 28px );
+  height: 32px;
+  :nth-child(n) {
+    height: 32px;
+    padding: 0px;
+    text-align: center;
+    line-height: 32px;
+    min-height: 32px !important;
+  }
 }
 
 .icon {

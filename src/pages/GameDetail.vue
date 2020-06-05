@@ -1,20 +1,32 @@
 <template>
   <div v-if="!game">Error</div>
-  <div v-else :class="$style.container">
-    <img :class="$style.image" :src="game.imgUrl" />
-    <div :class="$style.wrapTitle">
-      <div :class="$style.title">{{ game.name }}</div>
-      <div :class="$style.titleInfo"><div>{{ game.brandName }}</div></div>
-      <div :class="$style.titleInfo"><div>({{ game.sellday }})</div></div>
+  <q-scroll-area v-else :style="styles.container">
+    <div :class="$style.container">
+      <img :class="$style.image" :src="game.imgUrl" />
+      <div :class="$style.wrapTitle">
+        <div :class="$style.title">{{ game.name }}</div>
+        <div :class="$style.titleInfo"><div>{{ game.brandName }}</div></div>
+        <div :class="$style.titleInfo"><div>({{ game.sellday }})</div></div>
+      </div>
     </div>
-    <main-wrapper :game="game" :gameInList="gameInList" :seiya="seiya" />
-  </div>
+    <main-wrapper :game="game" :gameInList="haveGame" :seiya="seiya" />
+  </q-scroll-area>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref, computed } from '@vue/composition-api';
+import { defineComponent, PropType, ref, computed, Ref, reactive, onMounted } from '@vue/composition-api';
 import MainWrapper from '../components/MainView/GameDetail/MainWrapper.vue'
 import { Game, Record, ListGame } from '../types/root';
+import { makeStyles } from '../lib/style'
+
+const useStyles = (windowHeight: Ref<number>) => 
+  reactive({
+    container: makeStyles(theme => ({
+        height: `calc( ${windowHeight.value}px - 52px )`
+      })
+    )
+  })
+
 
 export default defineComponent({
   name: 'GameDetail',
@@ -27,7 +39,7 @@ export default defineComponent({
       type: Number,
       required: true
     },
-    gameInList: {
+    haveGame: {
       type: Object as PropType<Record<number, ListGame>>,
       required: true
     },
@@ -44,7 +56,14 @@ export default defineComponent({
       console.log(props.games[props.id], props.games, props.id)
       return props.games[props.id]
     })
-    return { game }
+    const windowHeight = ref(window.innerHeight)
+    const styles = useStyles(windowHeight)
+    onMounted(() => {
+      window.addEventListener('resize', () => {
+        windowHeight.value = window.innerHeight
+      })
+    })
+    return { game, styles }
   }
 });
 </script>

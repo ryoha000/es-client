@@ -68,13 +68,15 @@ const useJson = () => {
     return haveGame
   }
   const readListGames = async (id: number) => {
-    const listGames: ListGame[] = []
+    const listGames: Record<number, ListGame> = {}
     try {
       const jsonLists: List[] = JSON.parse(await readFileConsoleErr('setting/lists.json'))
       if (!Array.isArray(jsonLists)) throw new Error()
       for (const jsonList of jsonLists) {
         if (jsonList.id === id) {
-          listGames.push(...jsonList.games)
+          for (const g of jsonList.games) {
+            listGames[g.id] = g
+          }
           break
         }
       }

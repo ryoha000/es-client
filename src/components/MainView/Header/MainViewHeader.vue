@@ -48,5 +48,13 @@ export default defineComponent({
 }
 .input {
   margin-left: auto;
+  :nth-child(1) {
+    height: 32px;
+    :nth-child(1) {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
 }
 </style>
