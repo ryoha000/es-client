@@ -30,8 +30,8 @@ export default defineComponent({
   setup(props, context) {
     const model = ref(null)
     const options = ref([
-        'Google', 'Facebook', 'Twitter', 'Apple', 'Oracle'
-      ])
+      '〇〇リスト', '〇〇リスト', '〇〇リスト', '〇〇リスト', '新しいリストを作成'
+    ])
     const sortAccessTime = () => {
       context.emit('sortByLastAccess')
     }

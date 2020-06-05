@@ -1,7 +1,7 @@
 <template>
   <div>
     <filter-game :class="$style.item" @sortByLastAccess="sortByLastAccess" :isSortByLastAccess="isSortByLastAccess" />
-    <search :class="$style.search" />
+    <search :class="$style.search" @changeSearch="changeSearch" />
     <add-game :class="$style.item" :allDMM="games" @addGame="addGame" />
     <q-scroll-area :style="styles.scrollArea" dark>
       <game-list-item :class="$style.item" @game="setGame" :games="arrayList" :allGames="games"/>
@@ -45,6 +45,12 @@ export default defineComponent({
     }
     const isSortByLastAccess = ref(false)
     const lastAccessTime = ref<Record<number, Date>>({})
+
+    const searchString = ref('')
+    const changeSearch = (value: string) => {
+      searchString.value = value
+    }
+
     const windowHeight = ref(window.innerHeight)
     onMounted(() => {
       window.addEventListener('resize', () => {
@@ -52,6 +58,7 @@ export default defineComponent({
       })
     })
     const styles = useStyles(windowHeight)
+
     const sortByLastAccess = async () => {
       // TODO 並列
       for (const listGame of Object.entries(props.haveGame)) {
@@ -65,8 +72,9 @@ export default defineComponent({
       }
       isSortByLastAccess.value = !isSortByLastAccess.value
     }
+
     const arrayList = computed(() => {
-      const arrayListGame = Object.entries(props.haveGame).map(v => v[1])
+      let arrayListGame = Object.entries(props.haveGame).map(v => v[1])
       if (isSortByLastAccess.value) {
         arrayListGame.sort((a, b) => {
           const aTime = lastAccessTime.value[a.id]
@@ -82,12 +90,15 @@ export default defineComponent({
           }
         })
       }
+      if (searchString.value !== '') {
+        arrayListGame = arrayListGame.filter(v => props.games?.[v.id]?.name.toLowerCase().includes(searchString.value.toLowerCase()))
+      }
       return arrayListGame
     })
     const addGame = () => {
       context.emit('addGame')
     }
-    return { setGame, sortByLastAccess, lastAccessTime, arrayList, isSortByLastAccess, styles, addGame }
+    return { setGame, sortByLastAccess, lastAccessTime, arrayList, isSortByLastAccess, styles, addGame, changeSearch }
   }
 });
 </script>

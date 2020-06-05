@@ -5,6 +5,7 @@
       v-model="searchString"
       square
       :class="$style.input"
+      @input="input"
     >
       <template v-slot:prepend>
         <q-icon name="search" :class="$style.icon" />
@@ -21,9 +22,12 @@ export default defineComponent({
   name: 'Search',
   props: {
   },
-  setup() {
+  setup(_, context) {
     const searchString = ''
-    return { searchString }
+    const input = (value: string) => {
+      context.emit('changeSearch', value)
+    }
+    return { searchString, input }
   }
 });
 </script>

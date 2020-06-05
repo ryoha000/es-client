@@ -19,11 +19,24 @@
       <q-list>
         <q-item clickable v-close-popup>
           <q-item-section>
-            <q-item-label>Photos</q-item-label>
+            <q-item-label>関連付けの変更</q-item-label>
           </q-item-section>
         </q-item>
 
         <q-item clickable v-close-popup>
+          <q-item-section>
+            <q-item-label>Vacation</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item clickable v-close-popup>
+          <q-item-section>
+            <q-item-label>Vacation</q-item-label>
+          </q-item-section>
+        </q-item><q-item clickable v-close-popup>
+          <q-item-section>
+            <q-item-label>Vacation</q-item-label>
+          </q-item-section>
+        </q-item><q-item clickable v-close-popup>
           <q-item-section>
             <q-item-label>Vacation</q-item-label>
           </q-item-section>

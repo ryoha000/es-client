@@ -27,7 +27,7 @@ export default defineComponent({
   },
   setup(_, context) {
     const { getTitle, getGameDetail } = useScraping()
-    const isOpenDialog = ref(true)
+    const isOpenDialog = ref(false)
     const onClick = () => {
       isOpenDialog.value = true
     }

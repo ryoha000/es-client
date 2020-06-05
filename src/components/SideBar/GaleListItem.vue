@@ -7,6 +7,7 @@
         v-ripple
         style="padding: 0;width: 231px;"
         @click="onClick(path.id)"
+        @click.right.prevent="rightClick"
       >
         <q-item-section style="padding-right: 0;min-width: 0;" avatar>
           <q-avatar square>
@@ -22,6 +23,9 @@
 <script lang="ts">
 import { defineComponent, PropType, computed } from '@vue/composition-api';
 import { ListGame, DMM } from '../../types/root';
+const remote = require('electron').remote;
+const Menu = remote.Menu;
+const MenuItem = remote.MenuItem;
 
 export default defineComponent({
   name: 'GameListItem',
@@ -42,8 +46,19 @@ export default defineComponent({
       }
       return ''
     }
+    const rightClick = () => {
+      const menu = new Menu()
+      menu.append(new MenuItem({ label: '一覧から削除', click: function() { console.log('item 1 clicked'); } }));
+      menu.append(new MenuItem({ type: 'separator' }));
+      menu.append(new MenuItem({ label: '〇〇リストに追加' }));menu.append(new MenuItem({ type: 'separator' }));
+      menu.append(new MenuItem({ label: '〇〇リストに追加' }));menu.append(new MenuItem({ type: 'separator' }));
+      menu.append(new MenuItem({ label: '〇〇リストに追加' }));menu.append(new MenuItem({ type: 'separator' }));
+      menu.append(new MenuItem({ label: '〇〇リストに追加' }));menu.append(new MenuItem({ type: 'separator' }));
+      menu.append(new MenuItem({ label: '新しいリストを作成' }));
+      menu.popup()
+    }
     const listGames = computed(() => props.games)
-    return { onClick, listGames, gameName, allDmmGames }
+    return { onClick, listGames, gameName, allDmmGames, rightClick }
   }
 });
 </script>
