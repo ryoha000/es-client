@@ -5,7 +5,7 @@
       dark
       v-model="model"
       :options="options"
-      
+      @input="input"
     />
     <q-icon
       :class="$style.icon"
@@ -47,7 +47,8 @@ export default defineComponent({
     // const options = ref([
     //   '〇〇リスト', '〇〇リスト', '〇〇リスト', '〇〇リスト', '新しいリストを作成'
     // ])
-    const options = computed(() => [...props.lists.map(v => v.name), '新しいリストを作成']) 
+    //const options = computed(() => [...props.lists.map(v => v.name), '新しいリストを作成'])
+    const options = computed(() => [...props.lists.map(v => ({label: v.name, id: v.id})), '新しいリストを作成'])
     const sortAccessTime = () => {
       context.emit('sortByLastAccess')
     }
@@ -58,7 +59,18 @@ export default defineComponent({
     const createList = () => {
       context.emit('createList')
     }
-    return { model, options, sortAccessTime, createList, isOpenCreateListDialog, closeCreateListDialog }
+    const input = (v: string | {label: string, id: number}) => {
+      if (typeof v === 'string') {
+        if (v === '新しいリストを作成') {
+          model.value = '所持ゲーム'
+          isOpenCreateListDialog.value = true
+        }
+      }
+      if (typeof v === 'object') {
+        context.emit('filter', v)
+      }
+    }
+    return { model, options, sortAccessTime, createList, isOpenCreateListDialog, closeCreateListDialog, input }
   }
 });
 </script>

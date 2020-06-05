@@ -121,10 +121,7 @@ export default defineComponent ({
       try {
         const a = JSON.parse(await readFileConsoleErr('setting/dmm.json'))
         const ad: Record<number, DMM> = {}
-        let i =0
         for (const d of a.games) {
-          i++
-          if (i < 10) console.log(d)
           ad[d.id] = d
 
         }

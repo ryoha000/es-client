@@ -7,6 +7,7 @@
       :lists="lists" @createList="createList"
       :haveGames="arrayList"
       :allGames="games"
+      @filter="filter"
     />
     <search :class="$style.search" @changeSearch="changeSearch" />
     <add-game :class="$style.item" :allDMM="games" @addGame="addGame" />
@@ -62,6 +63,11 @@ export default defineComponent({
       searchString.value = value
     }
 
+    const filterListId = ref(0)
+    const filter = (v: {label: string, id: number}) => {
+      filterListId.value = v.id
+    }
+
     const windowHeight = ref(window.innerHeight)
     onMounted(() => {
       window.addEventListener('resize', () => {
@@ -85,7 +91,7 @@ export default defineComponent({
     }
 
     const arrayList = computed(() => {
-      let arrayListGame = Object.entries(props.haveGame).map(v => v[1])
+      let arrayListGame = props.lists.find(v => v.id === filterListId.value)?.games ?? (Object.entries(props.haveGame)).map(v => v[1])
       if (isSortByLastAccess.value) {
         arrayListGame.sort((a, b) => {
           const aTime = lastAccessTime.value[a.id]
@@ -112,7 +118,7 @@ export default defineComponent({
     const createList = () => {
       context.emit('createList')
     }
-    return { setGame, sortByLastAccess, lastAccessTime, arrayList, isSortByLastAccess, styles, addGame, changeSearch, createList }
+    return { setGame, sortByLastAccess, lastAccessTime, arrayList, isSortByLastAccess, styles, addGame, changeSearch, createList, filter }
   }
 });
 </script>
