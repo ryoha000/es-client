@@ -52,8 +52,8 @@ export default defineComponent({
     const close = () => {
       context.emit('close')
     }
-    const { searchAll, searchDifference } = useJudgeGame(props.allDMM)
     const diff = async () => {
+      const { searchDifference } = useJudgeGame(props.allDMM)
       loading.value = true
       const newGames = await searchDifference()
       console.log(newGames)
@@ -71,6 +71,7 @@ export default defineComponent({
       context.emit('close')
     }
     const all = async () => {
+      const { searchAll } = useJudgeGame(props.allDMM)
       loading.value = true
       const games = await searchAll()
       console.log(games)

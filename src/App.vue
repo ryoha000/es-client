@@ -1,16 +1,18 @@
 <template>
   <div id="q-app" :class="$style.app" :style="styles.app">
-    <side-bar :class="$style.sidebar" @game="setGame" :haveGame="haveGame" :games="allDMM" @addGame="addGame" />
+    <side-bar :class="$style.sidebar" @game="setGame" :haveGame="haveGame" :games="allDMM" @addGame="addGame" :lists="lists" @createList="createList" />
     <div :class="$style.mainview">
       <main-view-header @next="next" @back="back" @home="goHome" />
       <div v-if="!isLoading">
-        <home v-if="routeStack[routeIndex].type === 'Home'" :campaigns="campaigns" :sellSchedules="sellSchedules" />
+        <home v-if="routeStack[routeIndex].type === 'Home'" :campaigns="campaigns" :sellSchedules="sellSchedules" :lists="lists" />
         <game-detail
           v-if="routeStack[routeIndex].type === 'Game'"
           :games="games"
           :id="gameId"
           :haveGame="haveGame"
           :seiya="seiya"
+          :lists="lists"
+          @createList="createList"
         />
       </div>
       <div v-else>Now Loading...</div>
@@ -97,6 +99,10 @@ export default defineComponent ({
     const addGame = async () => {
       haveGame.value = await readListGames(0)
     }
+    const createList = async () => {
+      console.log('app')
+      lists.value = JSON.parse(await readFileConsoleErr('setting/lists.json'))
+    }
 
     const { getCampaignWithImage, getSchedule, getSeiyaGames } = useScraping()
     
@@ -115,8 +121,12 @@ export default defineComponent ({
       try {
         const a = JSON.parse(await readFileConsoleErr('setting/dmm.json'))
         const ad: Record<number, DMM> = {}
+        let i =0
         for (const d of a.games) {
+          i++
+          if (i < 10) console.log(d)
           ad[d.id] = d
+
         }
         allDMM.value = ad
         // if (seiya.value.games.length === 0 || Date.now() - seiya.value.createdNow > 1000*60*60*24) {
@@ -147,7 +157,9 @@ export default defineComponent ({
       sellSchedules,
       allDMM,
       seiya,
-      addGame
+      addGame,
+      createList,
+      lists
     }
   }
 })

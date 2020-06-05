@@ -1,10 +1,17 @@
 <template>
   <div>
-    <filter-game :class="$style.item" @sortByLastAccess="sortByLastAccess" :isSortByLastAccess="isSortByLastAccess" />
+    <filter-game
+      :class="$style.item"
+      @sortByLastAccess="sortByLastAccess"
+      :isSortByLastAccess="isSortByLastAccess"
+      :lists="lists" @createList="createList"
+      :haveGames="arrayList"
+      :allGames="games"
+    />
     <search :class="$style.search" @changeSearch="changeSearch" />
     <add-game :class="$style.item" :allDMM="games" @addGame="addGame" />
     <q-scroll-area :style="styles.scrollArea" dark>
-      <game-list-item :class="$style.item" @game="setGame" :games="arrayList" :allGames="games"/>
+      <game-list-item :class="$style.item" @game="setGame" :games="arrayList" :allGames="games" :lists="lists" @createList="createList"/>
     </q-scroll-area>
   </div>
 </template>
@@ -15,7 +22,7 @@ import FilterGame from './FilterGame.vue'
 import Search from './Search.vue'
 import GameListItem from './GaleListItem.vue'
 import AddGame from './AddGame.vue'
-import { ListGame, Game, DMM } from '../../types/root';
+import { ListGame, List, DMM } from '../../types/root';
 import { makeStyles } from '../../lib/style'
 import * as fs from 'fs'
 
@@ -31,7 +38,11 @@ export default defineComponent({
   name: 'SideBar',
   props: {
     haveGame: { type: Object as PropType<Record<number, ListGame>>, required: true },
-    games: { type: Object as PropType<Record<number, DMM>>, required: true }
+    games: { type: Object as PropType<Record<number, DMM>>, required: true },
+    lists: {
+      type: Array as PropType<List[]>,
+      default: []
+    }
   },
   components: {
     FilterGame,
@@ -98,7 +109,10 @@ export default defineComponent({
     const addGame = () => {
       context.emit('addGame')
     }
-    return { setGame, sortByLastAccess, lastAccessTime, arrayList, isSortByLastAccess, styles, addGame, changeSearch }
+    const createList = () => {
+      context.emit('createList')
+    }
+    return { setGame, sortByLastAccess, lastAccessTime, arrayList, isSortByLastAccess, styles, addGame, changeSearch, createList }
   }
 });
 </script>

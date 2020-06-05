@@ -201,9 +201,8 @@ const useJudgeGame = (allDMM: Record<number, DMM>) => {
 
     // .lnkの探索
     const linkPaths: string[] = await showFiles('C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs')
-
-    const { override, updateOrInsertList } = useJson()
     linkPaths.push(...await getUserInstallFile('C:\\Users'))
+    const { override, updateOrInsertList } = useJson()
     await override('setting/memory.json', JSON.stringify(linkPaths))
     const paths = await getEXE(linkPaths)
     await updateOrInsertList({id: 0, name: '所持ゲーム', games: paths})
@@ -230,13 +229,18 @@ const useJudgeGame = (allDMM: Record<number, DMM>) => {
       } else {
         differencePaths = linkPaths
       }
-      await override('setting/memory.json', JSON.stringify(linkPaths))
-      const paths = await getEXE(differencePaths)
-      const games = await readListGames(0)
-      const listGames = Object.entries(games).map(v => v[1])
-      listGames.push(...paths)
-      await updateOrInsertList({id: 0, name: '所持ゲーム', games: listGames})
-      return paths
+      try {
+        await override('setting/memory.json', JSON.stringify(linkPaths))
+        const paths = await getEXE(differencePaths)
+        const games = await readListGames(0)
+        const listGames = Object.entries(games).map(v => v[1])
+        listGames.push(...paths)
+        await updateOrInsertList({id: 0, name: '所持ゲーム', games: listGames})
+        return paths
+      } catch (e) {
+        console.error(e)
+        return []
+      }
     } catch (e) {
       console.error(e)
       await override('setting/memory.json', JSON.stringify(linkPaths))

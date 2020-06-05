@@ -30,15 +30,17 @@ const useJson = () => {
     }
   }
   const updateOrInsertList = async (list: List) => {
-    const prevLists: List[] = []
     try {
       const jsonLists = JSON.parse(await readFileConsoleErr('setting/lists.json'))
-      if (!Array.isArray(jsonLists)) await override('setting/lists.json', JSON.stringify([list]))
+      if (!Array.isArray(jsonLists)) {
+        console.log(jsonLists)
+        await override('setting/lists.json', JSON.stringify([list]))
+      }
       else {
         let exist = false
         const newList: List[] = []
-        for (const prevList of prevLists) {
-          if (prevList.name === list.name) {
+        for (const prevList of jsonLists) {
+          if (prevList.id === list.id) {
             newList.push(list)
             exist = true
           } else {
@@ -53,6 +55,18 @@ const useJson = () => {
     } catch(e) {
       console.error(e)
       await override('setting/lists.json', JSON.stringify([list]))
+    }
+  }
+  const createNewList = async (listName: string, games: ListGame[]) => {
+    try {
+      const nowLists: List[] = JSON.parse(await readFileConsoleErr('setting/lists.json'))
+      let max = 0
+      for (const nl of nowLists) {
+        if (max < nl.id) max = nl.id
+      }
+      await updateOrInsertList({id: max + 1, name: listName, games: games})
+    } catch {
+      throw new Error()
     }
   }
   const getHaveGame = (lists: List[]) => {
@@ -85,7 +99,7 @@ const useJson = () => {
     }
     return listGames
   }
-  return { jsonSetup, updateOrInsertList, readFileConsoleErr, getHaveGame, override, readListGames }
+  return { jsonSetup, updateOrInsertList, readFileConsoleErr, getHaveGame, override, readListGames, createNewList }
 }
 
 export default useJson

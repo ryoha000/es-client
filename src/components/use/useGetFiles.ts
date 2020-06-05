@@ -26,8 +26,6 @@ const useGetFile = () => {
             } else {
               if (fp.endsWith('.lnk') || fp.endsWith('.LNK')) {
                 paths.push(fp)
-              } else {
-                console.log(fp)
               }
             }
           }
@@ -50,7 +48,7 @@ const useGetFile = () => {
         console.log(path.join(userDirpath, userDir.name, 'AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs'))
       }
     } catch (e) {
-      console.error(e)
+      // console.error(e)
     }
     return paths
   }

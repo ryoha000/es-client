@@ -9,14 +9,14 @@
         <div :class="$style.titleInfo"><div>({{ game.sellday }})</div></div>
       </div>
     </div>
-    <main-wrapper :game="game" :gameInList="haveGame" :seiya="seiya" />
+    <main-wrapper :game="game" :gameInList="haveGame" :seiya="seiya" @createList="createList"/>
   </q-scroll-area>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType, ref, computed, Ref, reactive, onMounted } from '@vue/composition-api';
 import MainWrapper from '../components/MainView/GameDetail/MainWrapper.vue'
-import { Game, Record, ListGame } from '../types/root';
+import { Game, Record, ListGame, List } from '../types/root';
 import { makeStyles } from '../lib/style'
 
 const useStyles = (windowHeight: Ref<number>) => 
@@ -46,12 +46,16 @@ export default defineComponent({
     seiya: {
       type: Object as PropType<{createdNow: number, games: {name: string, url: string}}[]>,
       required: true
+    },
+    lists: {
+      type: Array as PropType<List[]>,
+      default: []
     }
   },
   components: {
     MainWrapper
   },
-  setup(props) {
+  setup(props, context) {
     const game = computed(() => {
       console.log(props.games[props.id], props.games, props.id)
       return props.games[props.id]
@@ -63,7 +67,10 @@ export default defineComponent({
         windowHeight.value = window.innerHeight
       })
     })
-    return { game, styles }
+    const createList = () => {
+      context.emit('createList')
+    }
+    return { game, styles, createList }
   }
 });
 </script>
