@@ -6,8 +6,8 @@
         clickable
         v-ripple
         style="padding: 0;width: 231px;"
-        @click="onClick(path.id)"
-        @click.right.prevent="rightClick"
+        @click="onClick(path)"
+        @click.right.prevent="rightClick(path)"
       >
         <q-item-section style="padding-right: 0;min-width: 0;" avatar>
           <q-avatar square>
@@ -26,6 +26,7 @@ import { defineComponent, PropType, computed, ref } from '@vue/composition-api';
 import { ListGame, DMM, List } from '../../types/root';
 import useElectron from '../use/useElectron'
 import createListDialog from '../CreateListDialog.vue'
+import useJson from '../use/useJson';
 
 const remote = require('electron').remote;
 const Menu = remote.Menu;
@@ -45,7 +46,6 @@ export default defineComponent({
     createListDialog
   },
   setup(props, context) {
-    const { createListDialog } = useElectron()
     const onClick = (id: number) => {
       context.emit('game', id)
     }
@@ -57,16 +57,17 @@ export default defineComponent({
       return ''
     }
     const isOpenCreateListDialog = ref(false)
-    const rightClick = () => {
+    const rightClick = (game: ListGame) => {
+      const { addGameToList } = useJson()
       const menu = new Menu()
-      menu.append(new MenuItem({ label: '一覧から削除', click: function() { createListDialog() } }));
+      menu.append(new MenuItem({ label: '一覧から削除', click: function() { console.log('TODO: delete') } }));
       menu.append(new MenuItem({ type: 'separator' }));
-      menu.append(new MenuItem({ label: '〇〇リストに追加' }));menu.append(new MenuItem({ type: 'separator' }));
-      menu.append(new MenuItem({ label: '〇〇リストに追加' }));menu.append(new MenuItem({ type: 'separator' }));
-      menu.append(new MenuItem({ label: '〇〇リストに追加' }));menu.append(new MenuItem({ type: 'separator' }));
-      menu.append(new MenuItem({ label: '〇〇リストに追加' }));menu.append(new MenuItem({ type: 'separator' }));
       for (const list of props.lists) {
-        menu.append(new MenuItem({ label: `${list.name}に追加`, click: function() { console.log(`${list.id} clicked`); } }))
+        if (list.id === 0) continue
+        menu.append(new MenuItem({ label: `${list.name}に追加`, click: async() => {
+          await addGameToList(list.id, game);
+          context.emit('createList');
+        }}))
         menu.append(new MenuItem({ type: 'separator' }));
       }
       menu.append(new MenuItem({ label: '新しいリストを作成', click: () => { isOpenCreateListDialog.value = true} }));

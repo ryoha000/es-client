@@ -83,7 +83,7 @@ export default defineComponent({
           const stats = await fs.promises.stat(listGame[1].path)
           lastAccessTime.value[listGame[1].id] = stats.birthtime
         } catch (e) {
-          console.error(e)
+          //console.error(e)
           continue
         }
       }
@@ -92,6 +92,7 @@ export default defineComponent({
 
     const arrayList = computed(() => {
       let arrayListGame = props.lists.find(v => v.id === filterListId.value)?.games ?? (Object.entries(props.haveGame)).map(v => v[1])
+      arrayListGame.sort()
       if (isSortByLastAccess.value) {
         arrayListGame.sort((a, b) => {
           const aTime = lastAccessTime.value[a.id]

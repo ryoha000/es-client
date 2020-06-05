@@ -99,7 +99,25 @@ const useJson = () => {
     }
     return listGames
   }
-  return { jsonSetup, updateOrInsertList, readFileConsoleErr, getHaveGame, override, readListGames, createNewList }
+  const addGameToList = async (id :number, game: ListGame) => {
+    const list: List = {id: id, name: '', games: [game]}
+    try {
+      const jsonLists: List[] = JSON.parse(await readFileConsoleErr('setting/lists.json'))
+      if (!Array.isArray(jsonLists)) throw new Error()
+      for (const jsonList of jsonLists) {
+        if (jsonList.id === id) {
+          list.name = jsonList.name
+          list.games.push(...jsonList.games)
+          console.log(list)
+          break
+        }
+      }
+      await updateOrInsertList(list)
+    } catch (e) {
+      console.error(e)
+    }
+  }
+  return { jsonSetup, updateOrInsertList, readFileConsoleErr, getHaveGame, override, readListGames, createNewList, addGameToList }
 }
 
 export default useJson
