@@ -1,13 +1,14 @@
 <template>
-  <div :class="$style.container">
-    <div :class="$style.day">
-      <span :class="$style.sellday">{{ schedule.dayAndCount }}</span>
-      <q-icon name="keyboard_arrow_down" :class="$style.icon" size="24px"/>
-    </div>
+  <q-expansion-item
+    expand-separator
+    :class="$style.container"
+    :label="schedule.dayAndCount"
+    default-opened
+  >
     <div :class="$style.gameCards" >
       <game-card :cardInfo="createCardInfo(game)" :class="$style.gameCard" v-for="(game, i) in schedule.games" :key="i"/>
     </div>
-  </div>
+  </q-expansion-item>
 </template>
 
 <script lang="ts">
@@ -50,19 +51,7 @@ export default defineComponent({
 <style lang="scss" module>
 .container {
   width: 100%;
-}
-.day {
-  width: 90%;
-  border-bottom: medium solid aliceblue;
-  display: flex;
-}
-.sellday {
   font-size: 20px;
-  margin-left: 8px;
-  margin-bottom: 4px;
-}
-.icon {
-  margin: auto 8px 2px auto;
 }
 .gameCards {
   display: flex;

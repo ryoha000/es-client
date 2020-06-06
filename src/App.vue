@@ -97,11 +97,9 @@ export default defineComponent ({
     }
 
     const addGame = async () => {
-      console.log('addGame app')
       haveGame.value = await readListGames(0)
     }
     const createList = async () => {
-      console.log('app')
       lists.value = JSON.parse(await readFileConsoleErr('setting/lists.json'))
     }
 
@@ -131,7 +129,7 @@ export default defineComponent ({
         // }
         // allDMM.value = await getAllDMM()
         // campaigns.value = await getCampaignWithImage(allDMM)
-        // sellSchedules.value = await getSchedule()
+        sellSchedules.value = await getSchedule()
       } catch (e) {
         console.error(e)
       }
