@@ -100,6 +100,7 @@ const useJudgeGame = (allDMM: Record<number, DMM>) => {
     // 何故かここでいくつかのObjectのidとpathが入れ替わる。()はバッチでのインデックス
     // いつも入れ替わってるからランダムではなさそう
     // バッチの後ろの方が入れ替わってる気がするけど入れ替わってないのもある
+    // 一つずつ取るようにしたら治った
     // 例) {id: 27418, path: 'E:\\Program Files (x86)\\Aonatsu\\Launcher.exe'}(20) と {id: 20228, path: "C:\Users\ユウヤ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\feng\彼女のセイイキ.lnk"}(18 or 19)
     // 例) {id: 23425, path: "C:\Users\ユウヤ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\ゆずソフト\千恋＊万花.lnk"}(20) と {id: 27319, path: "C:\Users\ユウヤ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\インサルトオーダー\インサルトオーダー.lnk"}(19)
 
@@ -195,13 +196,43 @@ const useJudgeGame = (allDMM: Record<number, DMM>) => {
     console.log(`finish: ${(new Date()).getTime() - start}`)
     return paths
   }
-  const searchAll = async() => {
-    // .lnkの探索のための関数
+  const getLinkPaths = async () => {
     const { showFiles, getUserInstallFile } = useGetFiles()
-
-    // .lnkの探索
-    const linkPaths: string[] = await showFiles('C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs')
-    linkPaths.push(...await getUserInstallFile('C:\\Users'))
+    const linkPaths: string[] = []
+    try {
+      linkPaths.push(...await showFiles('C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs'))
+    } catch (e) {
+      console.error(e)
+    }
+    try {
+      linkPaths.push(...await getUserInstallFile('C:\\Users'))
+    } catch (e) {
+      console.error(e)
+    }
+    const { readFileConsoleErr } = useJson()
+    let customPaths: unknown = []
+    try {
+      customPaths = JSON.parse(await readFileConsoleErr('setting/folder.json'))
+    } catch (e) {
+      console.error(e)
+    }
+    if (Array.isArray(customPaths)) {
+      for (const cp of customPaths) {
+        console.log(cp)
+        if (typeof cp === 'string') {
+          try {
+            linkPaths.push(...await showFiles(cp))
+          } catch {
+            console.log('aaaaaaaaaaaaaaaaaaaa')
+            alert(`Path: ${cp}は無効です`)
+          }
+        }
+      }
+    }
+    return linkPaths
+  }
+  const searchAll = async() => {
+    const linkPaths = await getLinkPaths()
     const { override, updateOrInsertList } = useJson()
     await override('setting/memory.json', JSON.stringify(linkPaths))
     const paths = await getEXE(linkPaths)
@@ -209,14 +240,9 @@ const useJudgeGame = (allDMM: Record<number, DMM>) => {
     return paths
   }
   const searchDifference = async () => {
-    // .lnkの探索のための関数
-    const { showFiles, getUserInstallFile } = useGetFiles()
-
-    // .lnkの探索
-    const linkPaths: string[] = await showFiles('C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs')
+    const linkPaths = await getLinkPaths()
 
     const { override, readFileConsoleErr, updateOrInsertList, readListGames } = useJson()
-    linkPaths.push(...await getUserInstallFile('C:\\Users'))
     try {
       const prevPaths = JSON.parse(await readFileConsoleErr('setting/memory.json'))
       let differencePaths: string[] = []

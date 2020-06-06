@@ -30,8 +30,7 @@ const useGetFile = () => {
             }
           }
         } catch(e) {
-          console.error(e)
-          continue
+          throw e
         }
       }
       searchPaths = nextSearchPaths.slice()
@@ -44,7 +43,11 @@ const useGetFile = () => {
     try {
       const userDirs = await showFilesDepth1(userDirpath)
       for (const userDir of userDirs) {
-        paths.push(...await showFiles(path.join(userDirpath, userDir.name, 'AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs')))
+        try {
+          paths.push(...await showFiles(path.join(userDirpath, userDir.name, 'AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs')))
+        } catch (e) {
+          //
+        }
         console.log(path.join(userDirpath, userDir.name, 'AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs'))
       }
     } catch (e) {

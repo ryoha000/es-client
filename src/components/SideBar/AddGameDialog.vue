@@ -2,7 +2,10 @@
   <q-dialog v-model="isOpen" @before-hide="close" :persistent="loading">
     <q-card style="width: 400px" :class="$style.cardWrapper">
       <q-card-section>
-        <div class="text-h6">ゲームを追加</div>
+        <div :class="$style.cardHeader">
+          <div class="text-h6">ゲームを追加</div>
+          <q-btn flat icon="settings" @click="openChangePath" :class="$style.cardIcon" />
+        </div>
       </q-card-section>
       <q-item dense>
         <q-item-section>
@@ -43,6 +46,7 @@
         </q-item-section>
       </q-item>
     </q-card>
+    <change-folder-path v-if="isOpenChangePath" :isOpen="isOpenChangePath" @close="closeChangePath" />
   </q-dialog>
 </template>
 
@@ -53,6 +57,7 @@ import { DMM, ListGame } from '../../types/root';
 import { remote } from 'electron'
 import useJson from '../use/useJson';
 import useGetFileIcon from '../use/useGetFileIcon';
+import ChangeFolderPath from './ChangeFolderPath.vue'
 
 export default defineComponent({
   name: 'AddGameDialog',
@@ -65,12 +70,16 @@ export default defineComponent({
       required: true
     }
   },
+  components: {
+    ChangeFolderPath
+  },
   setup(props, context) {
     const loading = ref(false)
     const isAddSelf = ref(false)
     const close = () => {
       loading.value = false
       isAddSelf.value = false
+      isOpenChangePath.value = false
       url.value = ''
       path.value = ''
       context.emit('close')
@@ -126,6 +135,7 @@ export default defineComponent({
       try {
         const id = +(url.value.replace('https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=', '')).replace('#ad', '')
         try {
+          loading.value = true
           const game: ListGame = (await getIcon([{id: id, path: path.value}]))[0]
           await addGameToList(0, game)
           alert(`${props.allDMM[game.id].name}を追加しました`)
@@ -134,6 +144,7 @@ export default defineComponent({
           await addGameToList(0, game)
           alert(`${props.allDMM[game.id].name}を追加しました`)
         } finally {
+          loading.value = false
           isAddSelf.value = false
           url.value = ''
           path.value = ''
@@ -145,12 +156,25 @@ export default defineComponent({
         alert('正しいURLを入力してください\n例) https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=26000')
       }
     }
-    return { close, loading, diff, all, isAddSelf, addSelf, url, add, path }
+    const isOpenChangePath = ref(false)
+    const openChangePath = () => {
+      isOpenChangePath.value = true
+    }
+    const closeChangePath = () => {
+      isOpenChangePath.value = false
+    }
+    return { close, loading, diff, all, isAddSelf, addSelf, url, add, path, isOpenChangePath, openChangePath, closeChangePath }
   }
 });
 </script>
 
 <style lang="scss" module>
+.cardHeader {
+  display: flex;
+}
+.cardIcon {
+  margin-left: auto;
+}
 .cardWrapper {
   position: relative;
 }

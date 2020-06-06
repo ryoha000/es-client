@@ -101,6 +101,11 @@ export default defineComponent ({
     }
     const createList = async () => {
       lists.value = JSON.parse(await readFileConsoleErr('setting/lists.json'))
+      const newHaveGame: Record<number, ListGame> = {}
+      lists.value.find(v => v.id === 0)?.games.forEach(v => {
+        newHaveGame[v.id] = v
+      })
+      haveGame.value = newHaveGame
     }
 
     const { getCampaignWithImage, getSchedule, getSeiyaGames, getAllDMM } = useScraping()
@@ -129,7 +134,7 @@ export default defineComponent ({
         // }
         // allDMM.value = await getAllDMM()
         // campaigns.value = await getCampaignWithImage(allDMM)
-        sellSchedules.value = await getSchedule()
+        //sellSchedules.value = await getSchedule()
       } catch (e) {
         console.error(e)
       }
