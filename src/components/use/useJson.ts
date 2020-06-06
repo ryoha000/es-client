@@ -121,9 +121,10 @@ const useJson = () => {
     const newLists: List[] = []
     try {
       const jsonLists: List[] = JSON.parse(await readFileConsoleErr('setting/lists.json'))
+      console.log(jsonLists)
       if (!Array.isArray(jsonLists)) throw new Error()
       for (const jsonList of jsonLists) {
-        const games = jsonList.games
+        const games: ListGame[] = []
         for (const game of jsonList.games) {
           if (game.path === path) {
             games.push({id: correctId, path: path, icon: game.icon})
@@ -133,6 +134,7 @@ const useJson = () => {
         }
         newLists.push({id: jsonList.id, name: jsonList.name, games: games})
       }
+      console.log(newLists)
       await override('setting/lists.json', JSON.stringify(newLists))
     } catch (e) {
       console.error(e)

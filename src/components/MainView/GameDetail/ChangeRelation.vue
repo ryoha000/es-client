@@ -38,21 +38,21 @@ export default defineComponent({
       context.emit('close')
     }
     const confirm = async () => {
-      // console.log('aaa')
-      // if (!url.value.startsWith('https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=')) {
-      //   alert('正しいURLを入力してください\n例) https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=26000')
-      //   return
-      // }
-      // try {
-      //   const id = +(url.value.replace('https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=', '')).replace('#ad', '')
-      //   await updateRelation(props.listGame.path, id)
-      //   console.log(props.listGame.path, id)
-      //   context.emit('createList')
-      //   context.emit('close')
-      // } catch (e) {
-      //   console.error(e)
-      //   alert('正しいURLを入力してください\n例) https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=26000')
-      // }
+      console.log('aaa')
+      if (!url.value.startsWith('https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=')) {
+        alert('正しいURLを入力してください\n例) https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=26000')
+        return
+      }
+      try {
+        const id = +(url.value.replace('https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=', '')).replace('#ad', '')
+        console.log(props.listGame.path, id)
+        await updateRelation(props.listGame.path, id)
+        context.emit('createList')
+        context.emit('close')
+      } catch (e) {
+        console.error(e)
+        alert('正しいURLを入力してください\n例) https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=26000')
+      }
     }
     return { url, close, confirm }
   }
