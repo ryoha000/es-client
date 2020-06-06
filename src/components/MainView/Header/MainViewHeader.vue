@@ -1,8 +1,8 @@
 <template>
   <div :class="$style.container">
-    <q-btn flat icon="keyboard_arrow_left" @click="back" />
-    <q-btn flat icon="keyboard_arrow_right" @click="next" />
-    <q-btn flat icon="home" @click="home" />
+    <q-btn flat icon="keyboard_arrow_left" @click="back" :disable="routeIndex === 0" />
+    <q-btn flat icon="keyboard_arrow_right" @click="next" :disable="routeStack.length === routeIndex + 1" />
+    <q-btn flat icon="home" @click="home" :disable="routeStack[routeIndex].type === 'Home'"/>
     <q-input :class="$style.input" rounded outlined v-model="searchString" dark>
       <template v-slot:prepend>
         <q-icon name="search" color="white" :class="$style.icon" />
@@ -12,11 +12,19 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from '@vue/composition-api';
+import { defineComponent, ref, PropType } from '@vue/composition-api';
+import { StackType } from '../../../types/root';
 
 export default defineComponent({
   name: 'MainViewHeader',
   props: {
+    routeIndex: {
+      type: Number ,required: true
+    },
+    routeStack: {
+      type: Array as PropType<StackType[]>,
+      required: true
+    }
   },
   components: {
   },

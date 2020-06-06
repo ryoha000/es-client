@@ -2,7 +2,7 @@
   <div id="q-app" :class="$style.app" :style="styles.app">
     <side-bar :class="$style.sidebar" @game="setGame" :haveGame="haveGame" :games="allDMM" @addGame="addGame" :lists="lists" @createList="createList" />
     <div :class="$style.mainview">
-      <main-view-header @next="next" @back="back" @home="goHome" />
+      <main-view-header @next="next" @back="back" @home="goHome" :routeStack="routeStack" :routeIndex="routeIndex" />
       <div v-if="!isLoading">
         <home v-if="routeStack[routeIndex].type === 'Home'" :campaigns="campaigns" :sellSchedules="sellSchedules" :lists="lists" />
         <game-detail

@@ -24,7 +24,7 @@
         </q-item>
       </q-list>
     </q-btn-dropdown>
-    <change-relation @close="closeRelationDialog" :isOpen="isOpenRelationDialog" :listGame="gameInList[game.id]" />
+    <change-relation @close="closeRelationDialog" :isOpen="isOpenRelationDialog" :listGame="gameInList[game.id]" @createList="createList" />
   </div>
 </template>
 
@@ -49,7 +49,7 @@ export default defineComponent({
     }
   },
   components: { ChangeRelation },
-  setup(props) {
+  setup(props, context) {
     const startProcess = () => {
       const listGame = props.gameInList[props.game.id]
       if (listGame) {
@@ -75,7 +75,10 @@ export default defineComponent({
     const openRelationDialog = () => {
       isOpenRelationDialog.value = true
     }
-    return { startProcess, isOpenRelationDialog, openRelationDialog, closeRelationDialog }
+    const createList = () => {
+      context.emit('createList')
+    }
+    return { startProcess, isOpenRelationDialog, openRelationDialog, closeRelationDialog, createList }
   }
 });
 </script>

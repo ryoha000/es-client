@@ -4,6 +4,7 @@
       <play-button
         :gameInList="gameInList"
         :game="game"
+        @createList="createList"
       />
     </div>
     <div :class="$style.Link">
@@ -51,7 +52,7 @@ export default defineComponent({
     GameInfo,
     ScoreC,
   },
-  setup(props) {
+  setup(props, context) {
     const { getSeiyaURL } = useScraping()
     const links = computed(() => [
       { title: 'OHP', url: props.game.officialHomePage },
@@ -68,7 +69,10 @@ export default defineComponent({
       sinarios: props.game.sinarios,
       seiyus: props.game.seiyus
     }))
-    return { links, score, creators }
+    const createList = () => {
+      context.emit('createList')
+    }
+    return { links, score, creators, createList }
   }
 });
 </script>
