@@ -12,7 +12,7 @@
           :title="genga.name"
           :icon="false"
           :fontSize="18"
-          url=""
+          :url="createURL(genga.id)"
           style="margin-right: 8px;"
         />
       </div>
@@ -23,7 +23,7 @@
           :icon="false"
           :fontSize="18"
           style="margin-right: 8px;"
-          url=""
+          :url="createURL(sinario.id)"
         />
       </div>
       <div :class="$style.wrapper">
@@ -31,7 +31,7 @@
           <link-c
             :title="seiyu.name"
             :icon="false"
-            url=""
+            :url="createURL(seiyu.id)"
             :fontSize="18"
           />
           <span v-if="seiyu.importance === 0" :class="$style.role0">({{ seiyu.role }})</span>
@@ -67,7 +67,10 @@ export default defineComponent({
     LinkC
   },
   setup() {
-    return
+    const createURL = (id: number) => {
+      return `https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/creater.php?creater=${id}`
+    }
+    return { createURL }
   }
 });
 </script>

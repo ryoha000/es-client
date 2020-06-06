@@ -5,8 +5,20 @@
       <img :class="$style.image" :src="game.imgUrl" />
       <div :class="$style.wrapTitle">
         <div :class="$style.title">{{ game.name }}</div>
-        <div :class="$style.titleInfo"><div>{{ game.brandName }}</div></div>
-        <div :class="$style.titleInfo"><div>({{ game.sellday }})</div></div>
+        <link-c
+          :title="game.brandName"
+          :fontSize="20"
+          :class="$style.titleInfo"
+          :url="`https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/brand.php?brand=${game.brandId}`"
+          :icon="false"
+        />
+        <link-c
+          :title="`(${game.sellday})`"
+          :fontSize="20"
+          :class="$style.titleInfo"
+          :url="createSellDayURL(game.sellday)"
+          :icon="false"
+        />
       </div>
     </div>
     <main-wrapper :game="game" :gameInList="haveGame" :seiya="seiya" @createList="createList"/>
@@ -18,6 +30,7 @@ import { defineComponent, PropType, ref, computed, Ref, reactive, onMounted } fr
 import MainWrapper from '../components/MainView/GameDetail/MainWrapper.vue'
 import { Game, Record, ListGame, List } from '../types/root';
 import { makeStyles } from '../lib/style'
+import LinkC from '../components/MainView/GameDetail/Link.vue'
 
 const useStyles = (windowHeight: Ref<number>) => 
   reactive({
@@ -53,7 +66,8 @@ export default defineComponent({
     }
   },
   components: {
-    MainWrapper
+    MainWrapper,
+    LinkC
   },
   setup(props, context) {
     const game = computed(() => {
@@ -70,7 +84,11 @@ export default defineComponent({
     const createList = () => {
       context.emit('createList')
     }
-    return { game, styles, createList }
+    const createSellDayURL = (sellday: string) => {
+      const [year, month, day] = sellday.split('-')
+      return `https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/toukei_hatubaibi_month.php?year=${year}&month=${month}#${sellday}`
+    }
+    return { game, styles, createList, createSellDayURL }
   }
 });
 </script>
@@ -93,13 +111,13 @@ export default defineComponent({
   margin-left: 16px;
 }
 .titleInfo {
-  font-size: 20px;
+  // font-size: 20px;
   margin-left: 16px;
-  color: #0366d6;
-  cursor: pointer;
-  :hover {
-    color: navy;
-    border-bottom: thin solid navy;
-  }
+  // color: #0366d6;
+  // cursor: pointer;
+  // :hover {
+  //   color: navy;
+  //   border-bottom: thin solid navy;
+  // }
 }
 </style>

@@ -3,8 +3,10 @@
     <q-card style="width: 400px" :class="$style.cardWrapper">
       <q-card-section>
         <div class="text-h6">探索先フォルダの追加</div>
-        <div class="text-h8">探索先フォルダの追加</div>
-        <div class="text-h8">探索先フォルダの追加</div>
+        <div class="text-h8">.lnk ファイルがあるPathを指定してください</div>
+        <div class="text-h8">必ず読み込むのは以下のPathです</div>
+        <code>C:\ProgramData\Microsoft\Windows\Start Menu\Programs</code><br>
+        <code>C:\Users\{UserName}\AppData\Roaming\Microsoft\Windows\Start Menu\Programs</code>
       </q-card-section>
       <q-item v-for="(path, i) in paths" >
         <q-item-section>
