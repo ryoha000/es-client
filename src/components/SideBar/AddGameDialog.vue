@@ -6,17 +6,32 @@
       </q-card-section>
       <q-item dense>
         <q-item-section>
-          <q-btn flat style="color: black" label="新しく追加されたものを探す(推奨)" @click="diff" />
+          <q-btn flat style="color: black" label="新しく追加されたものを探す(推奨)" @click="diff" :disable="loading" />
         </q-item-section>
       </q-item>
       <q-item>
         <q-item-section>
-            <q-btn flat style="color: black" label="フォルダを探索しなおす(非常に重いです)" @click="all" />
+            <q-btn flat style="color: black" label="フォルダを探索しなおす(非常に重いです)" @click="all" :disable="loading" />
           </q-item-section>
       </q-item>
       <q-item>
         <q-item-section>
-            <q-btn flat style="color: black" label="自分で実行ファイルとゲームを指定して追加する" />
+            <q-btn flat style="color: black" label="自分で実行ファイルとゲームを指定して追加する" @click="addSelf" :disable="loading" />
+          </q-item-section>
+      </q-item>
+      <q-item v-if="isAddSelf">
+        <q-item-section>
+            <div>Path: {{path}}</div>
+          </q-item-section>
+      </q-item>
+      <q-item v-if="isAddSelf">
+        <q-item-section>
+            <q-input v-model="url" label="ErogameScape URL" />
+          </q-item-section>
+      </q-item>
+      <q-item v-if="isAddSelf">
+        <q-item-section>
+            <q-btn @click="add" color="primary" label="追加" />
           </q-item-section>
       </q-item>
       <q-item :class="$style.loading" :style="loading ? 'z-index: 3' : 'z-index: -1'" >
@@ -34,7 +49,10 @@
 <script lang="ts">
 import { defineComponent, ref, PropType } from '@vue/composition-api';
 import useJudgeGame from '../use/useJudgeGame'
-import { DMM } from '../../types/root';
+import { DMM, ListGame } from '../../types/root';
+import { remote } from 'electron'
+import useJson from '../use/useJson';
+import useGetFileIcon from '../use/useGetFileIcon';
 
 export default defineComponent({
   name: 'AddGameDialog',
@@ -49,15 +67,19 @@ export default defineComponent({
   },
   setup(props, context) {
     const loading = ref(false)
+    const isAddSelf = ref(false)
     const close = () => {
+      loading.value = false
+      isAddSelf.value = false
+      url.value = ''
+      path.value = ''
       context.emit('close')
     }
     const diff = async () => {
       const { searchDifference } = useJudgeGame(props.allDMM)
       loading.value = true
       const newGames = await searchDifference()
-      console.log(newGames)
-      context.emit('addGame')
+      context.emit('createList')
       loading.value = false
       let message = ''
       for (const g of newGames) {
@@ -74,12 +96,56 @@ export default defineComponent({
       const { searchAll } = useJudgeGame(props.allDMM)
       loading.value = true
       const games = await searchAll()
-      console.log(games)
-      context.emit('addGame')
+      context.emit('createList')
       loading.value = false
       context.emit('close')
     }
-    return { close, loading, diff, all }
+    const url = ref('')
+    const path = ref('')
+    const addSelf = async () => {
+      isAddSelf.value = true
+      const dialog = remote.dialog
+      const result = await dialog.showOpenDialog({
+        title: '実行ファイルの選択',
+        properties: ['openFile', 'dontAddToRecent'],
+        defaultPath: '.'
+      })
+      if (result.canceled) {
+        isAddSelf.value = false
+        return
+      }
+      path.value = result.filePaths[0]
+    }
+    const add = async () => {
+      const { addGameToList } = useJson()
+      const { getIcon } = useGetFileIcon()
+      if (!url.value.startsWith('https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=')) {
+        alert('正しいURLを入力してください\n例) https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=26000')
+        return
+      }
+      try {
+        const id = +(url.value.replace('https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=', '')).replace('#ad', '')
+        try {
+          const game: ListGame = (await getIcon([{id: id, path: path.value}]))[0]
+          await addGameToList(0, game)
+          alert(`${props.allDMM[game.id].name}を追加しました`)
+        } catch (e) {
+          const game: ListGame = {id: id, path: path.value, icon: ''}
+          await addGameToList(0, game)
+          alert(`${props.allDMM[game.id].name}を追加しました`)
+        } finally {
+          isAddSelf.value = false
+          url.value = ''
+          path.value = ''
+          context.emit('createList')
+          context.emit('close')
+        }
+      } catch (e) {
+        console.error(e)
+        alert('正しいURLを入力してください\n例) https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=26000')
+      }
+    }
+    return { close, loading, diff, all, isAddSelf, addSelf, url, add, path }
   }
 });
 </script>

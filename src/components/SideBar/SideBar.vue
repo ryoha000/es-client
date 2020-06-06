@@ -10,7 +10,7 @@
       @filter="filter"
     />
     <search :class="$style.search" @changeSearch="changeSearch" />
-    <add-game :class="$style.item" :allDMM="games" @addGame="addGame" />
+    <add-game :class="$style.item" :allDMM="games" @createList="createList" />
     <q-scroll-area :style="styles.scrollArea" dark>
       <game-list-item
         :class="$style.item"

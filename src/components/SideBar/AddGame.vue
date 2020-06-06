@@ -4,7 +4,7 @@
       <div style="margin-left: 8px;" />
       ゲームを追加
     </q-btn>
-    <add-game-dialog :allDMM="allDMM" :isOpen="isOpenDialog" @close="onCloseDialog" @addGame="addGame"/>
+    <add-game-dialog :allDMM="allDMM" :isOpen="isOpenDialog" @close="onCloseDialog" @createList="createList"/>
   </div>
 </template>
 
@@ -34,10 +34,10 @@ export default defineComponent({
     const onCloseDialog = () => {
       isOpenDialog.value = false
     }
-    const addGame = () => {
-      context.emit('addGame')
+    const createList = () => {
+      context.emit('createList')
     }
-    return { onClick, isOpenDialog, onCloseDialog, addGame }
+    return { onClick, isOpenDialog, onCloseDialog, createList }
   }
 });
 </script>

@@ -97,6 +97,7 @@ export default defineComponent ({
     }
 
     const addGame = async () => {
+      console.log('addGame app')
       haveGame.value = await readListGames(0)
     }
     const createList = async () => {
