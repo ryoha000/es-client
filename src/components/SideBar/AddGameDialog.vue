@@ -76,6 +76,9 @@ export default defineComponent({
   setup(props, context) {
     const loading = ref(false)
     const isAddSelf = ref(false)
+    const isOpenChangePath = ref(false)
+    const url = ref('')
+    const path = ref('')
     const close = () => {
       loading.value = false
       isAddSelf.value = false
@@ -109,8 +112,6 @@ export default defineComponent({
       loading.value = false
       context.emit('close')
     }
-    const url = ref('')
-    const path = ref('')
     const addSelf = async () => {
       isAddSelf.value = true
       const dialog = remote.dialog
@@ -156,7 +157,6 @@ export default defineComponent({
         alert('正しいURLを入力してください\n例) https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=26000')
       }
     }
-    const isOpenChangePath = ref(false)
     const openChangePath = () => {
       isOpenChangePath.value = true
     }

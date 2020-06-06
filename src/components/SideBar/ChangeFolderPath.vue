@@ -8,7 +8,7 @@
         <code>C:\ProgramData\Microsoft\Windows\Start Menu\Programs</code><br>
         <code>C:\Users\{UserName}\AppData\Roaming\Microsoft\Windows\Start Menu\Programs</code>
       </q-card-section>
-      <q-item v-for="(path, i) in paths" >
+      <q-item v-for="(path, i) in paths" :key="i">
         <q-item-section>
           <div :class="$style.input">
             <q-input :value="path" @input="(value) => input(value, i)" />
@@ -31,10 +31,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, PropType, onMounted } from '@vue/composition-api';
-import useJudgeGame from '../use/useJudgeGame'
-import { DMM, ListGame } from '../../types/root';
-import { remote } from 'electron'
+import { defineComponent, ref, onMounted } from '@vue/composition-api';
 import useJson from '../use/useJson';
 
 export default defineComponent({

@@ -60,6 +60,7 @@ export default defineComponent({
       context.emit('createList')
     }
     const input = (v: string | {label: string, id: number}) => {
+
       if (typeof v === 'string') {
         if (v === '新しいリストを作成') {
           model.value = '所持ゲーム'
