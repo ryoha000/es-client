@@ -40,7 +40,8 @@ export default defineComponent({
     lists: {
       type: Array as PropType<List[]>,
       default: []
-    }
+    },
+    filterListId: { type: Number, default: 0 }
   },
   components: {
     createListDialog
@@ -58,9 +59,13 @@ export default defineComponent({
     }
     const isOpenCreateListDialog = ref(false)
     const rightClick = (game: ListGame) => {
-      const { addGameToList } = useJson()
+      const { addGameToList, removeGameFromList } = useJson()
       const menu = new Menu()
-      menu.append(new MenuItem({ label: '一覧から削除', click: function() { console.log('TODO: delete') } }));
+      menu.append(new MenuItem({ label: '一覧から削除', click: async() => {
+        console.log(props.filterListId, game)
+        await removeGameFromList(props.filterListId, game)
+        context.emit('createList');
+      }}));
       menu.append(new MenuItem({ type: 'separator' }));
       for (const list of props.lists) {
         if (list.id === 0) continue

@@ -117,6 +117,24 @@ const useJson = () => {
       console.error(e)
     }
   }
+  const removeGameFromList = async (id :number, game: ListGame) => {
+    const list: List = {id: id, name: '', games: []}
+    try {
+      const jsonLists: List[] = JSON.parse(await readFileConsoleErr('setting/lists.json'))
+      if (!Array.isArray(jsonLists)) throw new Error()
+      for (const jsonList of jsonLists) {
+        if (jsonList.id === id) {
+          list.name = jsonList.name
+          list.games.push(...jsonList.games.filter(v => v.path !== game.path))
+          console.log(list)
+          break
+        }
+      }
+      await updateOrInsertList(list)
+    } catch (e) {
+      console.error(e)
+    }
+  }
   const updateRelation = async (path: string, correctId: number) => {
     const newLists: List[] = []
     try {
@@ -140,7 +158,18 @@ const useJson = () => {
       console.error(e)
     }
   }
-  return { jsonSetup, updateOrInsertList, readFileConsoleErr, getHaveGame, override, readListGames, createNewList, addGameToList, updateRelation }
+  return {
+    jsonSetup,
+    updateOrInsertList,
+    readFileConsoleErr,
+    getHaveGame,
+    override,
+    readListGames,
+    createNewList,
+    addGameToList,
+    updateRelation,
+    removeGameFromList
+  }
 }
 
 export default useJson

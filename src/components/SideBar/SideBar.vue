@@ -12,7 +12,15 @@
     <search :class="$style.search" @changeSearch="changeSearch" />
     <add-game :class="$style.item" :allDMM="games" @addGame="addGame" />
     <q-scroll-area :style="styles.scrollArea" dark>
-      <game-list-item :class="$style.item" @game="setGame" :games="arrayList" :allGames="games" :lists="lists" @createList="createList"/>
+      <game-list-item
+        :class="$style.item"
+        @game="setGame"
+        :games="arrayList"
+        :allGames="games"
+        :lists="lists"
+        @createList="createList"
+        :filterListId="filterListId"
+      />
     </q-scroll-area>
   </div>
 </template>
@@ -120,7 +128,7 @@ export default defineComponent({
     const createList = () => {
       context.emit('createList')
     }
-    return { setGame, sortByLastAccess, lastAccessTime, arrayList, isSortByLastAccess, styles, addGame, changeSearch, createList, filter }
+    return { setGame, sortByLastAccess, lastAccessTime, arrayList, isSortByLastAccess, styles, addGame, changeSearch, createList, filter, filterListId }
   }
 });
 </script>
