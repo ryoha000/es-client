@@ -35,8 +35,9 @@ import useJson from './components/use/useJson'
 import { remote } from 'electron'
 import useScraping from './components/use/useScraping'
 import useJudgeGame from './components/use/useJudgeGame'
+import { check } from './lib/opencv'
 
-const useStyles = () => 
+const useStyles = () =>
   reactive({
     app: makeStyles(theme => ({
         backgroundColor: theme.background.primary
@@ -96,6 +97,8 @@ export default defineComponent ({
       goDetail(id)
     }
 
+    check()
+
     const addGame = async () => {
       haveGame.value = await readListGames(0)
     }
@@ -109,7 +112,7 @@ export default defineComponent ({
     }
 
     const { getCampaignWithImage, getSchedule, getSeiyaGames, getAllDMM, checkUpdate } = useScraping()
-    
+
     // eslint-disable-next-line @typescript-eslint/require-await
     onMounted(async () => {
       isLoading.value = true
