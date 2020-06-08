@@ -74,6 +74,7 @@ export default defineComponent({
         if (Array.isArray(jsonPaths)) {
           for (const jsonPath of jsonPaths) {
             if (typeof jsonPath === 'string') {
+              //if (jsonPath === '') continue
               prevPaths.push(jsonPath)
               console.log(jsonPath)
             }

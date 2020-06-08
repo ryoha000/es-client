@@ -199,7 +199,6 @@ const useScraping = () => {
       }
       schedules.push({dayAndCount: scheduleAndCount, games: games})
     }
-    console.log(schedules)
     return schedules
   }
   const getSeiyaGames = async (seiya: Ref<{createdNow: number, games: {name: string, url: string}[]}>) => {
@@ -212,11 +211,9 @@ const useScraping = () => {
         url: 'https://seiya-saiga.com/game/' + tr.getElementsByTagName('a')?.[0]?.getAttribute('href') ?? ''
       })
     }
-    console.log(games)
     seiya.value = {createdNow: Date.now(), games: games}
   }
   const getSeiyaURL = (gameName: string, games: {name: string, url: string}[]) => {
-    console.log(gameName)
     for (const game of games) {
       if (game.name === gameName) {
         console.log(game.url)
@@ -232,7 +229,12 @@ const useScraping = () => {
     }
     return 'https://seiya-saiga.com/game/kouryaku.html'
   }
-  return { getTitle, getGameDetail, getHome, getCampaignWithImage, getSchedule, getSeiyaURL, getSeiyaGames, getAllDMM }
+  const checkUpdate = async (now: number) => {
+    const document = await getDocument('http://es-server.ryoha.trap.show/version.json')
+    const version = JSON.parse(document.getElementsByTagName('body')[0]?.innerHTML)
+    return version !== now
+  }
+  return { getTitle, getGameDetail, getHome, getCampaignWithImage, getSchedule, getSeiyaURL, getSeiyaGames, getAllDMM, checkUpdate }
 }
 
 export default useScraping

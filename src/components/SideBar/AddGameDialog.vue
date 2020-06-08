@@ -108,8 +108,7 @@ export default defineComponent({
       const { searchAll } = useJudgeGame(props.allDMM)
       loading.value = true
       try {
-        const games = await searchAll()
-        console.log(games)
+        await searchAll()
       } catch (e) {
         console.error(e)
       }

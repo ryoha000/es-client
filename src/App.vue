@@ -108,7 +108,7 @@ export default defineComponent ({
       haveGame.value = newHaveGame
     }
 
-    const { getCampaignWithImage, getSchedule, getSeiyaGames, getAllDMM } = useScraping()
+    const { getCampaignWithImage, getSchedule, getSeiyaGames, getAllDMM, checkUpdate } = useScraping()
     
     // eslint-disable-next-line @typescript-eslint/require-await
     onMounted(async () => {
@@ -135,6 +135,14 @@ export default defineComponent ({
         // allDMM.value = await getAllDMM()
         // campaigns.value = await getCampaignWithImage(allDMM)
         // sellSchedules.value = await getSchedule()
+      } catch (e) {
+        console.error(e)
+      }
+      try {
+        // update時はここを変える
+        if (await checkUpdate(1.01)) {
+          alert('アップデートがあります')
+        }
       } catch (e) {
         console.error(e)
       }

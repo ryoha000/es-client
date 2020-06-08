@@ -222,7 +222,6 @@ const useJson = () => {
           continue
         }
       }
-      console.log(histories)
       return histories
     } catch (e) {
       await override('setting/playtime.json', '')

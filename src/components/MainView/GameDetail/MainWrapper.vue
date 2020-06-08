@@ -79,14 +79,11 @@ export default defineComponent({
     onMounted(async () => {
       const histories = await getHistory()
       let playTime = 0
-      console.log(props.game)
       for (const his of histories) {
         if (his.id === props.game.id) {
-          console.log('起動+1')
           playTime += his.time
         }
       }
-      console.log(playTime)
       playTimeString.value = `プレイ時間: ${Math.floor(playTime / 1000 / 60 / 60)}時間 ${Math.round(playTime / 1000 / 60)}分`
     })
     return { links, score, creators, createList, playTimeString }

@@ -24,7 +24,6 @@
 <script lang="ts">
 import { defineComponent, PropType, computed, ref } from '@vue/composition-api';
 import { ListGame, DMM, List } from '../../types/root';
-import useElectron from '../use/useElectron'
 import createListDialog from '../CreateListDialog.vue'
 import useJson from '../use/useJson';
 
@@ -62,10 +61,8 @@ export default defineComponent({
       const { addGameToList, removeGameFromList } = useJson()
       const menu = new Menu()
       menu.append(new MenuItem({ label: '一覧から削除', click: async() => {
-        // console.log(props.filterListId, game)
-        // await removeGameFromList(props.filterListId, game)
-        // context.emit('createList');
-        console.log(game)
+        await removeGameFromList(props.filterListId, game)
+        context.emit('createList');
       }}));
       menu.append(new MenuItem({ type: 'separator' }));
       for (const list of props.lists) {
