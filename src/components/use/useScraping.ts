@@ -232,7 +232,9 @@ const useScraping = () => {
   const checkUpdate = async (now: number) => {
     const document = await getDocument('http://es-server.ryoha.trap.show/version.json')
     const version = JSON.parse(document.getElementsByTagName('body')[0]?.innerHTML)
-    return version !== now
+    console.log(version)
+    console.log(version.version)
+    return version.version !== now
   }
   return { getTitle, getGameDetail, getHome, getCampaignWithImage, getSchedule, getSeiyaURL, getSeiyaGames, getAllDMM, checkUpdate }
 }

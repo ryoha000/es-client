@@ -4,6 +4,7 @@
       <q-card-section>
         <div class="text-h6">探索先フォルダの追加</div>
         <div class="text-h8">.lnk ファイルがあるPathを指定してください</div>
+        <div class="text-h8">追加後は「新しく追加されたものを探す」で探索できます</div>
         <div class="text-h8">必ず読み込むのは以下のPathです</div>
         <code>C:\ProgramData\Microsoft\Windows\Start Menu\Programs</code><br>
         <code>C:\Users\{UserName}\AppData\Roaming\Microsoft\Windows\Start Menu\Programs</code>
@@ -23,7 +24,7 @@
       </q-item>
       <q-item>
         <q-item-section>
-          <q-btn color="primary" label="確定" :disable="paths.length === 0" @click="addPath"/>
+          <q-btn color="primary" label="確定" @click="addPath"/>
         </q-item-section>
       </q-item>
     </q-card>
@@ -74,7 +75,7 @@ export default defineComponent({
         if (Array.isArray(jsonPaths)) {
           for (const jsonPath of jsonPaths) {
             if (typeof jsonPath === 'string') {
-              //if (jsonPath === '') continue
+              if (jsonPath === '') continue
               prevPaths.push(jsonPath)
               console.log(jsonPath)
             }

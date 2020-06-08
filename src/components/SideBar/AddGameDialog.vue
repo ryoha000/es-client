@@ -9,12 +9,12 @@
       </q-card-section>
       <q-item dense>
         <q-item-section>
-          <q-btn flat style="color: black" label="新しく追加されたものを探す(推奨)" @click="diff" :disable="loading" />
+          <q-btn flat style="color: black" label="新しく追加されたものを探す(推奨、初回激重)" @click="diff" :disable="loading" />
         </q-item-section>
       </q-item>
       <q-item>
         <q-item-section>
-            <q-btn flat style="color: black" label="フォルダを探索しなおす(非常に重いです)" @click="all" :disable="loading" />
+            <q-btn flat style="color: black" label="フォルダを探索しなおす(激重)" @click="all" :disable="loading" />
           </q-item-section>
       </q-item>
       <q-item>

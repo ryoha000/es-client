@@ -211,7 +211,7 @@ const useJudgeGame = (allDMM: Record<number, DMM>) => {
       for (const cp of customPaths) {
         console.log(cp)
         if (typeof cp === 'string') {
-          //if (cp === '') continue
+          if (cp === '') continue
           try {
             linkPaths.push(...await showFiles(cp))
           } catch {
