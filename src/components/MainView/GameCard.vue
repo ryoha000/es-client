@@ -45,7 +45,7 @@ export default defineComponent({
         console.error('Face detection failed:', e);
       }
     })
-    const topDiff = computed(() => face.value ? (face.value.top + face.value.bottom)/2/height.value*100 : 50)
+    const topDiff = computed(() => face.value &&height.value ? (face.value.top + face.value.bottom)/2/height.value*100 : 50)
 
     return { onClick, onClickContent, topDiff }
   }

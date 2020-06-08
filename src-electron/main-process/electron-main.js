@@ -6,6 +6,10 @@ try {
   }
 } catch (_) { }
 
+if (process.platform === 'win32' && !process.env.OPENCV4NODEJS_DISABLE_AUTOBUILD) {
+  process.env.path += ';' + require('../../node_modules/opencv-build').opencvBinDir
+}
+
 /**
  * Set `__statics` path to static files in production;
  * The reason we are setting it here is that the path needs to be evaluated at runtime
