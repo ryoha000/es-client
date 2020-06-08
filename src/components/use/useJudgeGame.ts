@@ -29,13 +29,16 @@ const useJudgeGame = (allDMM: Record<number, DMM>) => {
     })
     for (const dmm of Object.entries(allDMM)) {
       const gameTitle = toLowerAndHankaku(dmm[1].name)
-      if (cleanLinkName.length > 5 && gameTitle.includes(cleanLinkName)) {
-        id = dmm[1].id
-        break
-      }
       if (editONP(cleanLinkName, gameTitle) > 0.8) {
         id = dmm[1].id
-        break
+        return id
+      }
+    }
+    for (const dmm of Object.entries(allDMM)) {
+      const gameTitle = toLowerAndHankaku(dmm[1].name)
+      if (cleanLinkName.length > 5 && gameTitle.includes(cleanLinkName)) {
+        id = dmm[1].id
+        return id
       }
     }
     return id
@@ -52,7 +55,6 @@ const useJudgeGame = (allDMM: Record<number, DMM>) => {
 
     // 紐づいたファイルの探索Promise
     const promises: Promise<{id: number, path: string}[]>[] = []
-    let batch: {id: number, path: string}[] = []
     let i = 0
     for (const linkPath of linkPaths) {
       const linkName = linkPath.split('\\').pop()
@@ -65,19 +67,6 @@ const useJudgeGame = (allDMM: Record<number, DMM>) => {
         i++
         //batch.push({id: id, path: linkPath})
         promises.push(getPath([{id: id, path: linkPath}]))
-      }
-
-      // batch上限は21個
-      if (i > 20) {
-        i = 0
-        console.log(batch)
-        promises.push(getPath(batch))
-        batch = []
-      }
-
-      // 最後が切れないように
-      if (linkPaths[linkPaths.length] === linkPath) {
-        promises.push(getPath(batch))
       }
     }
 
@@ -106,15 +95,17 @@ const useJudgeGame = (allDMM: Record<number, DMM>) => {
 
     promiseResultPath.forEach((element, i) => {
       // ちゃんとPathをとれてたとき
-      if (element.value !== undefined) {
+      if (element.value !== undefined && element.value) {
         console.log('batch')
         for (const val of element.value) {
-          if (val.path === 'E:\\Program Files (x86)\\Aonatsu\\Launcher.exe') console.log(val) // 変わってる
           if (val.path.startsWith('file://')) {
             games.push({id: val.id, path: val.path.replace('file://', '')})
             continue
           }
           if (val.path.startsWith('http')) {
+            continue
+          }
+          if (!val.id) {
             continue
           }
           games.push(val)

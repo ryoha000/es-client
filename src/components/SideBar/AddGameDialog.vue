@@ -107,7 +107,12 @@ export default defineComponent({
     const all = async () => {
       const { searchAll } = useJudgeGame(props.allDMM)
       loading.value = true
-      const games = await searchAll()
+      try {
+        const games = await searchAll()
+        console.log(games)
+      } catch (e) {
+        console.error(e)
+      }
       context.emit('createList')
       loading.value = false
       context.emit('close')

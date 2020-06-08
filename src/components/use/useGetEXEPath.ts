@@ -43,7 +43,11 @@ const useGetEXEPath = () => {
             resolve([{id: lnkFile.id, path: result[0]}])
           }
         } else if (result.length === 0) {
-          resolve([{id: 0, path: ''}])
+          if (Array.isArray(lnkFile)){
+            resolve([{id: lnkFile[0].id ?? 0, path: lnkFile[0].path ?? ''}])
+          } else {
+            resolve([{id: lnkFile.id ?? 0, path: lnkFile.path ?? ''}])
+          }
         } else {
           if (Array.isArray(lnkFile)) {
             resolve(result.map((res, i) => ({id: lnkFile[i].id, path: res})))

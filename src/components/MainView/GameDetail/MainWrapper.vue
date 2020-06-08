@@ -6,6 +6,7 @@
         :game="game"
         @createList="createList"
       />
+      <div :class="$style.playTime">{{ playTimeString }}</div>
     </div>
     <div :class="$style.Link">
       <link-c
@@ -29,6 +30,7 @@ import ScoreC, { Score } from './Score.vue'
 import { Game, ListGame } from '../../../types/root';
 import useScraping from '../../use/useScraping'
 import { number } from 'yargs';
+import useJson from '../../use/useJson';
 
 export default defineComponent({
   name: 'MainWrapper',
@@ -72,7 +74,22 @@ export default defineComponent({
     const createList = () => {
       context.emit('createList')
     }
-    return { links, score, creators, createList }
+    const { getHistory } = useJson()
+    const playTimeString = ref('')
+    onMounted(async () => {
+      const histories = await getHistory()
+      let playTime = 0
+      console.log(props.game)
+      for (const his of histories) {
+        if (his.id === props.game.id) {
+          console.log('起動+1')
+          playTime += his.time
+        }
+      }
+      console.log(playTime)
+      playTimeString.value = `プレイ時間: ${Math.floor(playTime / 1000 / 60 / 60)}時間 ${Math.round(playTime / 1000 / 60)}分`
+    })
+    return { links, score, creators, createList, playTimeString }
   }
 });
 </script>
@@ -85,6 +102,11 @@ export default defineComponent({
 }
 .button {
   margin-top: 16px;
+  display: flex;
+}
+.playTime {
+  align-self: flex-end;
+  margin-left: 24px;
 }
 .Link {
   display: flex;

@@ -38,7 +38,7 @@ import * as fs from 'fs'
 const useStyles = (height: Ref<number>) => 
   reactive({
     scrollArea: makeStyles(theme => ({
-        height: `calc( ${height.value}px - 138px )`,
+        height: `calc( ${height.value}px - 126px )`,
       })
     )
   })

@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as iconv from 'iconv-lite'
-import { List, ListGame } from "src/types/root";
+import { List, ListGame, History } from "src/types/root";
 
 const useJson = () => {
   const jsonSetup = () => {
@@ -158,6 +158,77 @@ const useJson = () => {
       console.error(e)
     }
   }
+  const getPlayTime = (start: string, end: string) => {
+    const startYear = +(start.split(' ')[0].split('/')[2])
+    const startMonth = +(start.split(' ')[0].split('/')[0])
+    const startDay = +(start.split(' ')[0].split('/')[1])
+    const startHour = +(start.split(' ')[1].split(':')[0])
+    const startMinute = +(start.split(' ')[1].split(':')[1])
+    const startSecond = +(start.split(' ')[1].split(':')[2])
+    const endYear = +(end.split(' ')[0].split('/')[2])
+    const endMonth = +(end.split(' ')[0].split('/')[0])
+    const endDay = +(end.split(' ')[0].split('/')[1])
+    const endHour = +(end.split(' ')[1].split(':')[0])
+    const endMinute = +(end.split(' ')[1].split(':')[1])
+    const endSecond = +(end.split(' ')[1].split(':')[2])
+    const startTime = new Date(startYear, startMonth, startDay, startHour, startMinute, startSecond)
+    const endTime = new Date(endYear, endMonth, endDay, endHour, endMinute, endSecond)
+    return endTime.getTime() - startTime.getTime()
+  }
+  const getHistory = async() => {
+    try {
+      const pt = await readFileConsoleErr('setting/playtime.json')
+      const histories: History[] = []
+      const start: {id: number, time: string}[] = []
+      const nowStart = {id: 0, time: ''}
+      const nowEnd = {id: 0, time: ''}
+      let isStart = 0
+      let isEnd = 0
+      for (const row of pt.split('\n')) {
+        console.log(row)
+        if (isStart === 1) {
+          isStart++
+          nowStart.id = +(row)
+          continue
+        }
+        if (isStart === 2) {
+          isStart++
+          nowStart.time = row
+          start.push(nowStart)
+          continue
+        }
+        if (isEnd === 1) {
+          isEnd++
+          nowEnd.id = +(row)
+          continue
+        }
+        if (isEnd === 2) {
+          isEnd++
+          nowEnd.time = row
+          const mirror = start.find(v => v.id === nowEnd.id)
+          if (mirror) {
+            histories.push({ id: nowEnd.id, time: getPlayTime(mirror.time, nowEnd.time) })
+            start.splice(start.findIndex(v => v.id === nowEnd.id), 1)
+          }
+        }
+        if (row === 'start') {
+          isStart = 1
+          isEnd = 0
+          continue
+        }
+        if (row === 'end') {
+          isStart = 0
+          isEnd = 1
+          continue
+        }
+      }
+      console.log(histories)
+      return histories
+    } catch (e) {
+      await override('setting/playtime.json', '')
+      return []
+    }
+  }
   return {
     jsonSetup,
     updateOrInsertList,
@@ -168,7 +239,8 @@ const useJson = () => {
     createNewList,
     addGameToList,
     updateRelation,
-    removeGameFromList
+    removeGameFromList,
+    getHistory
   }
 }
 

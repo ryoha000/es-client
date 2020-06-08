@@ -97,3 +97,8 @@ export interface Directory {
   dirPath: string
   children: Directory[]
 }
+
+export interface History {
+  id: number
+  time: number
+}
