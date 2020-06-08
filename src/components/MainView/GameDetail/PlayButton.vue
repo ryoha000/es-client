@@ -66,15 +66,18 @@ export default defineComponent({
           await override('setting/playtime.json', '')
         }
         const absPath = path.resolve(__dirname).split('\\')
+        absPath.pop()
+        absPath.pop()
         const addStartTime = `$date = Get-Date ; Add-Content setting/playtime.json \"start\`n${listGame.id}\`n$date\"`
         const addFinishTime = `$date = Get-Date ; Add-Content setting/playtime.json \"end\`n${listGame.id}\`n$date\"`
-        let rootAbsPath = ''
-        for (let i = 0; i < absPath.length; i++) {
-          if (absPath[absPath.length - 1- i] === __dirname.split('\\')[0]) {
-            rootAbsPath = path.normalize(absPath.slice(0, absPath.length - i - 1).join('\\')).replace(/\'/g,'\'\'')
-          }
-        }
-        const command = `${addStartTime} ; cd \'${normalizedFile}\' ; powershell Start-Process ${exe} -verb runas -Wait ; cd \'${rootAbsPath}\' ; ${addFinishTime}`
+        // let rootAbsPath = ''
+        // for (let i = 0; i < absPath.length; i++) {
+        //   if (absPath[absPath.length - 1- i] === __dirname.split('\\')[0]) {
+        //     rootAbsPath = path.normalize(absPath.slice(0, absPath.length - i - 1).join('\\')).replace(/\'/g,'\'\'')
+        //   }
+        // }
+        alert(absPath.join('\\'))
+        const command = `${addStartTime} ; cd \'${normalizedFile}\' ; powershell Start-Process ${exe} -verb runas -Wait ; cd \'${absPath.join('\\')}\' ; ${addFinishTime}`
         // 何故か if(Buffer.isBuffer(stderr)) で判定してもダメだからanyに
         ChileProcess.exec(`powershell.exe -command "${command}"`, {encoding: 'binary', maxBuffer: 64*1024*1024}, (err, stdout, stderr: any) => {
           if (err) {
