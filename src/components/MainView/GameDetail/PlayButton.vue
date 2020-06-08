@@ -76,7 +76,6 @@ export default defineComponent({
         //     rootAbsPath = path.normalize(absPath.slice(0, absPath.length - i - 1).join('\\')).replace(/\'/g,'\'\'')
         //   }
         // }
-        alert(absPath.join('\\'))
         const command = `${addStartTime} ; cd \'${normalizedFile}\' ; powershell Start-Process ${exe} -verb runas -Wait ; cd \'${absPath.join('\\')}\' ; ${addFinishTime}`
         // 何故か if(Buffer.isBuffer(stderr)) で判定してもダメだからanyに
         ChileProcess.exec(`powershell.exe -command "${command}"`, {encoding: 'binary', maxBuffer: 64*1024*1024}, (err, stdout, stderr: any) => {
