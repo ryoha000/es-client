@@ -38,7 +38,7 @@
     "electron-packager": "^14.2.1",
     "eslint": "^7.2.0",
     "eslint-config-prettier": "^6.9.0",
-    "eslint-loader": "^3.0.3",
+    "eslint-loader": "^4.0.2",
     "eslint-plugin-vue": "^6.1.2",
     "iconv-lite": "git+https://github.com/ashtuchkin/iconv-lite.git",
     "jsdom": "git+https://github.com/ryoha000/jsdom.git",
