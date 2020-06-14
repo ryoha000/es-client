@@ -47,7 +47,6 @@ const useGetFile = () => {
         } catch (e) {
           //
         }
-        console.log(path.join(userDirpath, userDir.name, 'AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs'))
       }
     } catch (e) {
       // console.error(e)

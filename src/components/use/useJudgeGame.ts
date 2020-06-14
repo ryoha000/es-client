@@ -61,7 +61,8 @@ const useJudgeGame = (allDMM: Record<number, DMM>) => {
       if (!linkName) continue
       // 拡張子を取り除いてGameかどうか判別
       const id = isLinkAsGame(linkName.replace(/\.[^/.]+$/, ''))
-      if (id !== 0) {
+      // id: 2644はRUN
+      if (id !== 0 && id !== 2644) {
         i++
         //batch.push({id: id, path: linkPath})
         promises.push(getPath([{id: id, path: linkPath}]))

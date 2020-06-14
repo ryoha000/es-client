@@ -140,7 +140,7 @@ export default defineComponent ({
       }
       try {
         // update時はここを変える
-        if (await checkUpdate(1.3)) {
+        if (await checkUpdate(1.4)) {
           alert('アップデートがあります')
         }
       } catch (e) {

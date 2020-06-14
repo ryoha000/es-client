@@ -9,6 +9,9 @@ const useGetFileIcon = () => {
   }
   const getIcon = (filePaths :{id: number, path: string}[]): Promise<{id: number, path: string, icon: string}[]> => {
     return new Promise((resolve, reject) => {
+      if (filePaths.length === 0 || filePaths.filter(v => v.id === undefined).length > 0) {
+        resolve([])
+      }
       const commands: string[] = []
       for (const filePath of filePaths) {
         commands.push(createCommand(filePath.path))
@@ -22,11 +25,12 @@ const useGetFileIcon = () => {
         const str = iconv.decode(stdout, 'shiftjis')
         const result = str.replace(/\r/g,'').split('\n').filter((v) => !!v)
   
-        if (filePaths.length === 0) resolve([])
+        if (result.length === 0) {
+          resolve(filePaths.map(v => ({id: v.id, path: v.path, icon: '' })))
+        }
+        if (filePaths.length !== result.length) resolve([])
         if (result.length === 1) {
           resolve([{id: filePaths[0].id, path: filePaths[0].path, icon: result[0]}])
-        } else if (result.length === 0) {
-          resolve(filePaths.map(v => ({id: v.id, path: v.path, icon: '' })))
         } else {
           resolve(result.map((v, i) => ({id: filePaths[i].id, path: filePaths[i].path, icon: v})))
         }
