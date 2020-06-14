@@ -11,6 +11,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from '@vue/composition-api';
 import { CardInfo } from './HorizontalScroll.vue'
+import { remote } from 'electron'
 
 export default defineComponent({
   name: 'GameCard',
@@ -21,10 +22,10 @@ export default defineComponent({
   },
   setup(props) {
     const onClick = () => {
-      window.open(props.cardInfo.url)
+      remote.shell.openExternal(props.cardInfo.url)
     }
     const onClickContent = () => {
-      window.open(props.cardInfo.contentUrl ?? props.cardInfo.url)
+      remote.shell.openExternal(props.cardInfo.contentUrl ?? props.cardInfo.url)
     }
     return { onClick, onClickContent }
   }

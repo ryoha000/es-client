@@ -10,6 +10,7 @@
 <script lang="ts">
 import { defineComponent, reactive } from '@vue/composition-api';
 import { makeStyles } from '../../../lib/style'
+import { remote } from 'electron'
 
 const useStyles = (props: { fontSize: number } ) => 
   reactive({
@@ -29,7 +30,7 @@ export default defineComponent({
   },
   setup(props) {
     const open = () => {
-      window.open(props.url)
+      remote.shell.openExternal(props.url)
     }
     const styles = useStyles(props)
     return { open, styles }

@@ -60,8 +60,7 @@ export default defineComponent({
         const fp = splitPath.join('\\')
         const normalizedFile = path.normalize(path.resolve(fp)).replace(/\'/g,'\'\'')
         try {
-          const pt = await readFileConsoleErr('setting/playtime.json')
-          console.log(pt.split('\n'))
+          await readFileConsoleErr('setting/playtime.json')
         } catch (e) {
           await override('setting/playtime.json', '')
         }

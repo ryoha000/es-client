@@ -14,6 +14,7 @@
 <script lang="ts">
 import { defineComponent, ref, PropType } from '@vue/composition-api';
 import { StackType } from '../../../types/root';
+import { remote } from 'electron'
 
 export default defineComponent({
   name: 'MainViewHeader',
@@ -44,7 +45,7 @@ export default defineComponent({
     }
     const search = (e: KeyboardEvent) => {
       if (e.key === 'Enter') {
-        window.open(`https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/kensaku.php?category=game&word_category=name&word=${searchString.value}&mode=normal`)
+        remote.shell.openExternal(`https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/kensaku.php?category=game&word_category=name&word=${searchString.value}&mode=normal`)
       }
     }
     return { searchString, back, next, home, search }
