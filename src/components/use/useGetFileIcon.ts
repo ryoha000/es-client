@@ -22,6 +22,7 @@ const useGetFileIcon = () => {
         const str = iconv.decode(stdout, 'shiftjis')
         const result = str.replace(/\r/g,'').split('\n').filter((v) => !!v)
   
+        if (filePaths.length === 0) resolve([])
         if (result.length === 1) {
           resolve([{id: filePaths[0].id, path: filePaths[0].path, icon: result[0]}])
         } else if (result.length === 0) {

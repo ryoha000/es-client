@@ -59,10 +59,8 @@ const useJudgeGame = (allDMM: Record<number, DMM>) => {
     for (const linkPath of linkPaths) {
       const linkName = linkPath.split('\\').pop()
       if (!linkName) continue
-      if(linkName.includes('美少女')) console.log(linkName)
-      const id = isLinkAsGame(linkName.replace(/\.[^/.]+$/, ''))
-      if(linkName.includes('美少女')) console.log(id)
       // 拡張子を取り除いてGameかどうか判別
+      const id = isLinkAsGame(linkName.replace(/\.[^/.]+$/, ''))
       if (id !== 0) {
         i++
         //batch.push({id: id, path: linkPath})

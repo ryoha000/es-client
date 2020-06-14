@@ -20,7 +20,6 @@ const useGetFile = () => {
           const dirents = await showFilesDepth1(searchPath)
           for (const dirent of dirents) {
             const fp = path.join(searchPath, dirent.name);
-            if (dirent.name === 'Whirlpool') console.log(fp)
             if (dirent.isDirectory()) {
               nextSearchPaths.push(fp)
             } else {
