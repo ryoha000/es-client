@@ -5,7 +5,7 @@
       color="indigo-9"
       push
       no-caps
-      @click="startProcess"
+      @click="startProcess(true)"
     >
       <template v-slot:label>
         <div class="row items-center no-wrap">
@@ -20,6 +20,11 @@
         <q-item clickable v-close-popup @click="openRelationDialog">
           <q-item-section>
             <q-item-label>関連付けの変更</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item clickable v-close-popup @click="startProcess(false)">
+          <q-item-section>
+            <q-item-label>管理者権限無しで実行</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
@@ -52,7 +57,7 @@ export default defineComponent({
   components: { ChangeRelation },
   setup(props, context) {
     const { readFileConsoleErr, override, getHistory } = useJson()
-    const startProcess = async () => {
+    const startProcess = async (isAdmin: boolean) => {
       const listGame = props.gameInList[props.game.id]
       if (listGame) {
         const splitPath = listGame.path.split('\\')
@@ -64,18 +69,9 @@ export default defineComponent({
         } catch (e) {
           await override('setting/playtime.json', '')
         }
-        const absPath = path.resolve(__dirname).split('\\')
-        absPath.pop()
-        absPath.pop()
         const addStartTime = `$date = Get-Date ; Add-Content setting/playtime.json \"start\`n${listGame.id}\`n$date\"`
         const addFinishTime = `$date = Get-Date ; Add-Content setting/playtime.json \"end\`n${listGame.id}\`n$date\"`
-        // let rootAbsPath = ''
-        // for (let i = 0; i < absPath.length; i++) {
-        //   if (absPath[absPath.length - 1- i] === __dirname.split('\\')[0]) {
-        //     rootAbsPath = path.normalize(absPath.slice(0, absPath.length - i - 1).join('\\')).replace(/\'/g,'\'\'')
-        //   }
-        // }
-        const command = `${addStartTime} ; cd \'${normalizedFile}\' ; powershell Start-Process ${exe} -verb runas -Wait ; cd \'${absPath.join('\\')}\' ; ${addFinishTime}`
+        const command = `$now = pwd ; ${addStartTime} ; cd \'${normalizedFile}\' ; powershell Start-Process ${exe} ${isAdmin ? '-verb runas' : ''} -Wait ; cd $now.path ; ${addFinishTime}`
         // 何故か if(Buffer.isBuffer(stderr)) で判定してもダメだからanyに
         ChileProcess.exec(`powershell.exe -command "${command}"`, {encoding: 'binary', maxBuffer: 64*1024*1024}, (err, stdout, stderr: any) => {
           if (err) {
