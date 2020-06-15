@@ -18,12 +18,14 @@ const useGetFileIcon = () => {
       }
       exec(`powershell.exe -command "Add-Type -AssemblyName System.Drawing ; ${commands.join(' ; ')}"`, {encoding: 'binary', maxBuffer: 64*1024*1024}, (err: string, stdout: Buffer) => {
         if (err) {
-          //console.log(err)
+          console.log(err)
           return resolve(filePaths.map(v => ({id: v.id, path: v.path, icon: '' })))
           //return reject(err)
         }
         const str = iconv.decode(stdout, 'shiftjis')
         const result = str.replace(/\r/g,'').split('\n').filter((v) => !!v)
+        console.log(filePaths)
+        console.log(result)
   
         if (result.length === 0) {
           resolve(filePaths.map(v => ({id: v.id, path: v.path, icon: '' })))
