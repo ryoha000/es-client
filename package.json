@@ -23,7 +23,7 @@
     "@types/chardet": "^0.8.0",
     "@types/fs-extra": "^9.0.1",
     "@types/jsdom": "^16.2.3",
-    "@types/node": "^12.12.42",
+    "@types/node": "^14.0.13",
     "@types/request-promise-native": "^1.0.17",
     "@types/yargs": "^15.0.5",
     "@typescript-eslint/eslint-plugin": "^3.2.0",
