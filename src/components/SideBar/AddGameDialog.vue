@@ -138,8 +138,6 @@ export default defineComponent({
       const { addGameToList } = useJson()
       const { getIcon } = useGetFileIcon()
       const num = +(url.value)
-      console.log(num)
-      console.log(num === NaN)
       if (!url.value.startsWith('https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=') && isNaN(num)) {
         console.log('aaa')
         remote.dialog.showErrorBox('正しいURLまたはidを入力してください', '例) https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=26000')

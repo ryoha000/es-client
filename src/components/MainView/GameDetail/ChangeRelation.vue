@@ -4,7 +4,7 @@
       <q-card-section>
         <div class="text-h6">実行ファイルとゲームの関連付けの変更</div>
       </q-card-section>
-      <q-item-label header>ErogameScapeのURLを入力してください</q-item-label>
+      <q-item-label header>ErogameScapeのURLまたはゲームのidを入力してください</q-item-label>
       <q-item>
         <q-item-section>
           <q-input v-model="url" label="ErogameScape URL" />
@@ -23,6 +23,7 @@
 import { defineComponent, ref, PropType, computed } from '@vue/composition-api';
 import useJson from '../../use/useJson';
 import { ListGame } from '../../../types/root';
+import { remote } from 'electron';
 
 
 export default defineComponent({
@@ -38,18 +39,28 @@ export default defineComponent({
       context.emit('close')
     }
     const confirm = async () => {
-      if (!url.value.startsWith('https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=')) {
-        alert('正しいURLを入力してください\n例) https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=26000')
+      const num = +(url.value)
+      if (!url.value.startsWith('https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=') && isNaN(num)) {
+        remote.dialog.showErrorBox('正しいURLまたはidを入力してください', '例) https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=26000')
         return
       }
       try {
-        const id = +(url.value.replace('https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=', '')).replace('#ad', '')
+        let id = 0
+        const parsedUrl = +(url.value.replace('https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=', '')).replace('#ad', '')
+        if (!isNaN(num)) {
+          id = num
+        } else if (!isNaN(parsedUrl)) {
+          id = parsedUrl
+        } else {
+          remote.dialog.showErrorBox('正しいURLまたはidを入力してください', '例) https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=26000')
+          return
+        }
         await updateRelation(props.listGame.path, id)
         context.emit('createList')
         context.emit('close')
       } catch (e) {
         console.error(e)
-        alert('正しいURLを入力してください\n例) https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=26000')
+        remote.dialog.showErrorBox('正しいURLまたはidを入力してください', '例) https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=26000')
       }
     }
     return { url, close, confirm }
