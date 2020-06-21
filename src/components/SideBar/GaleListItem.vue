@@ -11,7 +11,7 @@
       >
         <q-item-section style="padding-right: 0;min-width: 0;" avatar>
           <q-avatar square>
-            <img :src="'data:image/png;base64,' + path.icon">
+            <q-img :ratio="1" :src="'data:image/png;base64,' + path.icon" />
           </q-avatar>
         </q-item-section>
         <q-item-section :class="$style.titleWrapper"><div :class="$style.title">{{ gameName(path.id) }}</div></q-item-section>
@@ -58,13 +58,29 @@ export default defineComponent({
     }
     const isOpenCreateListDialog = ref(false)
     const rightClick = (game: ListGame) => {
-      const { addGameToList, removeGameFromList } = useJson()
+      const { addGameToList, removeGameFromList, updateImage } = useJson()
+
       const menu = new Menu()
       menu.append(new MenuItem({ label: '一覧から削除', click: async() => {
         await removeGameFromList(props.filterListId, game)
         context.emit('createList');
       }}));
       menu.append(new MenuItem({ type: 'separator' }));
+
+      menu.append(new MenuItem({ label: 'アイコンを変更', click: async() => {
+        const result = await remote.dialog.showOpenDialog({
+          properties: ['openFile'],
+          filters: [{ name: 'Images', extensions: ['jpg', 'png'] }],
+          title: 'フォルダ(複数選択)',
+          defaultPath: '.'
+        })
+        if (result.filePaths.length > 0) {
+          await updateImage(game.path, result.filePaths[0])
+        }
+        context.emit('createList');
+      }}));
+      menu.append(new MenuItem({ type: 'separator' }));
+
       for (const list of props.lists) {
         if (list.id === 0) continue
         menu.append(new MenuItem({ label: `${list.name}に追加`, click: async() => {
@@ -73,6 +89,7 @@ export default defineComponent({
         }}))
         menu.append(new MenuItem({ type: 'separator' }));
       }
+
       menu.append(new MenuItem({ label: '新しいリストを作成', click: () => { isOpenCreateListDialog.value = true} }));
       menu.popup()
     }

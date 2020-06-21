@@ -71,6 +71,29 @@ const useJson = () => {
       await override('setting/lists.json', JSON.stringify([list]))
     }
   }
+  const updateImage = async (path: string, iconPath: string) => {
+    try {
+      const base64Icon = await fs.promises.readFile(iconPath, 'base64')
+      const jsonLists: List[] = JSON.parse(await readFileConsoleErr('setting/lists.json'))
+      if (!Array.isArray(jsonLists)) throw new Error()
+      for (const jsonList of jsonLists) {
+        let isChange = false
+        const list: List = jsonList
+        list.games = list.games.map(v => {
+          if (v.path === path) {
+            v.icon = base64Icon
+            isChange = true
+          }
+          return v
+        })
+        if (isChange) {
+          await updateOrInsertList(list)
+        }
+      }
+    } catch (e) {
+      console.error(e)
+    }
+  }
   const createNewList = async (listName: string, games: ListGame[]) => {
     try {
       const nowLists: List[] = JSON.parse(await readFileConsoleErr('setting/lists.json'))
@@ -253,7 +276,8 @@ const useJson = () => {
     addGameToList,
     updateRelation,
     removeGameFromList,
-    getHistory
+    getHistory,
+    updateImage
   }
 }
 
