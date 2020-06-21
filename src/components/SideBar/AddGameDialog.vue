@@ -29,7 +29,7 @@
       </q-item>
       <q-item v-if="isAddSelf">
         <q-item-section>
-            <q-input v-model="url" label="ErogameScape URL" />
+            <q-input v-model="url" label="ErogameScape URL or game id" />
           </q-item-section>
       </q-item>
       <q-item v-if="isAddSelf">
@@ -131,20 +131,43 @@ export default defineComponent({
       path.value = result.filePaths[0]
     }
     const add = async () => {
+      if (url.value.length === 0) {
+        remote.dialog.showErrorBox('正しいURLまたはidを入力してください', '例) https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=26000')
+        return
+      }
       const { addGameToList } = useJson()
       const { getIcon } = useGetFileIcon()
-      if (!url.value.startsWith('https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=')) {
-        alert('正しいURLを入力してください\n例) https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=26000')
+      const num = +(url.value)
+      console.log(num)
+      console.log(num === NaN)
+      if (!url.value.startsWith('https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=') && isNaN(num)) {
+        console.log('aaa')
+        remote.dialog.showErrorBox('正しいURLまたはidを入力してください', '例) https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=26000')
         return
       }
       try {
-        const id = +(url.value.replace('https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=', '')).replace('#ad', '')
+        let id = 0
+        const parsedUrl = +(url.value.replace('https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=', '')).replace('#ad', '')
+        if (!isNaN(num)) {
+          id = num
+        } else if (!isNaN(parsedUrl)) {
+          id = parsedUrl
+        } else {
+          remote.dialog.showErrorBox('正しいURLまたはidを入力してください', '例) https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=26000')
+          return
+        }
         try {
+          if (!props.allDMM[id].name) {
+            throw('idが正しくありません')
+          }
           loading.value = true
           const game: ListGame = (await getIcon([{id: id, path: path.value}]))[0]
           await addGameToList(0, game)
           alert(`${props.allDMM[game.id].name}を追加しました`)
         } catch (e) {
+          if (!props.allDMM[id].name) {
+            throw('idが正しくありません')
+          }
           const game: ListGame = {id: id, path: path.value, icon: ''}
           await addGameToList(0, game)
           alert(`${props.allDMM[game.id].name}を追加しました`)
@@ -158,7 +181,8 @@ export default defineComponent({
         }
       } catch (e) {
         console.error(e)
-        alert('正しいURLを入力してください\n例) https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=26000')
+        remote.dialog.showErrorBox('正しいURLまたはidを入力してください', '例) https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=26000')
+        return
       }
     }
     const openChangePath = () => {
