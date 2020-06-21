@@ -82,6 +82,6 @@ export default defineComponent({
 
 .checkbox {
   justify-content: center;
-  flex-direction: row;
+  flex-direction: row !important;
 }
 </style>

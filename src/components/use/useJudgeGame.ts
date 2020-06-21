@@ -27,13 +27,18 @@ const useJudgeGame = (allDMM: Record<number, DMM>) => {
     validateString.forEach(v => {
       cleanLinkName = cleanLinkName.replace(v, '')
     })
+
+    // 編集距離は最大でも0.8欲しい
+    let maxDistance = 0.8
     for (const dmm of Object.entries(allDMM)) {
       const gameTitle = toLowerAndHankaku(dmm[1].name)
-      if (editONP(cleanLinkName, gameTitle) > 0.8) {
+      const distance = editONP(cleanLinkName, gameTitle)
+      if (distance > maxDistance) {
         id = dmm[1].id
-        return id
+        maxDistance = distance
       }
     }
+    if (id !== 0) return id
     for (const dmm of Object.entries(allDMM)) {
       const gameTitle = toLowerAndHankaku(dmm[1].name)
       if (cleanLinkName.length > 5 && gameTitle.includes(cleanLinkName)) {
@@ -55,7 +60,6 @@ const useJudgeGame = (allDMM: Record<number, DMM>) => {
 
     // 紐づいたファイルの探索Promise
     const promises: Promise<{id: number, path: string}[]>[] = []
-    let i = 0
     for (const linkPath of linkPaths) {
       const linkName = linkPath.split('\\').pop()
       if (!linkName) continue
@@ -63,7 +67,6 @@ const useJudgeGame = (allDMM: Record<number, DMM>) => {
       const id = isLinkAsGame(linkName.replace(/\.[^/.]+$/, ''))
       // id: 2644はRUN
       if (id !== 0 && id !== 2644) {
-        i++
         //batch.push({id: id, path: linkPath})
         promises.push(getPath([{id: id, path: linkPath}]))
       }
@@ -71,7 +74,7 @@ const useJudgeGame = (allDMM: Record<number, DMM>) => {
 
     // とりあえず、ゲーム起動と紐づいてると思われる .lnk のPathをあつめたときの処理時間を出力
     console.log('finish prepare promise')
-    console.log(`finish: ${(new Date()).getTime() - start}`)
+    console.log(`time: ${(new Date()).getTime() - start}`)
 
     // .lnkに紐づいたファイルの探索関数
     const { getIcon } = useGetFileIcon()
@@ -116,9 +119,14 @@ const useJudgeGame = (allDMM: Record<number, DMM>) => {
       }
     })
 
+    // とることにした実行ファイルのPath配列
+    const exePaths: string[] = []
     games.forEach((v) => {
-      // 複数やるとバグるからとりあえずひとつずつPromise解決
-      promisesI.push(getIcon([v]))
+      if (exePaths.filter(p => p === v.path).length === 0) {
+        exePaths.push(v.path)
+        // 複数やるとバグるからとりあえずひとつずつPromise解決
+        promisesI.push(getIcon([v]))
+      }
     })
     // // 全てのファイルPathからアイコンの探索Promiseを作って、バッチに分けてPromise配列に追加
     // batch = []
