@@ -2,11 +2,11 @@
   <div :class="$style.container">
     <q-list dark  separator dense>
       <q-item
-        v-for="(path, i) in listGames" :key="i"
+        v-for="(path, i) in games" :key="i"
         clickable
         v-ripple
         style="padding: 0;width: 231px;"
-        @click="onClick(path.id)"
+        @click="onClick(path)"
         @click.right.prevent="rightClick(path)"
       >
         <q-item-section style="padding-right: 0;min-width: 0;" avatar>
@@ -26,6 +26,7 @@ import { defineComponent, PropType, computed, ref } from '@vue/composition-api';
 import { ListGame, DMM, List } from '../../types/root';
 import createListDialog from '../CreateListDialog.vue'
 import useJson from '../use/useJson';
+import useStartProcess from '../use/useStartProcess'
 
 const remote = require('electron').remote;
 const Menu = remote.Menu;
@@ -46,8 +47,23 @@ export default defineComponent({
     createListDialog
   },
   setup(props, context) {
-    const onClick = (id: number) => {
-      context.emit('game', id)
+    const clicked = ref(false)
+    const onClick = async (game: ListGame) => {
+      if (clicked.value) {
+        clicked.value = false;
+        const { startProcess } = useStartProcess(game)
+        await startProcess(undefined)
+        return;
+      }
+
+      clicked.value = true;
+
+      setTimeout(function () {
+        if (clicked.value) {
+          context.emit('game', game.id)
+        }
+        clicked.value = false;
+      }, 300);
     }
     const allDmmGames = computed(() => props.allGames)
     const gameName = (id: number) => {
@@ -99,8 +115,7 @@ export default defineComponent({
     const createList = () => {
       context.emit('createList')
     }
-    const listGames = computed(() => props.games)
-    return { onClick, listGames, gameName, allDmmGames, rightClick, isOpenCreateListDialog, closeCreateListDialog, createList }
+    return { onClick, gameName, allDmmGames, rightClick, isOpenCreateListDialog, closeCreateListDialog, createList }
   }
 });
 </script>
@@ -122,6 +137,7 @@ export default defineComponent({
     width: 183px;
     margin-left: 8px;
     font-size: 16px;
+    user-select: none;
   }
 }
 
