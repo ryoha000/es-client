@@ -8,6 +8,8 @@
         <q-icon name="search" color="white" :class="$style.icon" />
       </template>
     </q-input>
+    <q-btn flat icon="settings" @click="openSettingDialog" :class="$style.settingButton" />
+    <setting :isOpen="isOpenSettingDialog" @close="closeSettingDialog" />
   </div>
 </template>
 
@@ -15,6 +17,7 @@
 import { defineComponent, ref, PropType } from '@vue/composition-api';
 import { StackType } from '../../../types/root';
 import { remote } from 'electron'
+import Setting from './Setting.vue'
 
 export default defineComponent({
   name: 'MainViewHeader',
@@ -28,6 +31,7 @@ export default defineComponent({
     }
   },
   components: {
+    Setting
   },
   setup(_, context) {
     const searchString = ref('')
@@ -48,7 +52,14 @@ export default defineComponent({
         remote.shell.openExternal(`https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/kensaku.php?category=game&word_category=name&word=${searchString.value}&mode=normal`)
       }
     }
-    return { searchString, back, next, home, search }
+    const isOpenSettingDialog = ref(false)
+    const openSettingDialog = () => {
+      isOpenSettingDialog.value = true
+    }
+    const closeSettingDialog = () => {
+      isOpenSettingDialog.value = false
+    }
+    return { searchString, back, next, home, search, isOpenSettingDialog, openSettingDialog, closeSettingDialog }
   }
 });
 </script>
@@ -69,6 +80,14 @@ export default defineComponent({
       justify-content: center;
       align-items: center;
     }
+  }
+}
+
+.settingButton {
+  margin-left: 8px;
+  width: 36px;
+  :nth-child(2) {
+    padding: 4px;
   }
 }
 </style>

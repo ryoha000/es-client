@@ -5,7 +5,7 @@
       color="indigo-9"
       push
       no-caps
-      @click="startProcess(true)"
+      @click="startProcess(undefined)"
     >
       <template v-slot:label>
         <div class="row items-center no-wrap">
@@ -22,6 +22,11 @@
             <q-item-label>関連付けの変更</q-item-label>
           </q-item-section>
         </q-item>
+        <q-item clickable v-close-popup @click="startProcess(true)">
+          <q-item-section>
+            <q-item-label>管理者権限ありで実行</q-item-label>
+          </q-item-section>
+        </q-item>
         <q-item clickable v-close-popup @click="startProcess(false)">
           <q-item-section>
             <q-item-label>管理者権限無しで実行</q-item-label>
@@ -34,7 +39,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref } from '@vue/composition-api';
+import { defineComponent, PropType, ref, onMounted } from '@vue/composition-api';
 import { ListGame, Game } from '../../../types/root';
 import ChangeRelation from './ChangeRelation.vue'
 import * as ChileProcess from 'child_process'
@@ -57,7 +62,10 @@ export default defineComponent({
   components: { ChangeRelation },
   setup(props, context) {
     const { readFileConsoleErr, override, getHistory } = useJson()
-    const startProcess = async (isAdmin: boolean) => {
+    const startProcess = async (isAdmin: boolean | undefined) => {
+      if (isAdmin === undefined) {
+        isAdmin = JSON.parse(await readFileConsoleErr('setting/setting.json')).isVerbRunAs
+      }
       const listGame = props.gameInList[props.game.id]
       if (listGame) {
         const splitPath = listGame.path.split('\\')

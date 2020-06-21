@@ -82,7 +82,6 @@ export default defineComponent ({
         gl[element.id] = element
       })
       haveGame.value = gl
-      //console.log(editONP('金色ラブリッチェ -GOLDEN TIME-', '金色ラブリッチェ-GOLDENTIME-'))
     }
     const styles = useStyles()
     const { next, back, goHome, goDetail } = useRouteStack(routeIndex, routeStack)
@@ -113,7 +112,11 @@ export default defineComponent ({
     // eslint-disable-next-line @typescript-eslint/require-await
     onMounted(async () => {
       isLoading.value = true
-      jsonSetup()
+      try {
+        await jsonSetup()
+      } catch (e) {
+        alert('設定ファイルを作れません\n管理者権限を与えるか、必要なさそうなところで実行してください')
+      }
       try {
         const nowLists: List[] = JSON.parse(await readFileConsoleErr('setting/lists.json'))
         lists.value = nowLists
@@ -122,19 +125,19 @@ export default defineComponent ({
         console.error(e)
       }
       try {
-        // const a = JSON.parse(await readFileConsoleErr('setting/dmm.json'))
-        // const ad: Record<number, DMM> = {}
-        // for (const d of a.games) {
-        //   ad[d.id] = d
+        const a = JSON.parse(await readFileConsoleErr('setting/dmm.json'))
+        const ad: Record<number, DMM> = {}
+        for (const d of a.games) {
+          ad[d.id] = d
 
-        // }
-        // allDMM.value = ad
-        if (seiya.value.games.length === 0 || Date.now() - seiya.value.createdNow > 1000*60*60*24) {
-          await getSeiyaGames(seiya)
         }
-        allDMM.value = await getAllDMM()
-        campaigns.value = await getCampaignWithImage(allDMM)
-        sellSchedules.value = await getSchedule()
+        allDMM.value = ad
+        // if (seiya.value.games.length === 0 || Date.now() - seiya.value.createdNow > 1000*60*60*24) {
+        //   await getSeiyaGames(seiya)
+        // }
+        // allDMM.value = await getAllDMM()
+        // campaigns.value = await getCampaignWithImage(allDMM)
+        // sellSchedules.value = await getSchedule()
       } catch (e) {
         console.error(e)
       }

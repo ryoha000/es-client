@@ -84,7 +84,7 @@ export default defineComponent({
           playTime += his.time
         }
       }
-      playTimeString.value = `プレイ時間: ${Math.floor(playTime / 1000 / 60 / 60)}時間 ${Math.round(playTime / 1000 / 60)}分`
+      playTimeString.value = `プレイ時間: ${Math.floor(playTime / 1000 / 60 / 60)}時間 ${Math.round((playTime / 1000 / 60) % 60)}分`
     })
     return { links, score, creators, createList, playTimeString }
   }

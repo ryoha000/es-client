@@ -62,7 +62,6 @@ export default defineComponent({
     }
     const addPath = async () => {
       const { override } = useJson()
-      console.log(JSON.stringify(paths.value))
       await override('setting/folder.json', JSON.stringify(paths.value))
       close()
     }
@@ -71,13 +70,11 @@ export default defineComponent({
       try {
         const jsonPaths = JSON.parse(await readFileConsoleErr('setting/folder.json'))
         const prevPaths: string[] = []
-        console.log(jsonPaths)
         if (Array.isArray(jsonPaths)) {
           for (const jsonPath of jsonPaths) {
             if (typeof jsonPath === 'string') {
               if (jsonPath === '') continue
               prevPaths.push(jsonPath)
-              console.log(jsonPath)
             }
           }
           paths.value = [...prevPaths, '']

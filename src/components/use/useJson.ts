@@ -3,16 +3,6 @@ import * as iconv from 'iconv-lite'
 import { List, ListGame, History } from "src/types/root";
 
 const useJson = () => {
-  const jsonSetup = () => {
-    fs.exists('setting', (exist => {
-      if (!exist) {
-        fs.mkdir('setting', (err) => {
-          if (err) throw(err)
-          console.log('create setting folder')
-        })
-      } 
-    }))
-  }
   const override = async (path: string, data: string) => {
     try {
       await fs.promises.writeFile(path, data, 'utf8')
@@ -27,6 +17,30 @@ const useJson = () => {
     } catch (e) {
       console.error(e)
       throw e
+    }
+  }
+  const jsonSetup = async () => {
+    try {
+      await fs.promises.stat('setting')
+    } catch (e) {
+      console.error(e)
+      try {
+        await fs.promises.mkdir('setting')
+      } catch (e) {
+        console.error(e)
+        throw(e)
+      }
+    }
+    try {
+      await readFileConsoleErr('setting/setting.json')
+    } catch (e) {
+      try {
+        const settings = { isVerbRunAs: false }
+        await override('setting/setting.json', JSON.stringify(settings))
+      } catch (e) {
+        console.error(e)
+        throw(e)
+      }
     }
   }
   const updateOrInsertList = async (list: List) => {
