@@ -1,5 +1,11 @@
 <template>
-  <div id="q-app" :class="$style.app" :style="styles.app">
+  <div
+    id="q-app"
+    :class="$style.app"
+    :style="styles.app"
+    @drop.prevent="dropFile"
+    @dragover.prevent 
+  >
     <side-bar :class="$style.sidebar" @game="setGame" :haveGame="haveGame" :games="allDMM" @addGame="addGame" :lists="lists" @createList="createList" />
     <div :class="$style.mainview">
       <main-view-header @next="next" @back="back" @home="goHome" :routeStack="routeStack" :routeIndex="routeIndex" />
@@ -65,7 +71,7 @@ export default defineComponent ({
     const allDMM = ref<Record<number, DMM>>({})
     const seiya = ref<{createdNow: number, games: {name: string, url: string}[]}>({createdNow: Date.now(), games: []})
 
-    const { jsonSetup, readListGames, readFileConsoleErr, getHaveGame } = useJson()
+    const { jsonSetup, readListGames, readFileConsoleErr, getHaveGame, addGameToList } = useJson()
     const { searchAll, searchDifference } = useJudgeGame(allDMM.value)
     const addGameFolder = async () => {
       // console.log('ido')
@@ -107,6 +113,25 @@ export default defineComponent ({
       haveGame.value = newHaveGame
     }
 
+    const dropFile = async (event: DragEvent) => {
+      const { getEXE } = useJudgeGame(allDMM.value)
+      try {
+        const dragFilePath = event.dataTransfer?.files[0].path
+        if (dragFilePath) {
+          const newListGames = await getEXE([dragFilePath])
+          if (newListGames.length === 0) {
+            alert('ゲームを特定できませんでした')
+            return
+          }
+          await addGameToList(0, newListGames[0])
+          await createList()
+          alert(`${allDMM.value[newListGames[0].id].name}が追加されました`)
+        }
+      } catch (e) {
+        console.error(e)
+      }
+    }
+
     const { getCampaignWithImage, getSchedule, getSeiyaGames, getAllDMM, checkUpdate } = useScraping()
     
     // eslint-disable-next-line @typescript-eslint/require-await
@@ -143,8 +168,8 @@ export default defineComponent ({
       }
       try {
         // update時はここを変える
-        if (await checkUpdate(1.4)) {
-          alert('アップデートがあります')
+        if (await checkUpdate(1.5)) {
+          alert('アップデートがあります\nURL: https://github.com/ryoha000/es-client/releases')
         }
       } catch (e) {
         console.error(e)
@@ -171,7 +196,8 @@ export default defineComponent ({
       seiya,
       addGame,
       createList,
-      lists
+      lists,
+      dropFile
     }
   }
 })

@@ -139,7 +139,6 @@ export default defineComponent({
       const { getIcon } = useGetFileIcon()
       const num = +(url.value)
       if (!url.value.startsWith('https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=') && isNaN(num)) {
-        console.log('aaa')
         remote.dialog.showErrorBox('正しいURLまたはidを入力してください', '例) https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=26000')
         return
       }

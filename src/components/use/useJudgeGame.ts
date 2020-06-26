@@ -273,7 +273,7 @@ const useJudgeGame = (allDMM: Record<number, DMM>) => {
       return paths
     }
   }
-  return { searchAll, searchDifference }
+  return { searchAll, searchDifference, getEXE }
 }
 
 export default useJudgeGame
