@@ -68,6 +68,7 @@ export default defineComponent({
     onMounted(async() => {
       const { readFileConsoleErr } = useJson()
       try {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const jsonPaths = JSON.parse(await readFileConsoleErr('setting/folder.json'))
         const prevPaths: string[] = []
         if (Array.isArray(jsonPaths)) {

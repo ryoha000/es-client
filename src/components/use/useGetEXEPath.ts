@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 const exec = require('child_process').exec
 import path from 'path'
 import * as iconv from 'iconv-lite'
@@ -29,6 +32,7 @@ const useGetEXEPath = () => {
         return reject(new Error('Input is neither string nor array!'))
       }
   
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       exec(`powershell.exe -command "${commands.join('')}"`, {encoding: 'binary', maxBuffer: 64*1024*1024}, (err: string, stdout: Buffer) => {
         if (err) {
           return reject(err)

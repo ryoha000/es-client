@@ -49,6 +49,7 @@ const useJudgeGame = (allDMM: Record<number, DMM>) => {
     return id
   }
   const getEXE = async (linkPaths: string[]) => {
+    console.log(linkPaths.length)
     // 計測開始
     const start = (new Date()).getTime()
     console.log('start')
@@ -210,6 +211,7 @@ const useJudgeGame = (allDMM: Record<number, DMM>) => {
     const { readFileConsoleErr } = useJson()
     let customPaths: unknown = []
     try {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       customPaths = JSON.parse(await readFileConsoleErr('setting/folder.json'))
     } catch (e) {
       console.error(e)
@@ -242,6 +244,7 @@ const useJudgeGame = (allDMM: Record<number, DMM>) => {
 
     const { override, readFileConsoleErr, updateOrInsertList, readListGames } = useJson()
     try {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const prevPaths = JSON.parse(await readFileConsoleErr('setting/memory.json'))
       let differencePaths: string[] = []
       if (Array.isArray(prevPaths)) {

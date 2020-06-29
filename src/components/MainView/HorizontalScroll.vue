@@ -24,7 +24,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref, Ref } from '@vue/composition-api';
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import { defineComponent, PropType, ref } from '@vue/composition-api';
 import GameCard from './GameCard.vue'
 
 export interface CardInfo {
@@ -57,6 +59,7 @@ export default defineComponent({
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const scrollarea = (position: any) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       nowPosition.value = position.horizontalPosition
     }
     return {

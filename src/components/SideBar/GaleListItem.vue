@@ -28,6 +28,7 @@ import createListDialog from '../CreateListDialog.vue'
 import useJson from '../use/useJson';
 import useStartProcess from '../use/useStartProcess'
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const remote = require('electron').remote;
 const Menu = remote.Menu;
 const MenuItem = remote.MenuItem;

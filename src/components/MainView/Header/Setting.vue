@@ -27,7 +27,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, PropType, onMounted } from '@vue/composition-api';
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import { defineComponent, ref, onMounted } from '@vue/composition-api';
 import ChangeFolderPath from '../../SideBar/ChangeFolderPath.vue'
 import useJson from '../../use/useJson';
 

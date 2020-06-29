@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import * as fs from "fs";
 import * as iconv from 'iconv-lite'
 import { List, ListGame, History } from "src/types/root";

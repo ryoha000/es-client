@@ -9,6 +9,7 @@
 </template>
 
 <script lang="ts">
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { defineComponent, PropType } from '@vue/composition-api';
 import { CardInfo } from './HorizontalScroll.vue'
 import { remote } from 'electron'
@@ -21,11 +22,11 @@ export default defineComponent({
   components: {
   },
   setup(props) {
-    const onClick = () => {
-      remote.shell.openExternal(props.cardInfo.url)
+    const onClick = async () => {
+      await remote.shell.openExternal(props.cardInfo.url)
     }
-    const onClickContent = () => {
-      remote.shell.openExternal(props.cardInfo.contentUrl ?? props.cardInfo.url)
+    const onClickContent = async () => {
+      await remote.shell.openExternal(props.cardInfo.contentUrl ?? props.cardInfo.url)
     }
     return { onClick, onClickContent }
   }

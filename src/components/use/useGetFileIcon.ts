@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 const exec = require('child_process').exec
 import * as iconv from 'iconv-lite'
 import * as path from 'path'
@@ -16,6 +19,7 @@ const useGetFileIcon = () => {
       for (const filePath of filePaths) {
         commands.push(createCommand(filePath.path))
       }
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       exec(`powershell.exe -command "Add-Type -AssemblyName System.Drawing ; ${commands.join(' ; ')}"`, {encoding: 'binary', maxBuffer: 64*1024*1024}, (err: string, stdout: Buffer) => {
         if (err) {
           return resolve(filePaths.map(v => ({id: v.id, path: v.path, icon: '' })))

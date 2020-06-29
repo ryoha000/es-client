@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { store } from 'quasar/wrappers';
 import Vuex from 'vuex';
 import root from './root'
@@ -21,6 +22,8 @@ export interface StoreInterface {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default store(function ({ Vue }: any) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   Vue.use(Vuex);
 
   const Store = new Vuex.Store<StoreInterface>({

@@ -29,8 +29,8 @@ export default defineComponent({
     icon: { type: Boolean, default: true }
   },
   setup(props) {
-    const open = () => {
-      remote.shell.openExternal(props.url)
+    const open = async () => {
+      await remote.shell.openExternal(props.url)
     }
     const styles = useStyles(props)
     return { open, styles }

@@ -27,6 +27,7 @@
 </template>
 
 <script lang="ts">
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import SideBar from './components/SideBar/SideBar.vue'
 import MainViewHeader from './components/MainView/Header/MainViewHeader.vue'
 import Home from './pages/Home.vue'
@@ -41,6 +42,7 @@ import useJson from './components/use/useJson'
 import { remote } from 'electron'
 import useScraping from './components/use/useScraping'
 import useJudgeGame from './components/use/useJudgeGame'
+import useApi from './components/use/useApi'
 
 const useStyles = () => 
   reactive({
@@ -132,9 +134,8 @@ export default defineComponent ({
       }
     }
 
-    const { getCampaignWithImage, getSchedule, getSeiyaGames, getAllDMM, checkUpdate } = useScraping()
+    const { getCampaignWithImage, getSchedule, getSeiyaGames, checkUpdate } = useScraping()
     
-    // eslint-disable-next-line @typescript-eslint/require-await
     onMounted(async () => {
       isLoading.value = true
       try {
@@ -150,9 +151,13 @@ export default defineComponent ({
         console.error(e)
       }
       try {
-        const a = JSON.parse(await readFileConsoleErr('setting/dmm.json'))
+        //const a = JSON.parse(await readFileConsoleErr('setting/dmm.json'))
+        const { getAllDMM } = useApi()
+        const a = await getAllDMM()
+        console.log(a)
         const ad: Record<number, DMM> = {}
-        for (const d of a.games) {
+        for (const d of a) {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
           ad[d.id] = d
 
         }

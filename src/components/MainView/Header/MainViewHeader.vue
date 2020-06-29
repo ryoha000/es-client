@@ -47,9 +47,9 @@ export default defineComponent({
       console.log('home header')
       context.emit('home')
     }
-    const search = (e: KeyboardEvent) => {
+    const search = async (e: KeyboardEvent) => {
       if (e.key === 'Enter') {
-        remote.shell.openExternal(`https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/kensaku.php?category=game&word_category=name&word=${searchString.value}&mode=normal`)
+        await remote.shell.openExternal(`https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/kensaku.php?category=game&word_category=name&word=${searchString.value}&mode=normal`)
       }
     }
     const isOpenSettingDialog = ref(false)

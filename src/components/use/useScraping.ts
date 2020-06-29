@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import * as Request from 'request-promise-native';
 import * as Charset from 'chardet';
 import * as iconv   from 'iconv-lite';
@@ -208,7 +211,7 @@ const useScraping = () => {
     for (const tr of trs) {
       games.push({
         name: tr.getElementsByTagName('a')?.[0]?.innerHTML,
-        url: 'https://seiya-saiga.com/game/' + tr.getElementsByTagName('a')?.[0]?.getAttribute('href') ?? ''
+        url: `https://seiya-saiga.com/game/${tr.getElementsByTagName('a')?.[0]?.getAttribute('href') ?? ''}`
       })
     }
     seiya.value = {createdNow: Date.now(), games: games}

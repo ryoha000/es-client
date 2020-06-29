@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-floating-promises */
 /**
  * This file is used specifically and only for development. It installs
  * `electron-debug` & `vue-devtools`. There shouldn't be any need to
@@ -16,6 +19,7 @@ electronDebug({ showDevTools: true })
 app.whenReady().then(() => {
   installExtension(VUEJS_DEVTOOLS)
     .then(ext => {
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       console.log(`Added Extension: ${ext.name}`)
     })
     .catch(err => {

@@ -9,5 +9,6 @@ declare module 'vue/types/vue' {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default boot(({ Vue }: any) => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   Vue.prototype.$axios = axios;
 });

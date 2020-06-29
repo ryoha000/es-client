@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /*
  * This file runs in a Node context (it's NOT transpiled by Babel), so use only
  * the ES6 features that are supported by your Node version. https://node.green/
@@ -7,7 +9,6 @@
 // https://quasar.dev/quasar-cli/quasar-conf-js
 /* eslint-env node */
 /* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable @typescript-eslint/camelcase */
 const { configure } = require('quasar/wrappers');
 
 module.exports = configure(function (ctx) {
@@ -119,12 +120,22 @@ module.exports = configure(function (ctx) {
     },
 
     // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-devServer
+    // devServer: {
+    //   https: false,
+    //   port: 8080,
+    //   open: true // opens browser window automatically
+    // },
+
     devServer: {
       https: false,
       port: 8080,
-      open: true // opens browser window automatically
+      open: true, // opens browser window automatically
+      proxy: {
+        '/api/': {
+          target: 'http://localhost:8088',
+        }
+      }
     },
-
     // animations: 'all', // --- includes all animations
     // https://quasar.dev/options/animations
     animations: [],
