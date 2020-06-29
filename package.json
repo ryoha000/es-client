@@ -34,6 +34,7 @@
     "chardet": "^1.1.0",
     "csstype": "^2.6.10",
     "devtron": "^1.4.0",
+    "direct-vuex": "^0.11.1",
     "electron": "^9.0.4",
     "electron-debug": "^3.1.0",
     "electron-devtools-installer": "^3.0.0",
@@ -43,13 +44,16 @@
     "eslint-loader": "^4.0.2",
     "eslint-plugin-vue": "^6.1.2",
     "iconv-lite": "git+https://github.com/ashtuchkin/iconv-lite.git",
+    "idb-keyval": "^3.2.0",
     "jsdom": "git+https://github.com/ryoha000/jsdom.git",
     "request": "^2.88.2",
     "request-promise-native": "^1.0.8",
+    "shvl": "^2.0.0",
     "ts-node": "^8.10.2",
     "typescript": "^3.9.5",
     "vue-cli-plugin-electron-builder": "~1.4.6",
-    "vue-loader": "^15.9.2"
+    "vue-loader": "^15.9.2",
+    "vuex-persist": "^2.2.0"
   },
   "engines": {
     "node": ">= 10.18.1",

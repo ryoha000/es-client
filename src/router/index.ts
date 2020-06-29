@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import { route } from 'quasar/wrappers';
 import VueRouter from 'vue-router';
-import { StoreInterface } from '../store';
 import routes from './routes';
 
 /*
@@ -10,7 +9,7 @@ import routes from './routes';
  */
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default route<StoreInterface>(function ({ Vue }: any) {
+export default route(function ({ Vue }: any) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   Vue.use(VueRouter);

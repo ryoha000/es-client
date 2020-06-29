@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /*
@@ -120,12 +121,6 @@ module.exports = configure(function (ctx) {
     },
 
     // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-devServer
-    // devServer: {
-    //   https: false,
-    //   port: 8080,
-    //   open: true // opens browser window automatically
-    // },
-
     devServer: {
       https: false,
       port: 8080,

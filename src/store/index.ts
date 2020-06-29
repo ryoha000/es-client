@@ -1,41 +1,66 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-import { store } from 'quasar/wrappers';
-import Vuex from 'vuex';
-import root from './root'
-import { RootStateInterface } from './root/state'
+/* eslint-disable @typescript-eslint/unbound-method */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import Vue from 'vue'
+import Vuex from 'vuex'
+import { createDirectStore } from 'direct-vuex'
+import VuexPersistence from 'vuex-persist'
+import indexedDBStorage from './indexedDBStorage'
+import { persistReducer } from './defineDBModule'
+import { entities } from './entities'
+// import { domain } from './domain'
+// import { app } from './app'
+// import { ui } from './ui'
 
-// import example from './module-example';
-// import { ExampleStateInterface } from './module-example/state';
+Vue.use(Vuex)
 
-/*
- * If not building with SSR mode, you can
- * directly export the Store instantiation
- */
+const vuexStrict = process.env.NODE_ENV !== 'production'
 
-export interface StoreInterface {
-  // Define your own store structure, using submodules if needed
-  // example: ExampleStateInterface;
-  // Declared as unknown to avoid linting issue. Best to strongly type as per the line above.
-  example: unknown;
-  root: RootStateInterface
+const persisted = new VuexPersistence({
+  strictMode: vuexStrict,
+  storage: indexedDBStorage,
+  asyncStorage: true,
+  reducer: persistReducer
+})
+
+const {
+  store,
+  rootActionContext,
+  moduleActionContext,
+  rootGetterContext,
+  moduleGetterContext
+} = createDirectStore({
+  // vuex-persist setting for strict mode
+  mutations: vuexStrict
+    ? {
+        RESTORE_MUTATION: persisted.RESTORE_MUTATION
+      }
+    : {},
+  modules: {
+    entities,
+    // domain,
+    // app,
+    // ui
+  },
+  plugins: [persisted.plugin],
+  strict: vuexStrict
+})
+
+export default store
+export {
+  rootActionContext,
+  moduleActionContext,
+  rootGetterContext,
+  moduleGetterContext
+}
+export type AppStore = typeof store
+declare module 'vuex' {
+  interface Store<S> {
+    direct: AppStore
+  }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default store(function ({ Vue }: any) {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  Vue.use(Vuex);
+type OriginalStore = typeof store.original & {
+  readonly restored: Promise<void>
+}
 
-  const Store = new Vuex.Store<StoreInterface>({
-    modules: {
-      //example
-      root
-    },
-
-    // enable strict mode (adds overhead!)
-    // for dev mode only
-    strict: !!process.env.DEV
-  });
-
-  return Store;
-});
+export const originalStore = store.original as OriginalStore

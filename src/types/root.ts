@@ -1,3 +1,5 @@
+import { number } from "yargs";
+
 export interface StackType {
   type: 'Home' | 'Game' | 'Search'
   id: number
@@ -18,14 +20,14 @@ export type Game = {
   gengas: Creator[]
   sinarios: Creator[]
   seiyus: Seiyu[]
-  createdAt: Date
+  createdAt: string |null
 }
 
 export interface Creator {
   id: number
   name: string
   furigana: string
-  createdAt: Date
+  createdAt: string |null
 }
 
 export interface Seiyu extends Creator {
@@ -88,7 +90,7 @@ export interface SellSchedule {
     name: string
     brandId: number
     brandName: string
-    isMasterup: boolean
+    isMasterup: boolean | null
     image: string
   }[]
 }
@@ -101,4 +103,56 @@ export interface Directory {
 export interface History {
   id: number
   time: number
+}
+
+export interface MinimalGame {
+  id: number
+  gamename: string
+}
+
+export interface User {
+  id: string
+  es_user_id: string
+  display_name: string
+  comment: string | null
+  show_all_users: boolean | null
+  show_detail_all_users: boolean | null
+  show_followers: boolean | null
+  show_followers_okazu: boolean | null
+  twitter_id: string | null
+  icon_url: string | null
+}
+
+export interface Game1 {
+  id: number
+  gamename: string | null
+  furigana: string | null
+  sellday:	string |null
+  brand_id:	number
+  comike:	number | null
+  shoukai:	string | null
+  model:	string | null
+  erogame:	boolean | null
+  banner_url:	string | null
+  gyutto_id:	number | null
+  dmm:	string | null
+  dmm_genre:	string | null
+  dmm_genre_2:	string | null
+  erogametokuten: number | null
+  total_play_time_median: number | null
+  time_before_understanding_fun_median: number | null
+  dlsite_id:	string | null
+  dlsite_domain:	string | null
+  trial_url:	string | null
+  okazu:	boolean | null
+  axis_of_soft_or_hard: number | null
+  genre:	string | null
+  twitter:	string | null
+  digiket:	string | null
+  twitter_data_widget_id: number | null
+  masterup: string |null
+  steam: number | null
+  dlsite_rental: boolean | null
+  dmm_subsc: string | null
+  surugaya_1: number | null
 }

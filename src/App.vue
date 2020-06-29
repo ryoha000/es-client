@@ -38,6 +38,7 @@ import { makeStyles } from './lib/style'
 import useRouteStack from './components/use/useRouteStack'
 import useDictionary from './components/use/useDictionary'
 import useJson from './components/use/useJson'
+import store from './store'
 
 import { remote } from 'electron'
 import useScraping from './components/use/useScraping'
@@ -116,22 +117,27 @@ export default defineComponent ({
     }
 
     const dropFile = async (event: DragEvent) => {
-      const { getEXE } = useJudgeGame(allDMM.value)
-      try {
-        const dragFilePath = event.dataTransfer?.files[0].path
-        if (dragFilePath) {
-          const newListGames = await getEXE([dragFilePath])
-          if (newListGames.length === 0) {
-            alert('ゲームを特定できませんでした')
-            return
-          }
-          await addGameToList(0, newListGames[0])
-          await createList()
-          alert(`${allDMM.value[newListGames[0].id].name}が追加されました`)
-        }
-      } catch (e) {
-        console.error(e)
-      }
+      
+      console.log(Object.entries(store.state.entities.games))
+      await store.dispatch.entities.fetchGame(11)
+      console.log(Object.entries(store.state.entities.games))
+
+      // const { getEXE } = useJudgeGame(allDMM.value)
+      // try {
+      //   const dragFilePath = event.dataTransfer?.files[0].path
+      //   if (dragFilePath) {
+      //     const newListGames = await getEXE([dragFilePath])
+      //     if (newListGames.length === 0) {
+      //       alert('ゲームを特定できませんでした')
+      //       return
+      //     }
+      //     await addGameToList(0, newListGames[0])
+      //     await createList()
+      //     alert(`${allDMM.value[newListGames[0].id].name}が追加されました`)
+      //   }
+      // } catch (e) {
+      //   console.error(e)
+      // }
     }
 
     const { getCampaignWithImage, getSchedule, getSeiyaGames, checkUpdate } = useScraping()
