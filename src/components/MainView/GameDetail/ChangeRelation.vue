@@ -56,8 +56,7 @@ export default defineComponent({
           return
         }
         await updateRelation(props.listGame.path, id)
-        context.emit('createList')
-        context.emit('close')
+        close()
       } catch (e) {
         console.error(e)
         remote.dialog.showErrorBox('正しいURLまたはidを入力してください', '例) https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=26000')

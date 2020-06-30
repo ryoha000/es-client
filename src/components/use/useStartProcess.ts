@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import useJson from "./useJson"
+import useJson from './useJson'
 import * as ChileProcess from 'child_process'
 import * as iconv from 'iconv-lite'
 import * as path from 'path'
-import { ListGame } from "src/types/root"
+import { ListGame } from 'src/types/root'
 
 const useStartProcess = (game: ListGame) => {
   const startProcess = async (isAdmin: boolean | undefined) => {

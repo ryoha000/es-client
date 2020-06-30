@@ -4,19 +4,15 @@
       :class="$style.item"
       @sortByLastAccess="sortByLastAccess"
       :isSortByLastAccess="isSortByLastAccess"
-      :lists="lists" @createList="createList"
-      :haveGames="arrayList"
       @filter="filter"
     />
     <search :class="$style.search" @changeSearch="changeSearch" />
-    <add-game :class="$style.item" @createList="createList" />
+    <add-game :class="$style.item" />
     <q-scroll-area :style="styles.scrollArea" dark>
       <game-list-item
         :class="$style.item"
         @game="setGame"
         :games="arrayList"
-        :lists="lists"
-        @createList="createList"
         :filterListId="filterListId"
       />
     </q-scroll-area>
@@ -24,19 +20,18 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, computed, ref, reactive, Ref, onMounted } from '@vue/composition-api';
+import { defineComponent, computed, ref, reactive, Ref, onMounted } from '@vue/composition-api';
 import FilterGame from './FilterGame.vue'
 import Search from './Search.vue'
 import GameListItem from './GaleListItem.vue'
 import AddGame from './AddGame.vue'
-import { ListGame, List } from '../../types/root';
 import { makeStyles } from '../../lib/style'
 import store from 'src/store'
 import * as fs from 'fs'
 
 const useStyles = (height: Ref<number>) => 
   reactive({
-    scrollArea: makeStyles(theme => ({
+    scrollArea: makeStyles(() => ({
         height: `calc( ${height.value}px - 126px )`,
       })
     )
@@ -45,11 +40,6 @@ const useStyles = (height: Ref<number>) =>
 export default defineComponent({
   name: 'SideBar',
   props: {
-    haveGame: { type: Object as PropType<Record<number, ListGame>>, required: true },
-    lists: {
-      type: Array as PropType<List[]>,
-      default: []
-    }
   },
   components: {
     FilterGame,
@@ -61,17 +51,32 @@ export default defineComponent({
     const setGame = (id: number) => {
       context.emit('game', id)
     }
+
+    const haveGames = computed(() => store.getters.app.getListById(0))
+    const arrayList = ref(haveGames.value?.games.map(v => v) ?? [])
+
+    const minimalGames = computed(() => store.state.entities.minimalGames)
+    const filteredList = computed(() => store.getters.app.getListById(filterListId.value))
+
     const isSortByLastAccess = ref(false)
     const lastAccessTime = ref<Record<number, Date>>({})
-
-    const searchString = ref('')
-    const changeSearch = (value: string) => {
-      searchString.value = value
-    }
 
     const filterListId = ref(0)
     const filter = (v: {label: string, id: number}) => {
       filterListId.value = v.id
+    }
+
+    const searchString = ref('')
+    const changeSearch = (value: string) => {
+      searchString.value = value
+      if (value !== '') {
+        arrayList.value = filteredList.value?.games.filter(v => {
+          const gamename = minimalGames.value[v.id]?.gamename
+          return gamename.toLowerCase().includes(value.toLowerCase())
+        }) ?? []
+      } else {
+        arrayList.value = filteredList.value?.games ?? []
+      }
     }
 
     const windowHeight = ref(window.innerHeight)
@@ -82,27 +87,23 @@ export default defineComponent({
     })
     const styles = useStyles(windowHeight)
 
+    const haveGameDetails = computed(() => store.state.entities.haveGames)
     const sortByLastAccess = async () => {
-      // TODO 並列
-      for (const listGame of Object.entries(props.haveGame)) {
-        try {
-          const stats = await fs.promises.stat(listGame[1].path)
-          lastAccessTime.value[listGame[1].id] = stats.birthtime
-        } catch (e) {
-          //console.error(e)
-          continue
+      if (!haveGames.value) return
+      if (Object.values(lastAccessTime.value).length === 0) {
+        // TODO 並列
+        for (const listGame of haveGames.value.games) {
+          try {
+            const stats = await fs.promises.stat(listGame.path)
+            lastAccessTime.value[listGame.id] = stats.birthtime
+          } catch (e) {
+            //console.error(e)
+            continue
+          }
         }
       }
-      isSortByLastAccess.value = !isSortByLastAccess.value
-    }
-
-    const minimalGames = computed(() => store.state.entities.minimalGames)
-
-    const arrayList = computed(() => {
-      //let arrayListGame = props.lists.find(v => v.id === filterListId.value)?.games ?? (Object.entries(props.haveGame)).map(v => v[1])
-      let arrayListGame = props.lists.find(v => v.id === filterListId.value)?.games ?? (Object.entries(props.haveGame)).map(v => v[1])
-      if (isSortByLastAccess.value) {
-        arrayListGame.sort((a, b) => {
+      if (!isSortByLastAccess.value) {
+        arrayList.value.sort((a, b) => {
           const aTime = lastAccessTime.value[a.id]
           const bTime = lastAccessTime.value[b.id]
           if (!aTime && !bTime) {
@@ -116,20 +117,14 @@ export default defineComponent({
           }
         })
       } else {
-        arrayListGame.sort()
+        arrayList.value.sort((a, b) => {
+          return ((haveGameDetails.value[`${a.id}`]?.furigana ?? '') < (haveGameDetails.value[`${b.id}`]?.furigana ?? '')) ? -1 : 1
+        })
       }
-      if (searchString.value !== '') {
-        arrayListGame = arrayListGame.filter(v => minimalGames.value[v.id]?.gamename.toLowerCase().includes(searchString.value.toLowerCase()))
-      }
-      return arrayListGame
-    })
-    const addGame = () => {
-      context.emit('addGame')
+      isSortByLastAccess.value = !isSortByLastAccess.value
     }
-    const createList = () => {
-      context.emit('createList')
-    }
-    return { setGame, sortByLastAccess, lastAccessTime, arrayList, isSortByLastAccess, styles, addGame, changeSearch, createList, filter, filterListId }
+    
+    return { setGame, sortByLastAccess, lastAccessTime, arrayList, isSortByLastAccess, styles, changeSearch, filter, filterListId }
   }
 });
 </script>

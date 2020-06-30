@@ -56,8 +56,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, PropType, computed } from '@vue/composition-api';
-import useJudgeGame from './use/useJudgeGame'
+import { defineComponent, ref, computed } from '@vue/composition-api';
 import useJson from './use/useJson'
 import { ListGame } from '../types/root';
 import store from 'src/store'
@@ -67,10 +66,6 @@ export default defineComponent({
   props: {
     isOpen: {
       type: Boolean, required: true
-    },
-    haveGames: {
-      type: Array as PropType<ListGame[]>,
-      required: true
     },
   },
   setup(props, context) {
@@ -92,15 +87,15 @@ export default defineComponent({
     }
     const create = async () => {
       await createNewList(title.value, initialGames.value)
-      context.emit('createList')
-      context.emit('close')
+      close()
     }
     const games = computed(() => {
-      return props.haveGames.filter(v => {
+      const haveGames = store.getters.app.getListById(0)?.games ?? []
+      return haveGames.filter(v => {
         if (searchString.value === '') {
           return true
         }
-        return allGames.value[v.id]?.gamename.toLowerCase().includes(searchString.value)
+        return allGames.value[v.id]?.gamename.toLowerCase().includes(searchString.value) ?? false
       })
     })
     return { title, close, create, onClick, initialGames, gameName, searchString, games }

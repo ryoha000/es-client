@@ -17,13 +17,13 @@
         <q-item-section :class="$style.titleWrapper"><div :class="$style.title">{{ gameName(path.id) }}</div></q-item-section>
       </q-item>
     </q-list>
-    <create-list-dialog :isOpen="isOpenCreateListDialog" @close="closeCreateListDialog" :haveGames="games" @createList="createList" />
+    <create-list-dialog :isOpen="isOpenCreateListDialog" @close="closeCreateListDialog" />
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, computed, ref } from '@vue/composition-api';
-import { ListGame, List } from '../../types/root';
+import { defineComponent, computed, ref, PropType } from '@vue/composition-api';
+import { ListGame } from '../../types/root';
 import createListDialog from '../CreateListDialog.vue'
 import useJson from '../use/useJson';
 import useStartProcess from '../use/useStartProcess'
@@ -38,10 +38,6 @@ export default defineComponent({
   name: 'GameListItem',
   props: {
     games: { type: Array as PropType<ListGame[]>, required: true },
-    lists: {
-      type: Array as PropType<List[]>,
-      default: []
-    },
     filterListId: { type: Number, default: 0 }
   },
   components: {
@@ -71,6 +67,8 @@ export default defineComponent({
       return haveGameInfo.value[id]?.gamename ?? ''
     }
     const isOpenCreateListDialog = ref(false)
+
+    const lists = computed(() => store.state.app.lists)
     const rightClick = (game: ListGame) => {
       const { addGameToList, removeGameFromList, updateImage } = useJson()
 
@@ -95,7 +93,7 @@ export default defineComponent({
       }}));
       menu.append(new MenuItem({ type: 'separator' }));
 
-      for (const list of props.lists) {
+      for (const list of lists.value) {
         if (list.id === 0) continue
         menu.append(new MenuItem({ label: `${list.name}に追加`, click: async() => {
           await addGameToList(list.id, game);

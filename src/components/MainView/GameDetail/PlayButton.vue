@@ -34,19 +34,16 @@
         </q-item>
       </q-list>
     </q-btn-dropdown>
-    <change-relation @close="closeRelationDialog" :isOpen="isOpenRelationDialog" :listGame="gameInList[game.id]" @createList="createList" />
+    <change-relation @close="closeRelationDialog" :isOpen="isOpenRelationDialog" :listGame="nowListGame" />
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref, onMounted } from '@vue/composition-api';
-import { ListGame, Game } from '../../../types/root';
+import { defineComponent, PropType, ref, computed } from '@vue/composition-api';
+import { Game } from '../../../types/root';
 import ChangeRelation from './ChangeRelation.vue'
-import * as ChileProcess from 'child_process'
-import * as iconv from 'iconv-lite'
-import * as path from 'path'
-import useJson from '../../use/useJson';
 import useStartProcess from '../../use/useStartProcess'
+import store from 'src/store'
 
 export default defineComponent({
   name: 'PlayButton',
@@ -55,16 +52,13 @@ export default defineComponent({
       type: Object as PropType<Game>,
       required: true
     },
-    gameInList :{
-      type: Object as PropType<Record<number, ListGame>>,
-      required: true
-    }
   },
   components: { ChangeRelation },
-  setup(props, context) {
-    const { readFileConsoleErr, override, getHistory } = useJson()
+  setup(props) {
+    const nowListGame = computed(() =>  store.getters.app.getListGameByGameId(props.game.id))
     const startProcess = async (isAdmin: boolean | undefined) => {
-      const { startProcess } = useStartProcess(props.gameInList[props.game.id])
+      if (!nowListGame.value) return
+      const { startProcess } = useStartProcess(nowListGame.value)
       await startProcess(isAdmin)
     }
     const isOpenRelationDialog = ref(false)
@@ -74,10 +68,7 @@ export default defineComponent({
     const openRelationDialog = () => {
       isOpenRelationDialog.value = true
     }
-    const createList = () => {
-      context.emit('createList')
-    }
-    return { startProcess, isOpenRelationDialog, openRelationDialog, closeRelationDialog, createList }
+    return { startProcess, isOpenRelationDialog, openRelationDialog, closeRelationDialog, nowListGame }
   }
 });
 </script>

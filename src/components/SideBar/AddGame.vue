@@ -4,15 +4,13 @@
       <div style="margin-left: 8px;" />
       ゲームを追加
     </q-btn>
-    <add-game-dialog :isOpen="isOpenDialog" @close="onCloseDialog" @createList="createList"/>
+    <add-game-dialog :isOpen="isOpenDialog" @close="onCloseDialog" />
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, PropType } from '@vue/composition-api';
-import useScraping from '../use/useScraping'
+import { defineComponent, ref } from '@vue/composition-api';
 import AddGameDialog from './AddGameDialog.vue'
-import store from 'src/store'
 
 export default defineComponent({
   name: 'AddGame',
@@ -21,25 +19,15 @@ export default defineComponent({
   },
   props: {
   },
-  setup(_, context) {
-    const { getTitle, getGameDetail } = useScraping()
+  setup() {
     const isOpenDialog = ref(false)
-    const onClick = async () => {
-      console.log(Object.values(store.state.entities.haveGames))
-      try {
-
-        await store.dispatch.entities.setHaveGames()
-      } catch (e) { console.error(e) }
-      
+    const onClick = () => {
       isOpenDialog.value = true
     }
     const onCloseDialog = () => {
       isOpenDialog.value = false
     }
-    const createList = () => {
-      context.emit('createList')
-    }
-    return { onClick, isOpenDialog, onCloseDialog, createList }
+    return { onClick, isOpenDialog, onCloseDialog }
   }
 });
 </script>

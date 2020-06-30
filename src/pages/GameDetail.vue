@@ -21,20 +21,20 @@
         />
       </div>
     </div>
-    <main-wrapper :game="game" :gameInList="haveGame" @createList="createList"/>
+    <main-wrapper :game="game" />
   </q-scroll-area>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType, ref, computed, Ref, reactive, onMounted } from '@vue/composition-api';
 import MainWrapper from '../components/MainView/GameDetail/MainWrapper.vue'
-import { Game, Record, ListGame, List } from '../types/root';
+import { Game, Record } from '../types/root';
 import { makeStyles } from '../lib/style'
 import LinkC from '../components/MainView/GameDetail/Link.vue'
 
 const useStyles = (windowHeight: Ref<number>) => 
   reactive({
-    container: makeStyles(theme => ({
+    container: makeStyles(() => ({
         height: `calc( ${windowHeight.value}px - 52px )`
       })
     )
@@ -52,20 +52,12 @@ export default defineComponent({
       type: Number,
       required: true
     },
-    haveGame: {
-      type: Object as PropType<Record<number, ListGame>>,
-      required: true
-    },
-    lists: {
-      type: Array as PropType<List[]>,
-      default: []
-    }
   },
   components: {
     MainWrapper,
     LinkC
   },
-  setup(props, context) {
+  setup(props) {
     const game = computed(() => {
       console.log(props.games[props.id], props.games, props.id)
       return props.games[props.id]
@@ -77,14 +69,11 @@ export default defineComponent({
         windowHeight.value = window.innerHeight
       })
     })
-    const createList = () => {
-      context.emit('createList')
-    }
     const createSellDayURL = (sellday: string) => {
       const [year, month, day] = sellday.split('-')
       return `https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/toukei_hatubaibi_month.php?year=${year}&month=${month}#${sellday}`
     }
-    return { game, styles, createList, createSellDayURL }
+    return { game, styles, createSellDayURL }
   }
 });
 </script>

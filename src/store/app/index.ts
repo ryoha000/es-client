@@ -3,6 +3,7 @@ import { state } from './state'
 import { getters } from './getters'
 import { mutations } from './mutations'
 import { actions } from './actions'
+import { ListGame } from 'src/types/root'
 
 export type Seiya = { gamename: string, url: string }[]
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

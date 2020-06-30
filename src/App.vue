@@ -1,28 +1,26 @@
 <template>
   <div
+    v-if="!isLoading"
     id="q-app"
     :class="$style.app"
     :style="styles.app"
     @drop.prevent="dropFile"
-    @dragover.prevent 
+    @dragover.prevent
   >
-    <side-bar :class="$style.sidebar" @game="setGame" :haveGame="haveGame" @addGame="addGame" :lists="lists" @createList="createList" />
+    <side-bar :class="$style.sidebar" @game="setGame" />
     <div :class="$style.mainview">
       <main-view-header @next="next" @back="back" @home="goHome" :routeStack="routeStack" :routeIndex="routeIndex" />
-      <div v-if="!isLoading">
-        <home v-if="routeStack[routeIndex].type === 'Home'" :campaigns="campaigns" :sellSchedules="sellSchedules" :lists="lists" />
+      <div>
+        <home v-if="routeStack[routeIndex].type === 'Home'" :campaigns="campaigns" :sellSchedules="sellSchedules"/>
         <game-detail
           v-if="routeStack[routeIndex].type === 'Game'"
           :games="games"
           :id="gameId"
-          :haveGame="haveGame"
-          :lists="lists"
-          @createList="createList"
         />
       </div>
-      <div v-else>Now Loading...</div>
     </div>
   </div>
+  <div v-else>Now Loading...</div>
 </template>
 
 <script lang="ts">
@@ -67,11 +65,9 @@ export default defineComponent ({
     const gameId = ref(0)
     const campaigns = ref<Campaign[]>([])
     const sellSchedules = ref<SellSchedule[]>([])
-    const haveGame = ref<Record<number, ListGame>>({})
-    const lists = ref<List[]>([])
     const isLoading = ref(true)
 
-    const { jsonSetup, readListGames, readFileConsoleErr, getHaveGame, addGameToList } = useJson()
+    const { jsonSetup, addGameToList } = useJson()
     const styles = useStyles()
     const { next, back, goHome, goDetail } = useRouteStack(routeIndex, routeStack)
     const { getOrSelect } = useDictionary(games)
@@ -84,21 +80,9 @@ export default defineComponent ({
       goDetail(id)
     }
 
-    const addGame = async () => {
-      haveGame.value = await readListGames(0)
-    }
-    const createList = async () => {
-      lists.value = JSON.parse(await readFileConsoleErr('setting/lists.json'))
-      const newHaveGame: Record<number, ListGame> = {}
-      lists.value.find(v => v.id === 0)?.games.forEach(v => {
-        newHaveGame[v.id] = v
-      })
-      haveGame.value = newHaveGame
-    }
-
     const dropFile = async (event: DragEvent) => {
       const minimalGames = store.state.entities.minimalGames
-      const { searchAll, searchDifference, getEXE } = useJudgeGame(minimalGames)
+      const { getEXE } = useJudgeGame(minimalGames)
       try {
         const dragFilePath = event.dataTransfer?.files[0].path
         console.log(Object.values(minimalGames))
@@ -109,7 +93,6 @@ export default defineComponent ({
             return
           }
           await addGameToList(0, newListGames[0])
-          await createList()
           alert(`${minimalGames[newListGames[0].id].gamename}が追加されました`)
         }
       } catch (e) {
@@ -127,17 +110,11 @@ export default defineComponent ({
         alert('設定ファイルを作れません\n管理者権限を与えるか、必要なさそうなところで実行してください')
       }
       try {
-        const nowLists: List[] = JSON.parse(await readFileConsoleErr('setting/lists.json'))
-        lists.value = nowLists
-        haveGame.value = getHaveGame(nowLists)
-      } catch(e) {
-        console.error(e)
-      }
-      try {
+        // TODO: 並列化
         await store.dispatch.entities.setAllMinimalGames()
         await store.dispatch.entities.setHaveGames()
+        await store.dispatch.app.setLists()
         // await store.dispatch.app.setSeiya()
-        //const a = JSON.parse(await readFileConsoleErr('setting/dmm.json'))
 
         // allDMM.value = await getAllDMM()
         // campaigns.value = await getCampaignWithImage(allDMM)
@@ -162,7 +139,6 @@ export default defineComponent ({
       isLoading,
       games,
       gameId,
-      haveGame,
       next,
       back,
       goHome,
@@ -170,9 +146,6 @@ export default defineComponent ({
       setGame,
       campaigns,
       sellSchedules,
-      addGame,
-      createList,
-      lists,
       dropFile
     }
   }

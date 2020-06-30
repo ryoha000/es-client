@@ -51,7 +51,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, PropType, computed } from '@vue/composition-api';
+import { defineComponent, ref, computed } from '@vue/composition-api';
 import useJudgeGame from '../use/useJudgeGame'
 import { ListGame } from '../../types/root';
 import { remote } from 'electron'
@@ -91,7 +91,6 @@ export default defineComponent({
     const diff = async () => {
       loading.value = true
       const newGames = await searchDifference()
-      context.emit('createList')
       loading.value = false
       let message = ''
       for (const g of newGames) {
@@ -102,7 +101,7 @@ export default defineComponent({
         message = '追加されたゲームはありません'
       }
       alert(message)
-      context.emit('close')
+      close()
     }
     const all = async () => {
       loading.value = true
@@ -111,9 +110,8 @@ export default defineComponent({
       } catch (e) {
         console.error(e)
       }
-      context.emit('createList')
       loading.value = false
-      context.emit('close')
+      close()
     }
     const addSelf = async () => {
       isAddSelf.value = true
@@ -168,12 +166,7 @@ export default defineComponent({
           await addGameToList(0, game)
           alert(`${minimalGames.value[game.id].gamename}を追加しました`)
         } finally {
-          loading.value = false
-          isAddSelf.value = false
-          url.value = ''
-          path.value = ''
-          context.emit('createList')
-          context.emit('close')
+          close()
         }
       } catch (e) {
         console.error(e)

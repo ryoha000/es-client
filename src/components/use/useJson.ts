@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import * as fs from "fs";
+import * as fs from 'fs';
 import * as iconv from 'iconv-lite'
-import { List, ListGame, History } from "src/types/root";
+import { List, ListGame, History } from 'src/types/root';
+import store from 'src/store'
 
 const useJson = () => {
   const override = async (path: string, data: string) => {
@@ -45,6 +46,15 @@ const useJson = () => {
       }
     }
   }
+  const getLists = async (): Promise<List[]> => {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return JSON.parse(await readFileConsoleErr('setting/lists.json'))
+    } catch (e) {
+      console.error(e)
+      return []
+    }
+  }
   const updateOrInsertList = async (list: List) => {
     try {
       const jsonLists = JSON.parse(await readFileConsoleErr('setting/lists.json'))
@@ -66,6 +76,7 @@ const useJson = () => {
         if (!exist) {
           newList.push(list)
         }
+        store.commit.app.setLists(newList)
         await override('setting/lists.json', JSON.stringify(newList))
       }
     } catch(e) {
@@ -121,11 +132,8 @@ const useJson = () => {
     return haveGame
   }
   const getHaveGameIdArray = async () => {
-    console.log('a')
     try {
       const lists: List[] = JSON.parse(await readFileConsoleErr('setting/lists.json'))
-
-      console.log(lists)
       const haveGames: number[] = []
       lists.forEach((element: List) => {
         if (element.id === 0) {
@@ -186,10 +194,25 @@ const useJson = () => {
           list.name = jsonList.name
           list.games.push(...jsonList.games.filter(v => v.path !== game.path))
           console.log(list)
-          break
         }
       }
       await updateOrInsertList(list)
+    } catch (e) {
+      console.error(e)
+    }
+  }
+  const removeList = async (id :number) => {
+    const lists: List[] = []
+    try {
+      const jsonLists: List[] = JSON.parse(await readFileConsoleErr('setting/lists.json'))
+      if (!Array.isArray(jsonLists)) throw new Error()
+      for (const jsonList of jsonLists) {
+        if (jsonList.id === id) {
+          continue
+        }
+        lists.push(jsonList)
+      }
+      await override('setting/lists.json', JSON.stringify(lists))
     } catch (e) {
       console.error(e)
     }
@@ -212,6 +235,7 @@ const useJson = () => {
         newLists.push({id: jsonList.id, name: jsonList.name, games: games})
       }
       console.log(newLists)
+      store.commit.app.setLists(newLists)
       await override('setting/lists.json', JSON.stringify(newLists))
     } catch (e) {
       console.error(e)
@@ -300,7 +324,9 @@ const useJson = () => {
     removeGameFromList,
     getHistory,
     updateImage,
-    getHaveGameIdArray
+    getHaveGameIdArray,
+    removeList,
+    getLists
   }
 }
 

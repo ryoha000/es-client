@@ -28,7 +28,6 @@ export const actions = defineActions({
     const { getHaveGameIdArray } = useJson()
     const haveGameIDs = await getHaveGameIdArray()
     const data = await getGamesWithoutNumByIds(haveGameIDs ?? [])
-    console.log(Object.values(reduceToRecord(data, 'id')))
     commit.setHaveGames(reduceToRecord(data, 'id'))
   },
 })

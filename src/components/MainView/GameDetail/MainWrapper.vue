@@ -2,9 +2,7 @@
   <div :class="$style.container">
     <div :class="$style.button">
       <play-button
-        :gameInList="gameInList"
         :game="game"
-        @createList="createList"
       />
       <div :class="$style.playTime">{{ playTimeString }}</div>
     </div>
@@ -27,9 +25,8 @@ import LinkC from './Link.vue'
 import PlayButton from './PlayButton.vue'
 import GameInfo, { CreatorInfo } from './GameInfo.vue'
 import ScoreC, { Score } from './Score.vue'
-import { Game, ListGame } from '../../../types/root';
+import { Game } from '../../../types/root';
 import useScraping from '../../use/useScraping'
-import { number } from 'yargs';
 import useJson from '../../use/useJson';
 import store from 'src/store'
 
@@ -40,10 +37,6 @@ export default defineComponent({
       type: Object as PropType<Game>,
       required: true
     },
-    gameInList :{
-      type: Object as PropType<Record<number, ListGame>>,
-      required: true
-    },
   },
   components: {
     LinkC,
@@ -51,7 +44,7 @@ export default defineComponent({
     GameInfo,
     ScoreC,
   },
-  setup(props, context) {
+  setup(props) {
     const { getSeiyaURL } = useScraping()
     const links = computed(() => [
       { title: 'OHP', url: props.game.officialHomePage },
@@ -69,9 +62,6 @@ export default defineComponent({
       sinarios: props.game.sinarios,
       seiyus: props.game.seiyus
     }))
-    const createList = () => {
-      context.emit('createList')
-    }
     const { getHistory } = useJson()
     const playTimeString = ref('')
     onMounted(async () => {
@@ -84,7 +74,7 @@ export default defineComponent({
       }
       playTimeString.value = `プレイ時間: ${Math.floor(playTime / 1000 / 60 / 60)}時間 ${Math.round((playTime / 1000 / 60) % 60)}分`
     })
-    return { links, score, creators, createList, playTimeString }
+    return { links, score, creators, playTimeString }
   }
 });
 </script>

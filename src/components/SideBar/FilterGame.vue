@@ -14,14 +14,14 @@
       :color="isSortByLastAccess ? 'blue' : 'snow'"
       @click="sortAccessTime"
     />
-    <create-list-dialog @createList="createList" :isOpen="isOpenCreateListDialog" @close="closeCreateListDialog" :haveGames="haveGames"/>
+    <create-list-dialog :isOpen="isOpenCreateListDialog" @close="closeCreateListDialog" />
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, PropType, computed } from '@vue/composition-api';
-import { List, ListGame } from '../../types/root';
+import { defineComponent, ref, computed } from '@vue/composition-api';
 import CreateListDialog from '../CreateListDialog.vue'
+import store from 'src/store'
 
 export default defineComponent({
   name: 'FilterGame',
@@ -29,30 +29,19 @@ export default defineComponent({
     isSortByLastAccess: {
       type: Boolean, required: true
     },
-    lists: {
-      type: Array as PropType<List[]>,
-      default: []
-    },
-    haveGames: {
-      type: Array as PropType<ListGame[]>,
-      required: true
-    },
   },
   components: {
     CreateListDialog
   },
   setup(props, context) {
     const model = ref('所持ゲーム')
-    const options = computed(() => [...props.lists.map(v => ({label: v.name, id: v.id})), '新しいリストを作成'])
+    const options = computed(() => [...store.state.app.lists.map(v => ({label: v.name, id: v.id})), '新しいリストを作成'])
     const sortAccessTime = () => {
       context.emit('sortByLastAccess')
     }
     const isOpenCreateListDialog = ref(false)
     const closeCreateListDialog = () => {
       isOpenCreateListDialog.value = false
-    }
-    const createList = () => {
-      context.emit('createList')
     }
     const input = (v: string | {label: string, id: number}) => {
 
@@ -66,7 +55,7 @@ export default defineComponent({
         context.emit('filter', v)
       }
     }
-    return { model, options, sortAccessTime, createList, isOpenCreateListDialog, closeCreateListDialog, input }
+    return { model, options, sortAccessTime, isOpenCreateListDialog, closeCreateListDialog, input }
   }
 });
 </script>
