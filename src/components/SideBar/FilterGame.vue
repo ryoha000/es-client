@@ -14,13 +14,13 @@
       :color="isSortByLastAccess ? 'blue' : 'snow'"
       @click="sortAccessTime"
     />
-    <create-list-dialog @createList="createList" :isOpen="isOpenCreateListDialog" @close="closeCreateListDialog" :haveGames="haveGames" :allGames="allGames"/>
+    <create-list-dialog @createList="createList" :isOpen="isOpenCreateListDialog" @close="closeCreateListDialog" :haveGames="haveGames"/>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, PropType, computed } from '@vue/composition-api';
-import { List, ListGame, DMM } from '../../types/root';
+import { List, ListGame } from '../../types/root';
 import CreateListDialog from '../CreateListDialog.vue'
 
 export default defineComponent({
@@ -37,17 +37,12 @@ export default defineComponent({
       type: Array as PropType<ListGame[]>,
       required: true
     },
-    allGames: { type: Object as PropType<Record<number, DMM>>, required: true },
   },
   components: {
     CreateListDialog
   },
   setup(props, context) {
     const model = ref('所持ゲーム')
-    // const options = ref([
-    //   '〇〇リスト', '〇〇リスト', '〇〇リスト', '〇〇リスト', '新しいリストを作成'
-    // ])
-    //const options = computed(() => [...props.lists.map(v => v.name), '新しいリストを作成'])
     const options = computed(() => [...props.lists.map(v => ({label: v.name, id: v.id})), '新しいリストを作成'])
     const sortAccessTime = () => {
       context.emit('sortByLastAccess')

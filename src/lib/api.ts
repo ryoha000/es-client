@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import axios from 'axios';
-import { DMM, MinimalGame, Game1 } from 'src/types/root';
+import { MinimalGame, GameWithoutNum } from 'src/types/root';
 
-const getAllDMM = async () => {
-  const data = await axios.get<DMM[]>('/api/games')
-  return data.data
+export const getGamesWithoutNumByIds = async (ids: number[]): Promise<GameWithoutNum[]> => {
+  return (await axios.post<GameWithoutNum[]>('/api/games', { ids: ids })).data
 }
+
 export const getMinimalGames = async (): Promise<MinimalGame[]> => {
   return (await axios.get<MinimalGame[]>('/api/games')).data
 }
 
-export const getGame = async (id: number): Promise<Game1> => {
-  return (await axios.get<Game1>(`/api/games/${id}`)).data
+export const getGame = async (id: number): Promise<GameWithoutNum> => {
+  return (await axios.get<GameWithoutNum>(`/api/games/${id}`)).data
 }

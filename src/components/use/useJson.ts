@@ -120,6 +120,26 @@ const useJson = () => {
     })
     return haveGame
   }
+  const getHaveGameIdArray = async () => {
+    console.log('a')
+    try {
+      const lists: List[] = JSON.parse(await readFileConsoleErr('setting/lists.json'))
+
+      console.log(lists)
+      const haveGames: number[] = []
+      lists.forEach((element: List) => {
+        if (element.id === 0) {
+          element.games.forEach(ele => {
+            haveGames.push(ele.id)
+          })
+          console.log(element.games.length)
+        }
+      })
+      return haveGames
+    } catch (e) {
+      console.error(e)
+    }
+  }
   const readListGames = async (id: number) => {
     const listGames: Record<number, ListGame> = {}
     try {
@@ -279,7 +299,8 @@ const useJson = () => {
     updateRelation,
     removeGameFromList,
     getHistory,
-    updateImage
+    updateImage,
+    getHaveGameIdArray
   }
 }
 

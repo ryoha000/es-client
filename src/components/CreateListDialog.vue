@@ -59,7 +59,8 @@
 import { defineComponent, ref, PropType, computed } from '@vue/composition-api';
 import useJudgeGame from './use/useJudgeGame'
 import useJson from './use/useJson'
-import { DMM, ListGame } from '../types/root';
+import { ListGame } from '../types/root';
+import store from 'src/store'
 
 export default defineComponent({
   name: 'CreateListDialog',
@@ -71,10 +72,6 @@ export default defineComponent({
       type: Array as PropType<ListGame[]>,
       required: true
     },
-    allGames: {
-      type: Object as PropType<Record<number, DMM>>,
-      required: true
-    }
   },
   setup(props, context) {
     const { createNewList } = useJson()
@@ -89,11 +86,9 @@ export default defineComponent({
     const onClick = (game: ListGame) => {
       initialGames.value.push(game)
     }
+    const allGames = computed(() => store.state.entities.minimalGames)
     const gameName = (id: number) => {
-      if (props.allGames[id]) {
-        return props.allGames[id].name
-      }
-      return ''
+      return allGames.value[id]?.gamename ?? ''
     }
     const create = async () => {
       await createNewList(title.value, initialGames.value)
@@ -105,7 +100,7 @@ export default defineComponent({
         if (searchString.value === '') {
           return true
         }
-        return props.allGames[v.id]?.name.toLowerCase().includes(searchString.value)
+        return allGames.value[v.id]?.gamename.toLowerCase().includes(searchString.value)
       })
     })
     return { title, close, create, onClick, initialGames, gameName, searchString, games }

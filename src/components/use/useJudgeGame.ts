@@ -1,13 +1,13 @@
 import useGetFiles from './useGetFiles'
 import getEXEPath from './useGetEXEPath'
 import useGetFileIcon from './useGetFileIcon'
-import { ListGame, DMM } from '../../types/root'
+import { ListGame, MinimalGame } from '../../types/root'
 import { editONP } from './useEditDistance'
 import useJson from './useJson'
 import { Ref } from '@vue/composition-api'
 
 
-const useJudgeGame = (allDMM: Record<number, DMM>) => {
+const useJudgeGame = (allMinimalGame: Record<string, MinimalGame>) => {
   const toLowerAndHankaku = (str: string) => {
     const retStr = str.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s) {
       return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
@@ -28,21 +28,21 @@ const useJudgeGame = (allDMM: Record<number, DMM>) => {
       cleanLinkName = cleanLinkName.replace(v, '')
     })
 
-    // 編集距離は最大でも0.8欲しい
+    // 編集距離は最小でも0.8欲しい
     let maxDistance = 0.8
-    for (const dmm of Object.entries(allDMM)) {
-      const gameTitle = toLowerAndHankaku(dmm[1].name)
+    for (const mg of Object.values(allMinimalGame)) {
+      const gameTitle = toLowerAndHankaku(mg.gamename)
       const distance = editONP(cleanLinkName, gameTitle)
       if (distance > maxDistance) {
-        id = dmm[1].id
+        id = mg.id
         maxDistance = distance
       }
     }
     if (id !== 0) return id
-    for (const dmm of Object.entries(allDMM)) {
-      const gameTitle = toLowerAndHankaku(dmm[1].name)
+    for (const mg of Object.values(allMinimalGame)) {
+      const gameTitle = toLowerAndHankaku(mg.gamename)
       if (cleanLinkName.length > 5 && gameTitle.includes(cleanLinkName)) {
-        id = dmm[1].id
+        id = mg.id
         return id
       }
     }

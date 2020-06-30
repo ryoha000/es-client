@@ -1,11 +1,11 @@
-import { MinimalGameMap, GameMap, Undefinedable } from '.'
+import { MinimalGameMap, GameWithoutNumMap, Undefinedable } from '.'
 
 export type S = {
-  games: Undefinedable<GameMap>
-  minimalGames: Undefinedable<MinimalGameMap>
+  haveGames: GameWithoutNumMap
+  minimalGames: MinimalGameMap
 }
 
 export const state: S = {
-  games: {},
+  haveGames: {},
   minimalGames: {},
 }

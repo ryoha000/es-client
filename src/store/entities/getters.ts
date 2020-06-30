@@ -10,9 +10,7 @@ const entitiesGetterContext = (args: [unknown, unknown, unknown, unknown]) =>
   moduleGetterContext(args, entities)
 
 export const getters = defineGetters<S>()({
-  // gradeTypeUserGroups(state) {
-  //   return Object.values(state.userGroups).filter(
-  //     group => group.type === 'grade'
-  //   )
-  // },
+  getHaveGames(state) {
+    return state.haveGames
+  },
 })

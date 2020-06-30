@@ -51,13 +51,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, PropType } from '@vue/composition-api';
+import { defineComponent, ref, PropType, computed } from '@vue/composition-api';
 import useJudgeGame from '../use/useJudgeGame'
-import { DMM, ListGame } from '../../types/root';
+import { ListGame } from '../../types/root';
 import { remote } from 'electron'
 import useJson from '../use/useJson';
 import useGetFileIcon from '../use/useGetFileIcon';
 import ChangeFolderPath from './ChangeFolderPath.vue'
+import store from 'src/store'
 
 export default defineComponent({
   name: 'AddGameDialog',
@@ -65,10 +66,6 @@ export default defineComponent({
     isOpen: {
       type: Boolean, required: true
     },
-    allDMM: {
-      type: Object as PropType<Record<number, DMM>>,
-      required: true
-    }
   },
   components: {
     ChangeFolderPath
@@ -87,15 +84,18 @@ export default defineComponent({
       path.value = ''
       context.emit('close')
     }
+
+    const minimalGames = computed(() => store.state.entities.minimalGames)
+    const { searchDifference, searchAll } = useJudgeGame(minimalGames.value)
+
     const diff = async () => {
-      const { searchDifference } = useJudgeGame(props.allDMM)
       loading.value = true
       const newGames = await searchDifference()
       context.emit('createList')
       loading.value = false
       let message = ''
       for (const g of newGames) {
-        message += `${props.allDMM[g.id].name}, `
+        message += `${minimalGames.value[g.id].gamename}, `
       }
       message += 'が追加されました'
       if (newGames.length === 0) {
@@ -105,7 +105,6 @@ export default defineComponent({
       context.emit('close')
     }
     const all = async () => {
-      const { searchAll } = useJudgeGame(props.allDMM)
       loading.value = true
       try {
         await searchAll()
@@ -154,20 +153,20 @@ export default defineComponent({
           return
         }
         try {
-          if (!props.allDMM[id].name) {
+          if (!minimalGames.value[id].gamename) {
             throw('idが正しくありません')
           }
           loading.value = true
           const game: ListGame = (await getIcon([{id: id, path: path.value}]))[0]
           await addGameToList(0, game)
-          alert(`${props.allDMM[game.id].name}を追加しました`)
+          alert(`${minimalGames.value[game.id].gamename}を追加しました`)
         } catch (e) {
-          if (!props.allDMM[id].name) {
+          if (!minimalGames.value[id].gamename) {
             throw('idが正しくありません')
           }
           const game: ListGame = {id: id, path: path.value, icon: ''}
           await addGameToList(0, game)
-          alert(`${props.allDMM[game.id].name}を追加しました`)
+          alert(`${minimalGames.value[game.id].gamename}を追加しました`)
         } finally {
           loading.value = false
           isAddSelf.value = false

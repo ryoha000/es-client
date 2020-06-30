@@ -17,16 +17,17 @@
         <q-item-section :class="$style.titleWrapper"><div :class="$style.title">{{ gameName(path.id) }}</div></q-item-section>
       </q-item>
     </q-list>
-    <create-list-dialog :isOpen="isOpenCreateListDialog" @close="closeCreateListDialog" :haveGames="games" @createList="createList" :allGames="allDmmGames" />
+    <create-list-dialog :isOpen="isOpenCreateListDialog" @close="closeCreateListDialog" :haveGames="games" @createList="createList" />
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType, computed, ref } from '@vue/composition-api';
-import { ListGame, DMM, List } from '../../types/root';
+import { ListGame, List } from '../../types/root';
 import createListDialog from '../CreateListDialog.vue'
 import useJson from '../use/useJson';
 import useStartProcess from '../use/useStartProcess'
+import store from 'src/store'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const remote = require('electron').remote;
@@ -37,7 +38,6 @@ export default defineComponent({
   name: 'GameListItem',
   props: {
     games: { type: Array as PropType<ListGame[]>, required: true },
-    allGames: { type: Object as PropType<Record<number, DMM>>, required: true },
     lists: {
       type: Array as PropType<List[]>,
       default: []
@@ -48,6 +48,7 @@ export default defineComponent({
     createListDialog
   },
   setup(props, context) {
+    const haveGameInfo = computed(() => store.state.entities.haveGames)
     const clicked = ref(false)
     const onClick = async (game: ListGame) => {
       if (clicked.value) {
@@ -66,12 +67,8 @@ export default defineComponent({
         clicked.value = false;
       }, 300);
     }
-    const allDmmGames = computed(() => props.allGames)
     const gameName = (id: number) => {
-      if (allDmmGames.value[id]) {
-        return allDmmGames.value[id].name
-      }
-      return ''
+      return haveGameInfo.value[id]?.gamename ?? ''
     }
     const isOpenCreateListDialog = ref(false)
     const rightClick = (game: ListGame) => {
@@ -116,7 +113,7 @@ export default defineComponent({
     const createList = () => {
       context.emit('createList')
     }
-    return { onClick, gameName, allDmmGames, rightClick, isOpenCreateListDialog, closeCreateListDialog, createList }
+    return { onClick, gameName, rightClick, isOpenCreateListDialog, closeCreateListDialog, createList }
   }
 });
 </script>

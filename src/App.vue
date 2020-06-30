@@ -6,7 +6,7 @@
     @drop.prevent="dropFile"
     @dragover.prevent 
   >
-    <side-bar :class="$style.sidebar" @game="setGame" :haveGame="haveGame" :games="allDMM" @addGame="addGame" :lists="lists" @createList="createList" />
+    <side-bar :class="$style.sidebar" @game="setGame" :haveGame="haveGame" @addGame="addGame" :lists="lists" @createList="createList" />
     <div :class="$style.mainview">
       <main-view-header @next="next" @back="back" @home="goHome" :routeStack="routeStack" :routeIndex="routeIndex" />
       <div v-if="!isLoading">
@@ -33,17 +33,17 @@ import MainViewHeader from './components/MainView/Header/MainViewHeader.vue'
 import Home from './pages/Home.vue'
 import GameDetail from './pages/GameDetail.vue'
 import { defineComponent, reactive, ref, onMounted } from '@vue/composition-api'
-import { StackType, Record, Game, Campaign, ListGame, List, DMM, SellSchedule } from './types/root'
+import { StackType, Record, Game, Campaign, ListGame, List, SellSchedule } from './types/root'
 import { makeStyles } from './lib/style'
 import useRouteStack from './components/use/useRouteStack'
 import useDictionary from './components/use/useDictionary'
 import useJson from './components/use/useJson'
-import store from './store'
+import store from 'src/store'
 
 import { remote } from 'electron'
 import useScraping from './components/use/useScraping'
 import useJudgeGame from './components/use/useJudgeGame'
-import useApi from './components/use/useApi'
+import { getMinimalGames } from './lib/api'
 
 const useStyles = () => 
   reactive({
@@ -71,27 +71,9 @@ export default defineComponent ({
     const haveGame = ref<Record<number, ListGame>>({})
     const lists = ref<List[]>([])
     const isLoading = ref(true)
-    const allDMM = ref<Record<number, DMM>>({})
     const seiya = ref<{createdNow: number, games: {name: string, url: string}[]}>({createdNow: Date.now(), games: []})
 
     const { jsonSetup, readListGames, readFileConsoleErr, getHaveGame, addGameToList } = useJson()
-    const { searchAll, searchDifference } = useJudgeGame(allDMM.value)
-    const addGameFolder = async () => {
-      // console.log('ido')
-      // const dialog = remote.dialog
-      // const result = await dialog.showOpenDialog({
-      //   properties: ['openDirectory', 'multiSelections'],
-      //   title: 'フォルダ(複数選択)',
-      //   defaultPath: '.'
-      // })
-      // console.log(result.filePaths)
-      const gl: Record<number, ListGame> = {}
-      const listGames = (await searchDifference())
-      listGames.forEach(element => {
-        gl[element.id] = element
-      })
-      haveGame.value = gl
-    }
     const styles = useStyles()
     const { next, back, goHome, goDetail } = useRouteStack(routeIndex, routeStack)
     const { getOrSelect } = useDictionary(games)
@@ -117,27 +99,24 @@ export default defineComponent ({
     }
 
     const dropFile = async (event: DragEvent) => {
-      
-      console.log(Object.entries(store.state.entities.games))
-      await store.dispatch.entities.fetchGame(11)
-      console.log(Object.entries(store.state.entities.games))
-
-      // const { getEXE } = useJudgeGame(allDMM.value)
-      // try {
-      //   const dragFilePath = event.dataTransfer?.files[0].path
-      //   if (dragFilePath) {
-      //     const newListGames = await getEXE([dragFilePath])
-      //     if (newListGames.length === 0) {
-      //       alert('ゲームを特定できませんでした')
-      //       return
-      //     }
-      //     await addGameToList(0, newListGames[0])
-      //     await createList()
-      //     alert(`${allDMM.value[newListGames[0].id].name}が追加されました`)
-      //   }
-      // } catch (e) {
-      //   console.error(e)
-      // }
+      const minimalGames = store.state.entities.minimalGames
+      const { searchAll, searchDifference, getEXE } = useJudgeGame(minimalGames)
+      try {
+        const dragFilePath = event.dataTransfer?.files[0].path
+        console.log(Object.values(minimalGames))
+        if (dragFilePath) {
+          const newListGames = await getEXE([dragFilePath])
+          if (newListGames.length === 0) {
+            alert('ゲームを特定できませんでした')
+            return
+          }
+          await addGameToList(0, newListGames[0])
+          await createList()
+          alert(`${minimalGames[newListGames[0].id].gamename}が追加されました`)
+        }
+      } catch (e) {
+        console.error(e)
+      }
     }
 
     const { getCampaignWithImage, getSchedule, getSeiyaGames, checkUpdate } = useScraping()
@@ -157,17 +136,10 @@ export default defineComponent ({
         console.error(e)
       }
       try {
+        await store.dispatch.entities.setAllMinimalGames()
+        await store.dispatch.entities.setHaveGames()
         //const a = JSON.parse(await readFileConsoleErr('setting/dmm.json'))
-        const { getAllDMM } = useApi()
-        const a = await getAllDMM()
-        console.log(a)
-        const ad: Record<number, DMM> = {}
-        for (const d of a) {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-          ad[d.id] = d
 
-        }
-        allDMM.value = ad
         // if (seiya.value.games.length === 0 || Date.now() - seiya.value.createdNow > 1000*60*60*24) {
         //   await getSeiyaGames(seiya)
         // }
@@ -188,7 +160,6 @@ export default defineComponent ({
       isLoading.value = false
     })
     return {
-      addGameFolder,
       styles,
       routeIndex,
       routeStack,
@@ -203,7 +174,6 @@ export default defineComponent ({
       setGame,
       campaigns,
       sellSchedules,
-      allDMM,
       seiya,
       addGame,
       createList,

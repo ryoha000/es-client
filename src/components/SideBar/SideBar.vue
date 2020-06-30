@@ -10,7 +10,7 @@
       @filter="filter"
     />
     <search :class="$style.search" @changeSearch="changeSearch" />
-    <add-game :class="$style.item" :allDMM="games" @createList="createList" />
+    <add-game :class="$style.item" @createList="createList" />
     <q-scroll-area :style="styles.scrollArea" dark>
       <game-list-item
         :class="$style.item"
@@ -31,8 +31,9 @@ import FilterGame from './FilterGame.vue'
 import Search from './Search.vue'
 import GameListItem from './GaleListItem.vue'
 import AddGame from './AddGame.vue'
-import { ListGame, List, DMM } from '../../types/root';
+import { ListGame, List } from '../../types/root';
 import { makeStyles } from '../../lib/style'
+import store from 'src/store'
 import * as fs from 'fs'
 
 const useStyles = (height: Ref<number>) => 
@@ -47,7 +48,6 @@ export default defineComponent({
   name: 'SideBar',
   props: {
     haveGame: { type: Object as PropType<Record<number, ListGame>>, required: true },
-    games: { type: Object as PropType<Record<number, DMM>>, required: true },
     lists: {
       type: Array as PropType<List[]>,
       default: []
@@ -98,7 +98,10 @@ export default defineComponent({
       isSortByLastAccess.value = !isSortByLastAccess.value
     }
 
+    const minimalGames = computed(() => store.state.entities.minimalGames)
+
     const arrayList = computed(() => {
+      //let arrayListGame = props.lists.find(v => v.id === filterListId.value)?.games ?? (Object.entries(props.haveGame)).map(v => v[1])
       let arrayListGame = props.lists.find(v => v.id === filterListId.value)?.games ?? (Object.entries(props.haveGame)).map(v => v[1])
       if (isSortByLastAccess.value) {
         arrayListGame.sort((a, b) => {
@@ -118,7 +121,7 @@ export default defineComponent({
         arrayListGame.sort()
       }
       if (searchString.value !== '') {
-        arrayListGame = arrayListGame.filter(v => props.games?.[v.id]?.name.toLowerCase().includes(searchString.value.toLowerCase()))
+        arrayListGame = arrayListGame.filter(v => minimalGames.value[v.id]?.gamename.toLowerCase().includes(searchString.value.toLowerCase()))
       }
       return arrayListGame
     })

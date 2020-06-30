@@ -1,5 +1,3 @@
-import { number } from "yargs";
-
 export interface StackType {
   type: 'Home' | 'Game' | 'Search'
   id: number
@@ -20,14 +18,14 @@ export type Game = {
   gengas: Creator[]
   sinarios: Creator[]
   seiyus: Seiyu[]
-  createdAt: string |null
+  createdAt: Date
 }
 
 export interface Creator {
   id: number
   name: string
   furigana: string
-  createdAt: string |null
+  createdAt: Date
 }
 
 export interface Seiyu extends Creator {
@@ -123,7 +121,7 @@ export interface User {
   icon_url: string | null
 }
 
-export interface Game1 {
+export interface GameWithoutNum {
   id: number
   gamename: string | null
   furigana: string | null

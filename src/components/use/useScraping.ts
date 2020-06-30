@@ -154,15 +154,6 @@ const useScraping = () => {
     console.log('getHome')
     return campaign
   }
-  const getAllDMM = async() => {
-    const document = await getDocument('http://es-server.ryoha.trap.show/dmm.json')
-    const dmm = JSON.parse(document.getElementsByTagName('body')[0]?.innerHTML)
-    const dmmRecord: Record<number, DMM> = {}
-    dmm.games.forEach((d: DMM) => {
-      dmmRecord[d.id] = d
-    })
-    return dmmRecord
-  }
   const getCampaignWithImage = async (all: Ref<Record<number, DMM>>) => {
     const noImageCampaign = await getHome()
     noImageCampaign.forEach((c, i) => c.games.forEach((c, j) => {
@@ -239,7 +230,7 @@ const useScraping = () => {
     console.log(version.version)
     return version.version !== now
   }
-  return { getTitle, getGameDetail, getHome, getCampaignWithImage, getSchedule, getSeiyaURL, getSeiyaGames, getAllDMM, checkUpdate }
+  return { getTitle, getGameDetail, getHome, getCampaignWithImage, getSchedule, getSeiyaURL, getSeiyaGames, checkUpdate }
 }
 
 export default useScraping

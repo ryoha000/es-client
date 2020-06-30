@@ -6,6 +6,9 @@
 export const reduceToRecord = <T>(array: T[], key: keyof T): Record<string, T> =>
   array.reduce((acc, cur) => {
     const ck = cur[key]
+    if (typeof ck === 'number') {
+      return Object.assign(acc, { [`${ck}`]: cur })
+    }
     if (typeof ck !== 'string') return acc
     return Object.assign(acc, { [ck]: cur })
   }, {} as Record<string, T>)
@@ -18,6 +21,14 @@ export const reduceToRecord = <T>(array: T[], key: keyof T): Record<string, T> =
 export const reduceToRecordOfArray = <T>(array: T[], key: keyof T): Record<string, T[]> =>
   array.reduce((acc, cur) => {
     const ck = cur[key]
+    if (typeof ck === 'number') {
+      // eslint-disable-next-line no-prototype-builtins
+      if (acc.hasOwnProperty(ck)) {
+        acc[`${ck}`].push(cur)
+        return acc
+      }
+      return Object.assign(acc, { [`${ck}`]: [cur] })
+    }
     if (typeof ck !== 'string') return acc
     // eslint-disable-next-line no-prototype-builtins
     if (acc.hasOwnProperty(ck)) {
