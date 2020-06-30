@@ -1,4 +1,4 @@
-import { MinimalGameMap, GameWithoutNumMap, Undefinedable } from '.'
+import { MinimalGameMap, GameWithoutNumMap } from '.'
 
 export type S = {
   haveGames: GameWithoutNumMap

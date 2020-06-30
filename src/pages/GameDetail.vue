@@ -21,7 +21,7 @@
         />
       </div>
     </div>
-    <main-wrapper :game="game" :gameInList="haveGame" :seiya="seiya" @createList="createList"/>
+    <main-wrapper :game="game" :gameInList="haveGame" @createList="createList"/>
   </q-scroll-area>
 </template>
 
@@ -54,10 +54,6 @@ export default defineComponent({
     },
     haveGame: {
       type: Object as PropType<Record<number, ListGame>>,
-      required: true
-    },
-    seiya: {
-      type: Object as PropType<{createdNow: number, games: {name: string, url: string}}[]>,
       required: true
     },
     lists: {

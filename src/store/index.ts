@@ -8,7 +8,7 @@ import indexedDBStorage from './indexedDBStorage'
 import { persistReducer } from './defineDBModule'
 import { entities } from './entities'
 // import { domain } from './domain'
-// import { app } from './app'
+import { app } from './app'
 // import { ui } from './ui'
 
 Vue.use(Vuex)
@@ -38,7 +38,7 @@ const {
   modules: {
     entities,
     // domain,
-    // app,
+    app,
     // ui
   },
   plugins: [persisted.plugin],

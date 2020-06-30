@@ -16,7 +16,6 @@
           :games="games"
           :id="gameId"
           :haveGame="haveGame"
-          :seiya="seiya"
           :lists="lists"
           @createList="createList"
         />
@@ -71,7 +70,6 @@ export default defineComponent ({
     const haveGame = ref<Record<number, ListGame>>({})
     const lists = ref<List[]>([])
     const isLoading = ref(true)
-    const seiya = ref<{createdNow: number, games: {name: string, url: string}[]}>({createdNow: Date.now(), games: []})
 
     const { jsonSetup, readListGames, readFileConsoleErr, getHaveGame, addGameToList } = useJson()
     const styles = useStyles()
@@ -119,7 +117,7 @@ export default defineComponent ({
       }
     }
 
-    const { getCampaignWithImage, getSchedule, getSeiyaGames, checkUpdate } = useScraping()
+    const { getCampaignWithImage, getSchedule, checkUpdate } = useScraping()
     
     onMounted(async () => {
       isLoading.value = true
@@ -138,11 +136,9 @@ export default defineComponent ({
       try {
         await store.dispatch.entities.setAllMinimalGames()
         await store.dispatch.entities.setHaveGames()
+        // await store.dispatch.app.setSeiya()
         //const a = JSON.parse(await readFileConsoleErr('setting/dmm.json'))
 
-        // if (seiya.value.games.length === 0 || Date.now() - seiya.value.createdNow > 1000*60*60*24) {
-        //   await getSeiyaGames(seiya)
-        // }
         // allDMM.value = await getAllDMM()
         // campaigns.value = await getCampaignWithImage(allDMM)
         // sellSchedules.value = await getSchedule()
@@ -174,7 +170,6 @@ export default defineComponent ({
       setGame,
       campaigns,
       sellSchedules,
-      seiya,
       addGame,
       createList,
       lists,

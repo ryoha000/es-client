@@ -31,6 +31,7 @@ import { Game, ListGame } from '../../../types/root';
 import useScraping from '../../use/useScraping'
 import { number } from 'yargs';
 import useJson from '../../use/useJson';
+import store from 'src/store'
 
 export default defineComponent({
   name: 'MainWrapper',
@@ -43,10 +44,6 @@ export default defineComponent({
       type: Object as PropType<Record<number, ListGame>>,
       required: true
     },
-    seiya: {
-      type: Object as PropType<{createdNow: number, games: {name: string, url: string}[]}>,
-      required: true
-    }
   },
   components: {
     LinkC,
@@ -59,8 +56,9 @@ export default defineComponent({
     const links = computed(() => [
       { title: 'OHP', url: props.game.officialHomePage },
       { title: 'ErogameSpace', url: `https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=${props.game.id}` },
-      { title: '誠也の部屋', url: getSeiyaURL(props.game.name, props.seiya.games) }
+      { title: '誠也の部屋', url: getSeiyaURL(props.game.name, store.state.app.seiya) }
     ])
+    
     const score = computed<Score>(() => ({
       median: props.game.median,
       average: props.game.average,

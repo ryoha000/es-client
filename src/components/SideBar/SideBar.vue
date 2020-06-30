@@ -6,7 +6,6 @@
       :isSortByLastAccess="isSortByLastAccess"
       :lists="lists" @createList="createList"
       :haveGames="arrayList"
-      :allGames="games"
       @filter="filter"
     />
     <search :class="$style.search" @changeSearch="changeSearch" />
@@ -16,7 +15,6 @@
         :class="$style.item"
         @game="setGame"
         :games="arrayList"
-        :allGames="games"
         :lists="lists"
         @createList="createList"
         :filterListId="filterListId"

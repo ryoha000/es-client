@@ -195,28 +195,28 @@ const useScraping = () => {
     }
     return schedules
   }
-  const getSeiyaGames = async (seiya: Ref<{createdNow: number, games: {name: string, url: string}[]}>) => {
+  const getSeiyaGames = async () => {
     const document = await getDocument('https://seiya-saiga.com/game/kouryaku.html')
     const trs = document.getElementsByTagName('tr')
-    const games: {name: string, url: string}[] = []
+    const games: { gamename: string, url: string }[] = []
     for (const tr of trs) {
       games.push({
-        name: tr.getElementsByTagName('a')?.[0]?.innerHTML,
+        gamename: tr.getElementsByTagName('a')?.[0]?.innerHTML,
         url: `https://seiya-saiga.com/game/${tr.getElementsByTagName('a')?.[0]?.getAttribute('href') ?? ''}`
       })
     }
-    seiya.value = {createdNow: Date.now(), games: games}
+    return games
   }
-  const getSeiyaURL = (gameName: string, games: {name: string, url: string}[]) => {
-    for (const game of games) {
-      if (game.name === gameName) {
+  const getSeiyaURL = (gameName: string, seiya: {gamename: string, url: string}[]) => {
+    for (const game of seiya) {
+      if (game.gamename === gameName) {
         console.log(game.url)
         return game.url
       }
     }
-    for (const game of games) {
-      if (!game.name || !gameName) continue
-      if (editONP(gameName, game.name) > 0.8) {
+    for (const game of seiya) {
+      if (!game.gamename || !gameName) continue
+      if (editONP(gameName, game.gamename) > 0.8) {
         console.log(game.url)
         return game.url
       }
