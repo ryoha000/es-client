@@ -32,7 +32,7 @@
     "@vue/babel-preset-app": "^4.4.6",
     "babel-eslint": "^10.0.1",
     "chardet": "^1.1.0",
-    "csstype": "^2.6.10",
+    "csstype": "^2.6.11",
     "devtron": "^1.4.0",
     "direct-vuex": "^0.11.1",
     "electron": "^9.0.4",
