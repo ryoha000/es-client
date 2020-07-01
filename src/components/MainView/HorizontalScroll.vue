@@ -36,7 +36,10 @@ export interface CardInfo {
   url: string
   contentUrl?: string
   contain?: boolean
+  tooltip?: string
 }
+
+const sleep = (msec: number)=> new Promise(resolve => setTimeout(resolve, msec));
 
 export default defineComponent({
   name: 'HorizontalScroll',
@@ -51,11 +54,17 @@ export default defineComponent({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const scrollRef = ref<any | undefined>()
     const nowPosition = ref(0)
-    const onRightClick = () => {
-      scrollRef.value.setScrollPosition(nowPosition.value + 500)
+    const onRightClick = async () => {
+      for (let i = 0; i < 5; i++) {
+        await sleep(20)
+        scrollRef.value.setScrollPosition(nowPosition.value + 100)
+      }
     }
-    const onLeftClick = () => {
-      scrollRef.value.setScrollPosition(nowPosition.value - 500)
+    const onLeftClick = async () => {
+      for (let i = 0; i < 5; i++) {
+        await sleep(20)
+        scrollRef.value.setScrollPosition(nowPosition.value - 100)
+      }
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const scrollarea = (position: any) => {
