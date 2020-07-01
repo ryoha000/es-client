@@ -112,6 +112,7 @@ export default defineComponent ({
         await store.dispatch.entities.setAllMinimalGames()
         await store.dispatch.entities.setHaveGames()
         await store.dispatch.app.setLists()
+        await store.dispatch.domain.setCampaign()
         // await store.dispatch.app.setSeiya()
 
         // allDMM.value = await getAllDMM()

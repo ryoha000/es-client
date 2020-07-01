@@ -15,7 +15,7 @@
 <script lang="ts">
 import { defineComponent, PropType, computed } from '@vue/composition-api';
 import GameCard from '../../GameCard.vue'
-import HorizontalScroll from '../../HorizontalScroll.vue'
+import HorizontalScroll, { CardInfo } from '../../HorizontalScroll.vue'
 import { Campaign, CampaignGame } from '../../../../types/root';
 import LinkC from '../../GameDetail/Link.vue'
 
@@ -46,13 +46,15 @@ export default defineComponent({
   },
   components: { GameCard, HorizontalScroll, LinkC },
   setup(props) {
-    const cardInfos = computed(() =>
+    const cardInfos = computed<CardInfo[]>(() =>
       props.campaign.games.map(game => ({
-        title: game.gamename,
-        supplement: game.content,
-        image: `https://pics.dmm.co.jp/${game.dmm_genre ?? ''}/pcgame/${game.dmm ?? ''}/${game.dmm ?? ''}pl.jpg`,
+        title: game.gamename ?? '',
+        supplement: game.content ?? '',
+        // image: `https://pics.dmm.co.jp/${game.dmm_genre ?? ''}/pcgame/${game.dmm ?? ''}/${game.dmm ?? ''}pl.jpg`,
+        image: '',
         url: getUrl(props.campaign.store ?? 0, game),
-        contentUrl: `https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=${game.id}`
+        contentUrl: `https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=${game.id}`,
+        tooltip: `中央値: ${game.median}\n標準偏差: ${game.stdev}\nデータ数: ${game.count2}`
       }))
     )
     return { cardInfos }

@@ -6,10 +6,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from '@vue/composition-api';
+import { defineComponent, onMounted, ref, computed } from '@vue/composition-api';
 import CampaignContent from './CampaignContent.vue'
 import { Campaign } from 'src/types/root';
 import { getCampaigns } from 'src/lib/api';
+import store from 'src/store';
 
 export default defineComponent({
   name: 'Campaign',
@@ -19,11 +20,8 @@ export default defineComponent({
     CampaignContent
   },
   setup() {
-    const campaigns = ref<Campaign[]>([])
-    onMounted(async () => {
-      campaigns.value = await getCampaigns()
-    })
-    return
+    const campaigns = computed(() => store.state.domain.campaigns)
+    return { campaigns }
   }
 });
 </script>
