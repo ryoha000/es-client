@@ -6,22 +6,23 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from '@vue/composition-api';
+import { defineComponent, onMounted, ref } from '@vue/composition-api';
 import CampaignContent from './CampaignContent.vue'
-import { Campaign } from '../../../../types/root';
+import { Campaign } from 'src/types/root';
+import { getCampaigns } from 'src/lib/api';
 
 export default defineComponent({
   name: 'Campaign',
   props: {
-    campaigns: {
-      type: Array as PropType<Campaign[]>,
-      default: []
-    }
   },
   components: {
     CampaignContent
   },
   setup() {
+    const campaigns = ref<Campaign[]>([])
+    onMounted(async () => {
+      campaigns.value = await getCampaigns()
+    })
     return
   }
 });

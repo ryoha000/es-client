@@ -102,72 +102,72 @@ const useScraping = () => {
     console.log('getGameDetail', game)
     return game
   }
-  const getCampaign = (document: Document) => {
-    const campaign: Campaign[] = []
-    const campaignNameList = document.getElementById('campaignlist')?.getElementsByTagName('dt')
-    const campaignGameTable = document.getElementById('campaignlist')?.getElementsByTagName('dd')
-    if (!campaignNameList) {
-      return campaign
-    }
-    for (let i = 0; i < campaignNameList.length; i++ ) {
-      const nameATag = campaignNameList[i].getElementsByTagName('a')[0]
-      const name = nameATag.innerHTML
-      const url = nameATag.getAttribute('href') ?? ''
+  // const getCampaign = (document: Document) => {
+  //   const campaign: Campaign[] = []
+  //   const campaignNameList = document.getElementById('campaignlist')?.getElementsByTagName('dt')
+  //   const campaignGameTable = document.getElementById('campaignlist')?.getElementsByTagName('dd')
+  //   if (!campaignNameList) {
+  //     return campaign
+  //   }
+  //   for (let i = 0; i < campaignNameList.length; i++ ) {
+  //     const nameATag = campaignNameList[i].getElementsByTagName('a')[0]
+  //     const name = nameATag.innerHTML
+  //     const url = nameATag.getAttribute('href') ?? ''
 
-      const campaignGameTR = campaignGameTable?.[i].getElementsByTagName('tr')
-      const games: CampaignGame[] = []
-      if (!campaignGameTR) continue
-      for (let j = 0; j < campaignGameTR?.length ?? 0; j++ ) {
-        if (j === 0) continue
-        const campaignGameTD = campaignGameTR[j].getElementsByTagName('td')
-        const game: CampaignGame = {id: 0, title: '', url: '', content: '', median: 0}
-        for (let k = 0; k < campaignGameTD.length; k++ ) {
-          const td = campaignGameTD[k]
-          if (k === 1) {
-            game.median = +(td.innerHTML)
-            continue
-          }
-          const gameATag = td.getElementsByTagName('a')[0]
-          if (k === 0) {
-            game.title = gameATag.innerHTML
-            game.id = +(gameATag.getAttribute('href')?.replace('game.php?game=', '') ?? '0')
-          }
-          if (k === 2) {
-            game.url = gameATag.getAttribute('href') ?? ''
-            game.content = gameATag.innerHTML
-          }
-        }
-        games.push(game)
-      }
-      campaign.push({
-        name: name,
-        url: url,
-        games: games
-      })
-    }
-    return campaign
-  }
-  const getHome = async () => {
-    const document = await getDocument(baseURL)
-    const campaign = getCampaign(document)
-    console.log(campaign)
-    console.log('getHome')
-    return campaign
-  }
-  const getCampaignWithImage = async (all: Ref<Record<number, DMM>>) => {
-    const noImageCampaign = await getHome()
-    noImageCampaign.forEach((c, i) => c.games.forEach((c, j) => {
-      noImageCampaign[i].games[j] = {
-        id: c.id,
-        title: c.title,
-        median: c.median,
-        url: c.url,
-        content: c.content,
-        imgUrl: `https://pics.dmm.co.jp/${all.value[c.id].dmm_genre}/pcgame/${all.value[c.id].dmm}/${all.value[c.id].dmm}pl.jpg`
-      }
-    }))
-    return noImageCampaign
-  }
+  //     const campaignGameTR = campaignGameTable?.[i].getElementsByTagName('tr')
+  //     const games: CampaignGame[] = []
+  //     if (!campaignGameTR) continue
+  //     for (let j = 0; j < campaignGameTR?.length ?? 0; j++ ) {
+  //       if (j === 0) continue
+  //       const campaignGameTD = campaignGameTR[j].getElementsByTagName('td')
+  //       const game: CampaignGame = {id: 0, title: '', url: '', content: '', median: 0}
+  //       for (let k = 0; k < campaignGameTD.length; k++ ) {
+  //         const td = campaignGameTD[k]
+  //         if (k === 1) {
+  //           game.median = +(td.innerHTML)
+  //           continue
+  //         }
+  //         const gameATag = td.getElementsByTagName('a')[0]
+  //         if (k === 0) {
+  //           game.title = gameATag.innerHTML
+  //           game.id = +(gameATag.getAttribute('href')?.replace('game.php?game=', '') ?? '0')
+  //         }
+  //         if (k === 2) {
+  //           game.url = gameATag.getAttribute('href') ?? ''
+  //           game.content = gameATag.innerHTML
+  //         }
+  //       }
+  //       games.push(game)
+  //     }
+  //     campaign.push({
+  //       name: name,
+  //       url: url,
+  //       games: games
+  //     })
+  //   }
+  //   return campaign
+  // }
+  // const getHome = async () => {
+  //   const document = await getDocument(baseURL)
+  //   const campaign = getCampaign(document)
+  //   console.log(campaign)
+  //   console.log('getHome')
+  //   return campaign
+  // }
+  // const getCampaignWithImage = async (all: Ref<Record<number, DMM>>) => {
+  //   const noImageCampaign = await getHome()
+  //   noImageCampaign.forEach((c, i) => c.games.forEach((c, j) => {
+  //     noImageCampaign[i].games[j] = {
+  //       id: c.id,
+  //       title: c.title,
+  //       median: c.median,
+  //       url: c.url,
+  //       content: c.content,
+  //       imgUrl: `https://pics.dmm.co.jp/${all.value[c.id].dmm_genre}/pcgame/${all.value[c.id].dmm}/${all.value[c.id].dmm}pl.jpg`
+  //     }
+  //   }))
+  //   return noImageCampaign
+  // }
   const getSchedule = async () => {
     const schedules: SellSchedule[] = []
     const document = await getDocument(`${baseURL}/before_hatubai_yotei.php`)
@@ -230,7 +230,7 @@ const useScraping = () => {
     console.log(version.version)
     return version.version !== now
   }
-  return { getTitle, getGameDetail, getHome, getCampaignWithImage, getSchedule, getSeiyaURL, getSeiyaGames, checkUpdate }
+  return { getTitle, getGameDetail, getSchedule, getSeiyaURL, getSeiyaGames, checkUpdate }
 }
 
 export default useScraping

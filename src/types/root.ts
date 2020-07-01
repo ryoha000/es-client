@@ -46,21 +46,6 @@ export type Record<K extends keyof any, T> = {
   [P in K]: T;
 };
 
-export interface CampaignGame {
-  id: number
-  title: string
-  median: number
-  content: string
-  url: string
-  imgUrl?: string
-}
-
-export interface Campaign {
-  name: string
-  url: string
-  games: CampaignGame[]
-}
-
 export type ListGame = {
   id: number
   path: string
@@ -153,4 +138,28 @@ export interface GameWithoutNum {
   dlsite_rental: boolean | null
   dmm_subsc: string | null
   surugaya_1: number | null
+}
+
+export interface Campaign {
+  id: number,
+  name: string | null,
+  url: string | null,
+  end_timestamp: string | null,
+  content: string | null,
+  store: number | null,
+  games: CampaignGame[],
+}
+
+export interface GameWithNum extends GameWithoutNum {
+  median: number,
+  stdev: number,
+  count2: number,
+}
+
+export interface CampaignGame extends GameWithNum {
+  median: number,
+  stdev: number,
+  count2: number,
+  content: string | null,
+  url: string | null,
 }

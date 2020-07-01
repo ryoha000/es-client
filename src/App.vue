@@ -11,7 +11,7 @@
     <div :class="$style.mainview">
       <main-view-header @next="next" @back="back" @home="goHome" :routeStack="routeStack" :routeIndex="routeIndex" />
       <div>
-        <home v-if="routeStack[routeIndex].type === 'Home'" :campaigns="campaigns" :sellSchedules="sellSchedules"/>
+        <home v-if="routeStack[routeIndex].type === 'Home'" :sellSchedules="sellSchedules"/>
         <game-detail
           v-if="routeStack[routeIndex].type === 'Game'"
           :games="games"
@@ -30,7 +30,7 @@ import MainViewHeader from './components/MainView/Header/MainViewHeader.vue'
 import Home from './pages/Home.vue'
 import GameDetail from './pages/GameDetail.vue'
 import { defineComponent, reactive, ref, onMounted } from '@vue/composition-api'
-import { StackType, Record, Game, Campaign, ListGame, List, SellSchedule } from './types/root'
+import { StackType, Record, Game, ListGame, List, SellSchedule } from './types/root'
 import { makeStyles } from './lib/style'
 import useRouteStack from './components/use/useRouteStack'
 import useDictionary from './components/use/useDictionary'
@@ -40,7 +40,6 @@ import store from 'src/store'
 import { remote } from 'electron'
 import useScraping from './components/use/useScraping'
 import useJudgeGame from './components/use/useJudgeGame'
-import { getMinimalGames } from './lib/api'
 
 const useStyles = () => 
   reactive({
@@ -63,7 +62,6 @@ export default defineComponent ({
     const routeStack = ref<StackType[]>([{ type: 'Home', id: 0 }])
     const games = ref<Record<number, Game>>({})
     const gameId = ref(0)
-    const campaigns = ref<Campaign[]>([])
     const sellSchedules = ref<SellSchedule[]>([])
     const isLoading = ref(true)
 
@@ -100,7 +98,7 @@ export default defineComponent ({
       }
     }
 
-    const { getCampaignWithImage, getSchedule, checkUpdate } = useScraping()
+    const { getSchedule, checkUpdate } = useScraping()
     
     onMounted(async () => {
       isLoading.value = true
@@ -117,7 +115,6 @@ export default defineComponent ({
         // await store.dispatch.app.setSeiya()
 
         // allDMM.value = await getAllDMM()
-        // campaigns.value = await getCampaignWithImage(allDMM)
         // sellSchedules.value = await getSchedule()
       } catch (e) {
         console.error(e)
@@ -144,7 +141,6 @@ export default defineComponent ({
       goHome,
       goDetail,
       setGame,
-      campaigns,
       sellSchedules,
       dropFile
     }
