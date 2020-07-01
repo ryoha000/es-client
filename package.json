@@ -28,7 +28,7 @@
     "@types/request-promise-native": "^1.0.17",
     "@types/yargs": "^15.0.5",
     "@typescript-eslint/eslint-plugin": "^3.2.0",
-    "@typescript-eslint/parser": "^3.2.0",
+    "@typescript-eslint/parser": "^3.5.0",
     "@vue/babel-preset-app": "^4.4.6",
     "babel-eslint": "^10.0.1",
     "chardet": "^1.1.0",
