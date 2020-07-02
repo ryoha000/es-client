@@ -1,7 +1,7 @@
 <template>
   <q-scroll-area :style="styles.container">
     <campaign-c :class="$style.item" />
-    <schedule :class="$style.item" :sellSchedules="sellSchedules" />
+    <schedule :class="$style.item" />
   </q-scroll-area>
 </template>
 
@@ -9,7 +9,6 @@
 import { defineComponent, ref, PropType, reactive, Ref, onMounted } from '@vue/composition-api';
 import CampaignC from '../components/MainView/Home/Campaign/Campaign.vue'
 import Schedule from '../components/MainView/Home/Schedule/Schedule.vue'
-import { SellSchedule } from '../types/root';
 import { makeStyles } from '../lib/style'
 
 const useStyles = (windowHeight: Ref<number>) => 
@@ -23,10 +22,6 @@ const useStyles = (windowHeight: Ref<number>) =>
 export default defineComponent({
   name: 'Home',
   props: {
-    sellSchedules: {
-      type: Array as PropType<SellSchedule[]>,
-      default: []
-    }
   },
   components: { CampaignC, Schedule },
   setup() {

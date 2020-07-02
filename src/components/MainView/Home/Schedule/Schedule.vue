@@ -10,21 +10,18 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from '@vue/composition-api';
+import { defineComponent, computed } from '@vue/composition-api';
 import ScheduleDay from './ScheduleDay.vue'
-import { SellSchedule } from '../../../../types/root';
+import store from 'src/store'
 
 export default defineComponent({
   name: 'Schedule',
   props: {
-    sellSchedules: {
-      type: Array as PropType<SellSchedule[]>,
-      default: []
-    }
   },
   components: { ScheduleDay },
   setup() {
-    return
+    const sellSchedules = computed(() => store.state.domain.schedules)
+    return { sellSchedules }
   }
 });
 </script>

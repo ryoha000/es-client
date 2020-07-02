@@ -2,7 +2,9 @@ import { defineActions } from 'direct-vuex'
 import { moduleActionContext } from 'src/store'
 import { domain } from './index'
 import { ActionContext } from 'vuex'
-import { getCampaigns } from 'src/lib/api'
+import { getCampaigns, getSchedules } from 'src/lib/api'
+import moment, { Moment } from 'moment'
+import { SellSchedule } from 'src/types/root'
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const domainActionContext = (
@@ -17,5 +19,25 @@ export const actions = defineActions({
       c.games.sort((a, b) => a.median > b.median ? -1 : 1)
     }
     commit.setCampaigns(campaigns)
+  },
+  async setSchedules(context) {
+    const { commit } = domainActionContext(context)
+    const schedules = await getSchedules()
+    schedules.sort((a, b) => moment(a.sellday ?? '') < moment(b.sellday ?? '') ? -1 : 1)
+    const sellSchedules: SellSchedule[] = []
+    let lastDay: Moment = moment(new Date())
+    for (const s of schedules) {
+      console.log(s.sellday)
+      if (!moment(s.sellday).isSame(lastDay)) {
+        lastDay = moment(s.sellday)
+        sellSchedules.push({ day: `${lastDay.month(1).format('YYYY-MM-DD')}`, games: [s] })
+      } else if (sellSchedules.length > 0) {
+        sellSchedules[sellSchedules.length - 1].games.push(s)
+      } else {
+        lastDay = moment(s.sellday)
+        sellSchedules.push({ day: `${lastDay.toString()}`, games: [s] })
+      }
+    }
+    commit.setSchedules(sellSchedules)
   },
 })

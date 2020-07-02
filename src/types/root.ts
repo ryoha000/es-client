@@ -67,15 +67,8 @@ export interface DMM {
 }
 
 export interface SellSchedule {
-  dayAndCount: string
-  games: {
-    id: number
-    name: string
-    brandId: number
-    brandName: string
-    isMasterup: boolean | null
-    image: string
-  }[]
+  day: string
+  games: GameWithoutNum[]
 }
 
 export interface Directory {

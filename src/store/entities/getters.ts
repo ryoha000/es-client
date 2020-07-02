@@ -2,7 +2,6 @@ import { defineGetters } from 'direct-vuex'
 import { S } from './state'
 import {
   entities,
-  Undefinedable
 } from './index'
 import { moduleGetterContext } from '../../store'
 

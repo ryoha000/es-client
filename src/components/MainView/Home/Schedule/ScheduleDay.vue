@@ -2,7 +2,7 @@
   <q-expansion-item
     expand-separator
     :class="$style.container"
-    :label="schedule.dayAndCount"
+    :label="schedule.day"
     default-opened
   >
     <div :class="$style.gameCards" >
@@ -15,7 +15,7 @@
 import { defineComponent, Ref, ref, PropType } from '@vue/composition-api';
 import GameCard from '../../GameCard.vue'
 import { CardInfo } from '../../HorizontalScroll.vue'
-import { SellSchedule } from '../../../../types/root';
+import { SellSchedule, GameWithoutNum } from '../../../../types/root';
 
 export default defineComponent({
   name: 'ScheduleDay',
@@ -34,11 +34,12 @@ export default defineComponent({
       image: '../../statics/icons/ESClient_demo_image.jpg',
       url: 'https://www.dlsite.com/maniax/campaign/matome202005'
     })
-    const createCardInfo = (game: {id: number, name: string, brandId: number, brandName: string, isMasterup: boolean, image: string}) => {
+    const createCardInfo = (game: GameWithoutNum) => {
       return {
-        title: game.name,
-        supplement: game.brandName,
-        image: game.image,
+        title: game.gamename,
+        supplement: 'game.brandName',
+        // image: `https://pics.dmm.co.jp/${game.dmm_genre ?? ''}/pcgame/${game.dmm ?? ''}/${game.dmm ?? ''}pl.jpg`,
+        image: '',
         url: `https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=${game.id}`,
         contain: true
       }

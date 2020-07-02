@@ -15,7 +15,6 @@ export const actions = defineActions({
   async setAllMinimalGames(context) {
     const { commit } = entitiesActionContext(context)
     const data = await getMinimalGames()
-    console.log(data)
     commit.setMinimalGames(reduceToRecord(data, 'id'))
   },
   async fetchGame(context, id: number) {

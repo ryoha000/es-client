@@ -17,3 +17,7 @@ export const getGame = async (id: number): Promise<GameWithoutNum> => {
 export const getCampaigns = async (): Promise<Campaign[]> => {
   return (await axios.get<Campaign[]>('/api/campaigns')).data
 }
+
+export const getSchedules = async (): Promise<GameWithoutNum[]> => {
+  return (await axios.get<GameWithoutNum[]>('/api/recentgames')).data
+}

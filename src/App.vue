@@ -11,7 +11,7 @@
     <div :class="$style.mainview">
       <main-view-header :routeStack="routeStack" :routeIndex="routeIndex" />
       <div>
-        <home v-if="routeStack[routeIndex].type === 'Home'" :sellSchedules="sellSchedules"/>
+        <home v-if="routeStack[routeIndex].type === 'Home'" />
         <game-detail
           v-if="routeStack[routeIndex].type === 'Game'"
           :games="games"
@@ -30,13 +30,12 @@ import MainViewHeader from './components/MainView/Header/MainViewHeader.vue'
 import Home from './pages/Home.vue'
 import GameDetail from './pages/GameDetail.vue'
 import { defineComponent, reactive, ref, onMounted, computed } from '@vue/composition-api'
-import { Record, Game, ListGame, List, SellSchedule } from './types/root'
+import { Record, Game } from './types/root'
 import { makeStyles } from './lib/style'
 import useDictionary from './components/use/useDictionary'
 import useJson from './components/use/useJson'
 import store from 'src/store'
 
-import { remote } from 'electron'
 import useScraping from './components/use/useScraping'
 import useJudgeGame from './components/use/useJudgeGame'
 
@@ -61,7 +60,6 @@ export default defineComponent ({
     const routeStack = computed(() => store.state.app.routeStack)
     const games = ref<Record<number, Game>>({})
     const gameId = ref(0)
-    const sellSchedules = ref<SellSchedule[]>([])
     const isLoading = ref(true)
 
     const { jsonSetup, addGameToList } = useJson()
@@ -73,7 +71,7 @@ export default defineComponent ({
       const game = await getOrSelect(id)
       games.value[id] = game
       isLoading.value = false
-      goDetail(id)
+      await store.dispatch.app.goDetail(id)
     }
 
     const dropFile = async (event: DragEvent) => {
@@ -95,7 +93,7 @@ export default defineComponent ({
       }
     }
 
-    const { getSchedule, checkUpdate } = useScraping()
+    const { checkUpdate } = useScraping()
     
     onMounted(async () => {
       isLoading.value = true
@@ -110,10 +108,10 @@ export default defineComponent ({
         await store.dispatch.entities.setHaveGames()
         await store.dispatch.app.setLists()
         await store.dispatch.domain.setCampaign()
+        await store.dispatch.domain.setSchedules()
         // await store.dispatch.app.setSeiya()
 
         // allDMM.value = await getAllDMM()
-        // sellSchedules.value = await getSchedule()
       } catch (e) {
         console.error(e)
       }
@@ -135,7 +133,6 @@ export default defineComponent ({
       games,
       gameId,
       setGame,
-      sellSchedules,
       dropFile
     }
   }

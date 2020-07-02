@@ -4,9 +4,9 @@ import useGetFileIcon from './useGetFileIcon'
 import { ListGame, MinimalGame } from '../../types/root'
 import { editONP } from './useEditDistance'
 import useJson from './useJson'
-import { Ref } from '@vue/composition-api'
 
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const useJudgeGame = (allMinimalGame: Record<string, MinimalGame>) => {
   const toLowerAndHankaku = (str: string) => {
     const retStr = str.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s) {
