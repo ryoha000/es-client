@@ -2,7 +2,7 @@ import { defineActions } from 'direct-vuex'
 import { moduleActionContext } from 'src/store'
 import { domain } from './index'
 import { ActionContext } from 'vuex'
-import { getCampaigns, getSchedules } from 'src/lib/api'
+import { getCampaigns, getSchedules, getGame } from 'src/lib/api'
 import moment, { Moment } from 'moment'
 import { SellSchedule } from 'src/types/root'
 
@@ -27,10 +27,9 @@ export const actions = defineActions({
     const sellSchedules: SellSchedule[] = []
     let lastDay: Moment = moment(new Date())
     for (const s of schedules) {
-      console.log(s.sellday)
       if (!moment(s.sellday).isSame(lastDay)) {
         lastDay = moment(s.sellday)
-        sellSchedules.push({ day: `${lastDay.month(1).format('YYYY-MM-DD')}`, games: [s] })
+        sellSchedules.push({ day: `${lastDay.format('YYYY-MM-DD')}`, games: [s] })
       } else if (sellSchedules.length > 0) {
         sellSchedules[sellSchedules.length - 1].games.push(s)
       } else {
@@ -40,4 +39,9 @@ export const actions = defineActions({
     }
     commit.setSchedules(sellSchedules)
   },
+  async setGame(context, id: number) {
+    const { commit } = domainActionContext(context)
+    const game = await getGame(id)
+    commit.setGame(game)
+  }
 })

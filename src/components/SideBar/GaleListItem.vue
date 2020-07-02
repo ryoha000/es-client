@@ -53,13 +53,11 @@ export default defineComponent({
         await startProcess(undefined)
         return;
       }
+      await store.dispatch.app.goDetail(game.id)
 
       clicked.value = true;
 
       setTimeout(function () {
-        if (clicked.value) {
-          context.emit('game', game.id)
-        }
         clicked.value = false;
       }, 300);
     }

@@ -57,8 +57,8 @@ export const actions = defineActions({
     console.log('home end')
     return
   },
-  goDetail(context, id: number) {
-    const { state, commit } = appActionContext(context)
+  async goDetail(context, id: number) {
+    const { state, commit, rootDispatch } = appActionContext(context)
     if (state.routeStack.length <= state.routeIndex) {
       commit.setRouteStack([{ type: 'Game', id: id }])
       commit.setRouteIndex(0)
@@ -75,6 +75,8 @@ export const actions = defineActions({
     }
     commit.addRouteStack({ type: 'Game', id: id })
     commit.setRouteIndex(state.routeIndex + 1)
+    // await rootDispatch.domain.setGame(id)
+    await rootDispatch.entities.setGameDetails(id)
     console.log('game end')
     return
   },

@@ -4,10 +4,11 @@ import { getters } from './getters'
 import { mutations } from './mutations'
 import { actions } from './actions'
 
-import { MinimalGame, GameWithoutNum } from 'src/types/root'
+import { MinimalGame, Game, GameDetail } from 'src/types/root'
 
 export type MinimalGameMap = Record<string, MinimalGame>
-export type GameWithoutNumMap = Record<string, GameWithoutNum>
+export type GameMap = Record<string, Game>
+export type GameDetailMap = Record<number, GameDetail>
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Undefinedable<T extends Record<string, any>> = Partial<T>
 

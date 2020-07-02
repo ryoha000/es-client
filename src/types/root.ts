@@ -3,7 +3,7 @@ export interface StackType {
   id: number
 }
 
-export type Game = {
+export type GameDetail = {
   id: number
   name: string
   furigana: string
@@ -33,14 +33,6 @@ export interface Seiyu extends Creator {
   importance: number // 0 => Main, 1 => Sub, 2 => Mob
 }
 
-export interface Brand {
-  id: number
-  name: string
-  furigana: string
-  officialHomePage: string
-  median: number
-}
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Record<K extends keyof any, T> = {
   [P in K]: T;
@@ -68,7 +60,7 @@ export interface DMM {
 
 export interface SellSchedule {
   day: string
-  games: GameWithoutNum[]
+  games: Game[]
 }
 
 export interface Directory {
@@ -99,10 +91,33 @@ export interface User {
   icon_url: string | null
 }
 
-export interface GameWithoutNum {
+export interface Brand {
+  id: number,
+  brandname: string,
+  brandfurigana: string | null,
+  makername: string | null,
+  makerfurigana: string | null,
+  url: string | null,
+  checked: boolean | null,
+  kind: string | null,
+  lost: boolean | null,
+  directlink: boolean | null,
+  median: number | null,
+  http_response_code: number | null,
+  twitter: string | null,
+  twitter_data_widget_id: number | null,
+  notes: string | null,
+  erogetrailers: number | null,
+  cien: number | null,
+}
+
+export interface Game {
   id: number
   gamename: string | null
   furigana: string | null
+  median: number | null
+  stdev: number | null
+  count2: number | null
   sellday:	string |null
   brand_id:	number
   comike:	number | null
@@ -121,10 +136,8 @@ export interface GameWithoutNum {
   dlsite_domain:	string | null
   trial_url:	string | null
   okazu:	boolean | null
-  axis_of_soft_or_hard: number | null
   genre:	string | null
   twitter:	string | null
-  digiket:	string | null
   twitter_data_widget_id: number | null
   masterup: string |null
   steam: number | null
@@ -143,16 +156,15 @@ export interface Campaign {
   games: CampaignGame[],
 }
 
-export interface GameWithNum extends GameWithoutNum {
-  median: number,
-  stdev: number,
-  count2: number,
-}
-
-export interface CampaignGame extends GameWithNum {
+export interface CampaignGame extends Game {
   median: number,
   stdev: number,
   count2: number,
   content: string | null,
   url: string | null,
+}
+
+export interface GameAndBrand {
+  game: Game,
+  brand: Brand,
 }

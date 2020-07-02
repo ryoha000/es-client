@@ -6,10 +6,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref, computed } from '@vue/composition-api';
+import { defineComponent, computed } from '@vue/composition-api';
 import CampaignContent from './CampaignContent.vue'
-import { Campaign } from 'src/types/root';
-import { getCampaigns } from 'src/lib/api';
 import store from 'src/store';
 
 export default defineComponent({

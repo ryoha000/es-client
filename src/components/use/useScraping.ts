@@ -5,8 +5,7 @@ import * as Request from 'request-promise-native';
 import * as Charset from 'chardet';
 import * as iconv   from 'iconv-lite';
 import { JSDOM }    from 'jsdom';
-import { Game, Creator, Seiyu, Campaign, CampaignGame, DMM, SellSchedule } from '../../types/root'
-import { Ref } from '@vue/composition-api';
+import { Creator, Seiyu, GameDetail } from '../../types/root'
 import { editONP } from './useEditDistance'
 
 const baseURL = 'https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki'
@@ -82,7 +81,7 @@ const useScraping = () => {
     const gengas = doc.getElementById('genga')?.getElementsByTagName('td')[0]
     const sinarios = doc.getElementById('shinario')?.getElementsByTagName('td')[0]
     const seiyus = doc.getElementById('seiyu')?.getElementsByTagName('td')[0]
-    const game: Game = {
+    const game: GameDetail = {
       id: id,
       name: gameTitle?.getElementsByTagName('a')[0]?.innerHTML ?? '',
       furigana: '',
@@ -230,7 +229,7 @@ const useScraping = () => {
     console.log(version.version)
     return version.version !== now
   }
-  return { getTitle, getGameDetail, getSeiyaURL, getSeiyaGames, checkUpdate }
+  return { getTitle, getSeiyaURL, getSeiyaGames, checkUpdate, getGameDetail }
 }
 
 export default useScraping

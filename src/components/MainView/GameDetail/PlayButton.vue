@@ -39,8 +39,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref, computed } from '@vue/composition-api';
-import { Game } from '../../../types/root';
+import { defineComponent, ref, computed } from '@vue/composition-api';
 import ChangeRelation from './ChangeRelation.vue'
 import useStartProcess from '../../use/useStartProcess'
 import store from 'src/store'
@@ -48,14 +47,10 @@ import store from 'src/store'
 export default defineComponent({
   name: 'PlayButton',
   props: {
-    game: {
-      type: Object as PropType<Game>,
-      required: true
-    },
   },
   components: { ChangeRelation },
-  setup(props) {
-    const nowListGame = computed(() =>  store.getters.app.getListGameByGameId(props.game.id))
+  setup() {
+    const nowListGame = computed(() => store.getters.app.getListGameByGameId(store.state.domain.gameDetail?.id ?? 0))
     const startProcess = async (isAdmin: boolean | undefined) => {
       if (!nowListGame.value) return
       const { startProcess } = useStartProcess(nowListGame.value)

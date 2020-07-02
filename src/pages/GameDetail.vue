@@ -1,36 +1,36 @@
 <template>
-  <div v-if="!game">Error</div>
+  <div v-if="!gameDetail">Error</div>
   <q-scroll-area v-else :style="styles.container">
     <div :class="$style.container">
-      <img :class="$style.image" :src="game.imgUrl" />
+      <img :class="$style.image" :src="imgUrl" />
       <div :class="$style.wrapTitle">
-        <div :class="$style.title">{{ game.name }}</div>
+        <div :class="$style.title">{{ gameDetail.name }}</div>
         <link-c
-          :title="game.brandName"
+          :title="gameDetail.brandName"
           :fontSize="20"
           :class="$style.titleInfo"
-          :url="`https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/brand.php?brand=${game.brandId}`"
+          :url="`https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/brand.php?brand=${gameDetail.brandId}`"
           :icon="false"
         />
         <link-c
-          :title="`(${game.sellday})`"
+          :title="`(${gameDetail.sellday})`"
           :fontSize="20"
           :class="$style.titleInfo"
-          :url="createSellDayURL(game.sellday)"
+          :url="createSellDayURL(gameDetail.sellday)"
           :icon="false"
         />
       </div>
     </div>
-    <main-wrapper :game="game" />
+    <main-wrapper />
   </q-scroll-area>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref, computed, Ref, reactive, onMounted } from '@vue/composition-api';
+import { defineComponent, ref, computed, Ref, reactive, onMounted } from '@vue/composition-api';
 import MainWrapper from '../components/MainView/GameDetail/MainWrapper.vue'
-import { Game, Record } from '../types/root';
 import { makeStyles } from '../lib/style'
 import LinkC from '../components/MainView/GameDetail/Link.vue'
+import store from 'src/store'
 
 const useStyles = (windowHeight: Ref<number>) => 
   reactive({
@@ -40,28 +40,17 @@ const useStyles = (windowHeight: Ref<number>) =>
     )
   })
 
-
 export default defineComponent({
   name: 'GameDetail',
   props: {
-    games: {
-      type: Object as PropType<Record<number, Game>>,
-      required: true
-    },
-    id: {
-      type: Number,
-      required: true
-    },
   },
   components: {
     MainWrapper,
     LinkC
   },
-  setup(props) {
-    const game = computed(() => {
-      console.log(props.games[props.id], props.games, props.id)
-      return props.games[props.id]
-    })
+  setup() {
+    const gameDetail = computed(() => store.state.domain.gameDetail)
+    const imgUrl = computed(() => store.state.domain.gameDetail?.imgUrl ?? '')
     const windowHeight = ref(window.innerHeight)
     const styles = useStyles(windowHeight)
     onMounted(() => {
@@ -73,7 +62,7 @@ export default defineComponent({
       const [year, month, day] = sellday.split('-')
       return `https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/toukei_hatubaibi_month.php?year=${year}&month=${month}#${sellday}`
     }
-    return { game, styles, createSellDayURL }
+    return { gameDetail, styles, createSellDayURL, imgUrl }
   }
 });
 </script>

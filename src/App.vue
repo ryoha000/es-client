@@ -12,11 +12,7 @@
       <main-view-header :routeStack="routeStack" :routeIndex="routeIndex" />
       <div>
         <home v-if="routeStack[routeIndex].type === 'Home'" />
-        <game-detail
-          v-if="routeStack[routeIndex].type === 'Game'"
-          :games="games"
-          :id="gameId"
-        />
+        <game-detail v-if="routeStack[routeIndex].type === 'Game'" />
       </div>
     </div>
   </div>
@@ -30,9 +26,7 @@ import MainViewHeader from './components/MainView/Header/MainViewHeader.vue'
 import Home from './pages/Home.vue'
 import GameDetail from './pages/GameDetail.vue'
 import { defineComponent, reactive, ref, onMounted, computed } from '@vue/composition-api'
-import { Record, Game } from './types/root'
 import { makeStyles } from './lib/style'
-import useDictionary from './components/use/useDictionary'
 import useJson from './components/use/useJson'
 import store from 'src/store'
 
@@ -58,18 +52,13 @@ export default defineComponent ({
   setup() {
     const routeIndex = computed(() => store.state.app.routeIndex)
     const routeStack = computed(() => store.state.app.routeStack)
-    const games = ref<Record<number, Game>>({})
-    const gameId = ref(0)
+
     const isLoading = ref(true)
 
     const { jsonSetup, addGameToList } = useJson()
     const styles = useStyles()
-    const { getOrSelect } = useDictionary(games)
     const setGame = async (id: number) => {
       isLoading.value = true
-      gameId.value = id
-      const game = await getOrSelect(id)
-      games.value[id] = game
       isLoading.value = false
       await store.dispatch.app.goDetail(id)
     }
@@ -110,8 +99,6 @@ export default defineComponent ({
         await store.dispatch.domain.setCampaign()
         await store.dispatch.domain.setSchedules()
         // await store.dispatch.app.setSeiya()
-
-        // allDMM.value = await getAllDMM()
       } catch (e) {
         console.error(e)
       }
@@ -130,8 +117,6 @@ export default defineComponent ({
       routeIndex,
       routeStack,
       isLoading,
-      games,
-      gameId,
       setGame,
       dropFile
     }

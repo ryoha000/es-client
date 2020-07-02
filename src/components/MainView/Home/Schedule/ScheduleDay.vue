@@ -2,7 +2,7 @@
   <q-expansion-item
     expand-separator
     :class="$style.container"
-    :label="schedule.day"
+    :label="schedule.day + '  (' + schedule.games.length + '本)'"
     default-opened
   >
     <div :class="$style.gameCards" >
@@ -15,7 +15,7 @@
 import { defineComponent, Ref, ref, PropType } from '@vue/composition-api';
 import GameCard from '../../GameCard.vue'
 import { CardInfo } from '../../HorizontalScroll.vue'
-import { SellSchedule, GameWithoutNum } from '../../../../types/root';
+import { SellSchedule, Game } from '../../../../types/root';
 
 export default defineComponent({
   name: 'ScheduleDay',
@@ -34,7 +34,7 @@ export default defineComponent({
       image: '../../statics/icons/ESClient_demo_image.jpg',
       url: 'https://www.dlsite.com/maniax/campaign/matome202005'
     })
-    const createCardInfo = (game: GameWithoutNum) => {
+    const createCardInfo = (game: Game) => {
       return {
         title: game.gamename,
         supplement: 'game.brandName',

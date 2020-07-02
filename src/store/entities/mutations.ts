@@ -40,13 +40,17 @@ const deleteMutation = <
 export const mutations = defineMutations<S>()({
   setHaveGames: setMutation('haveGames'),
   setMinimalGames: setMutation('minimalGames'),
+  setGameDetails: setMutation('gameDetails'),
 
   extendHaveGames: extendMutation('haveGames'),
   extentMinimalGames: extendMutation('minimalGames'),
+  extentGameDetails: extendMutation('gameDetails'),
 
   addHaveGame: addMutation('haveGames'),
   addMinimalGame: addMutation('minimalGames'),
+  addGameDetail: addMutation('gameDetails'),
 
   deleteHaveGame: deleteMutation('haveGames'),
   deleteMinimalGame: deleteMutation('minimalGames'),
+  deleteGameDetail: deleteMutation('gameDetails'),
 })

@@ -1,9 +1,7 @@
 <template>
   <div :class="$style.container">
     <div :class="$style.button">
-      <play-button
-        :game="game"
-      />
+      <play-button />
       <div :class="$style.playTime">{{ playTimeString }}</div>
     </div>
     <div :class="$style.Link">
@@ -20,12 +18,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, computed, ref, onMounted } from '@vue/composition-api';
+import { defineComponent, computed, ref, onMounted } from '@vue/composition-api';
 import LinkC from './Link.vue'
 import PlayButton from './PlayButton.vue'
 import GameInfo, { CreatorInfo } from './GameInfo.vue'
 import ScoreC, { Score } from './Score.vue'
-import { Game } from '../../../types/root';
 import useScraping from '../../use/useScraping'
 import useJson from '../../use/useJson';
 import store from 'src/store'
@@ -33,10 +30,6 @@ import store from 'src/store'
 export default defineComponent({
   name: 'MainWrapper',
   props: {
-    game: {
-      type: Object as PropType<Game>,
-      required: true
-    },
   },
   components: {
     LinkC,
@@ -44,23 +37,24 @@ export default defineComponent({
     GameInfo,
     ScoreC,
   },
-  setup(props) {
+  setup() {
+    const gameDetail = computed(() => store.state.domain.gameDetail)
     const { getSeiyaURL } = useScraping()
     const links = computed(() => [
-      { title: 'OHP', url: props.game.officialHomePage },
-      { title: 'ErogameSpace', url: `https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=${props.game.id}` },
-      { title: '誠也の部屋', url: getSeiyaURL(props.game.name, store.state.app.seiya) }
+      { title: 'OHP', url: gameDetail.value?.officialHomePage ?? '' },
+      { title: 'ErogameSpace', url: `https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=${gameDetail.value?.id ?? ''}` },
+      { title: '誠也の部屋', url: getSeiyaURL(gameDetail.value?.name ?? '', store.state.app.seiya) }
     ])
     
     const score = computed<Score>(() => ({
-      median: props.game.median,
-      average: props.game.average,
-      count: props.game.count
+      median: gameDetail.value?.median ?? 0,
+      average: gameDetail.value?.average ?? 0,
+      count: gameDetail.value?.count ?? 0,
     }))
     const creators = computed<CreatorInfo>(() => ({
-      gengas: props.game.gengas,
-      sinarios: props.game.sinarios,
-      seiyus: props.game.seiyus
+      gengas: gameDetail.value?.gengas ?? [],
+      sinarios: gameDetail.value?.sinarios ?? [],
+      seiyus: gameDetail.value?.seiyus ?? [],
     }))
     const { getHistory } = useJson()
     const playTimeString = ref('')
@@ -68,13 +62,13 @@ export default defineComponent({
       const histories = await getHistory()
       let playTime = 0
       for (const his of histories) {
-        if (his.id === props.game.id) {
+        if (his.id === gameDetail.value?.id) {
           playTime += his.time
         }
       }
       playTimeString.value = `プレイ時間: ${Math.floor(playTime / 1000 / 60 / 60)}時間 ${Math.round((playTime / 1000 / 60) % 60)}分`
     })
-    return { links, score, creators, playTimeString }
+    return { links, score, playTimeString, creators }
   }
 });
 </script>
