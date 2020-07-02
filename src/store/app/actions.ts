@@ -22,4 +22,60 @@ export const actions = defineActions({
     const { getLists } = useJson()
     commit.setLists(await getLists())
   },
+  next(context) {
+    const { state, commit } = appActionContext(context)
+    if (state.routeStack.length > state.routeIndex + 1) {
+      commit.setRouteIndex(state.routeIndex + 1)
+      console.log('next')
+    }
+  },
+  back(context) {
+    const { state, commit } = appActionContext(context)
+    if (state.routeStack.length > state.routeIndex && state.routeIndex !== 0) {
+      commit.setRouteIndex(state.routeIndex - 1)
+      console.log('back')
+    }
+  },
+  goHome(context) {
+    const { state, commit } = appActionContext(context)
+    if (state.routeStack.length <= state.routeIndex) {
+      commit.setRouteStack([{ type: 'Home', id: 0 }])
+      commit.setRouteIndex(0)
+      console.log('home index err')
+      return
+    }
+    if (state.routeStack[state.routeIndex].type === 'Home') {
+      console.log('home now')
+      return
+    }
+    if (state.routeStack.length !== state.routeIndex + 1) {
+      commit.spliceRouteStack(state.routeIndex + 1)
+      console.log('home not top')
+    }
+    commit.addRouteStack({ type: 'Home', id: 0 })
+    commit.setRouteIndex(state.routeIndex + 1)
+    console.log('home end')
+    return
+  },
+  goDetail(context, id: number) {
+    const { state, commit } = appActionContext(context)
+    if (state.routeStack.length <= state.routeIndex) {
+      commit.setRouteStack([{ type: 'Game', id: id }])
+      commit.setRouteIndex(0)
+      console.log('game index err')
+      return
+    }
+    if (state.routeStack[state.routeIndex].id === id) {
+      console.log('game now')
+      return
+    }
+    if (state.routeStack.length !== state.routeIndex + 1) {
+      commit.spliceRouteStack(state.routeIndex + 1)
+      console.log('game not top')
+    }
+    commit.addRouteStack({ type: 'Game', id: id })
+    commit.setRouteIndex(state.routeIndex + 1)
+    console.log('game end')
+    return
+  },
 })

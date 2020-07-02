@@ -7,9 +7,9 @@
     @drop.prevent="dropFile"
     @dragover.prevent
   >
-    <side-bar :class="$style.sidebar" @game="setGame" />
+    <side-bar :class="$style.sidebar" />
     <div :class="$style.mainview">
-      <main-view-header @next="next" @back="back" @home="goHome" :routeStack="routeStack" :routeIndex="routeIndex" />
+      <main-view-header :routeStack="routeStack" :routeIndex="routeIndex" />
       <div>
         <home v-if="routeStack[routeIndex].type === 'Home'" :sellSchedules="sellSchedules"/>
         <game-detail
@@ -29,10 +29,9 @@ import SideBar from './components/SideBar/SideBar.vue'
 import MainViewHeader from './components/MainView/Header/MainViewHeader.vue'
 import Home from './pages/Home.vue'
 import GameDetail from './pages/GameDetail.vue'
-import { defineComponent, reactive, ref, onMounted } from '@vue/composition-api'
-import { StackType, Record, Game, ListGame, List, SellSchedule } from './types/root'
+import { defineComponent, reactive, ref, onMounted, computed } from '@vue/composition-api'
+import { Record, Game, ListGame, List, SellSchedule } from './types/root'
 import { makeStyles } from './lib/style'
-import useRouteStack from './components/use/useRouteStack'
 import useDictionary from './components/use/useDictionary'
 import useJson from './components/use/useJson'
 import store from 'src/store'
@@ -58,8 +57,8 @@ export default defineComponent ({
     GameDetail
   },
   setup() {
-    const routeIndex = ref(0)
-    const routeStack = ref<StackType[]>([{ type: 'Home', id: 0 }])
+    const routeIndex = computed(() => store.state.app.routeIndex)
+    const routeStack = computed(() => store.state.app.routeStack)
     const games = ref<Record<number, Game>>({})
     const gameId = ref(0)
     const sellSchedules = ref<SellSchedule[]>([])
@@ -67,7 +66,6 @@ export default defineComponent ({
 
     const { jsonSetup, addGameToList } = useJson()
     const styles = useStyles()
-    const { next, back, goHome, goDetail } = useRouteStack(routeIndex, routeStack)
     const { getOrSelect } = useDictionary(games)
     const setGame = async (id: number) => {
       isLoading.value = true
@@ -83,7 +81,6 @@ export default defineComponent ({
       const { getEXE } = useJudgeGame(minimalGames)
       try {
         const dragFilePath = event.dataTransfer?.files[0].path
-        console.log(Object.values(minimalGames))
         if (dragFilePath) {
           const newListGames = await getEXE([dragFilePath])
           if (newListGames.length === 0) {
@@ -137,10 +134,6 @@ export default defineComponent ({
       isLoading,
       games,
       gameId,
-      next,
-      back,
-      goHome,
-      goDetail,
       setGame,
       sellSchedules,
       dropFile

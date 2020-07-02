@@ -18,6 +18,7 @@ import { defineComponent, ref, PropType } from '@vue/composition-api';
 import { StackType } from '../../../types/root';
 import { remote } from 'electron'
 import Setting from './Setting.vue'
+import store from 'src/store'
 
 export default defineComponent({
   name: 'MainViewHeader',
@@ -33,19 +34,19 @@ export default defineComponent({
   components: {
     Setting
   },
-  setup(_, context) {
+  setup() {
     const searchString = ref('')
-    const back = () => {
+    const back = async () => {
       console.log('back header')
-      context.emit('back')
+      await store.dispatch.app.back()
     }
-    const next = () => {
+    const next = async () => {
       console.log('next header')
-      context.emit('next')
+      await store.dispatch.app.next()
     }
-    const home = () => {
+    const home = async () => {
       console.log('home header')
-      context.emit('home')
+      await store.dispatch.app.goHome()
     }
     const search = async (e: KeyboardEvent) => {
       if (e.key === 'Enter') {
