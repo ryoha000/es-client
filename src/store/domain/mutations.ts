@@ -1,6 +1,6 @@
 import { defineMutations } from 'direct-vuex'
 import { S } from './state'
-import { Campaign, SellSchedule, GameAndBrand, GameDetail } from 'src/types/root'
+import { Campaign, SellSchedule, GameAndBrand, GameDetail, User } from 'src/types/root'
 
 export const mutations = defineMutations<S>()({
   setCampaigns(state, payload: Campaign[]) {
@@ -15,4 +15,7 @@ export const mutations = defineMutations<S>()({
   setGameDetail(state, payload: GameDetail) {
     state.gameDetail = payload
   },
+  setMe(state, payload: User) {
+    state.me = payload
+  }
 })

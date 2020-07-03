@@ -2,9 +2,10 @@ import { defineActions } from 'direct-vuex'
 import { moduleActionContext } from 'src/store'
 import { domain } from './index'
 import { ActionContext } from 'vuex'
-import { getCampaigns, getSchedules, getGame } from 'src/lib/api'
+import { getCampaigns, getSchedules, getGame, getMe } from 'src/lib/api'
 import moment, { Moment } from 'moment'
 import { SellSchedule } from 'src/types/root'
+import { setMaxListeners } from 'process'
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const domainActionContext = (
@@ -43,5 +44,10 @@ export const actions = defineActions({
     const { commit } = domainActionContext(context)
     const game = await getGame(id)
     commit.setGame(game)
-  }
+  },
+  async setMe(context) {
+    const { commit } = domainActionContext(context)
+    const me = await getMe()
+    commit.setMe(me)
+  },
 })

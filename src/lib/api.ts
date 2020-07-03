@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import axios from 'axios';
-import { MinimalGame, Game, Campaign, GameAndBrand } from 'src/types/root';
+import { MinimalGame, Game, Campaign, GameAndBrand, User } from 'src/types/root';
 
 export const getGamesWithoutNumByIds = async (ids: number[]): Promise<Game[]> => {
   return (await axios.post<Game[]>('/api/games', { ids: ids })).data
@@ -20,4 +20,8 @@ export const getCampaigns = async (): Promise<Campaign[]> => {
 
 export const getSchedules = async (): Promise<Game[]> => {
   return (await axios.get<Game[]>('/api/recentgames')).data
+}
+
+export const getMe = async (): Promise<User> => {
+  return (await axios.get<User>('/api/me')).data
 }
