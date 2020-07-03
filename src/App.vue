@@ -98,6 +98,7 @@ export default defineComponent ({
         await store.dispatch.app.setLists()
         await store.dispatch.domain.setCampaign()
         await store.dispatch.domain.setSchedules()
+        await store.dispatch.domain.setMe()
         // await store.dispatch.app.setSeiya()
       } catch (e) {
         console.error(e)

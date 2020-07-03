@@ -8,7 +8,9 @@
         <q-icon name="search" color="white" :class="$style.icon" />
       </template>
     </q-input>
+    <user-icon />
     <q-btn flat icon="settings" @click="openSettingDialog" :class="$style.settingButton" />
+
     <setting :isOpen="isOpenSettingDialog" @close="closeSettingDialog" />
   </div>
 </template>
@@ -16,9 +18,10 @@
 <script lang="ts">
 import { defineComponent, ref, PropType } from '@vue/composition-api';
 import { StackType } from '../../../types/root';
-import { remote } from 'electron'
 import Setting from './Setting.vue'
+import { remote } from 'electron'
 import store from 'src/store'
+import UserIcon from './UserIcon.vue'
 
 export default defineComponent({
   name: 'MainViewHeader',
@@ -32,22 +35,14 @@ export default defineComponent({
     }
   },
   components: {
-    Setting
+    Setting,
+    UserIcon
   },
   setup() {
     const searchString = ref('')
-    const back = async () => {
-      console.log('back header')
-      await store.dispatch.app.back()
-    }
-    const next = async () => {
-      console.log('next header')
-      await store.dispatch.app.next()
-    }
-    const home = async () => {
-      console.log('home header')
-      await store.dispatch.app.goHome()
-    }
+    const back = async () => { await store.dispatch.app.back() }
+    const next = async () => { await store.dispatch.app.next() }
+    const home = async () => { await store.dispatch.app.goHome() }
     const search = async (e: KeyboardEvent) => {
       if (e.key === 'Enter') {
         await remote.shell.openExternal(`https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/kensaku.php?category=game&word_category=name&word=${searchString.value}&mode=normal`)
@@ -84,6 +79,12 @@ export default defineComponent({
   }
 }
 
+.avater {
+  justify-self: center;
+  align-self: center;
+  margin-left: 8px;
+  cursor: pointer;
+}
 .settingButton {
   margin-left: 8px;
   width: 36px;

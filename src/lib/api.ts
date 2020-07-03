@@ -25,3 +25,11 @@ export const getSchedules = async (): Promise<Game[]> => {
 export const getMe = async (): Promise<User> => {
   return (await axios.get<User>('/api/me')).data
 }
+
+export const login = async (name: string, pass: string): Promise<User> => {
+  return (await axios.post<User>('/api/login', { name: name, password: pass })).data
+}
+
+export const signup = async (name: string, pass: string): Promise<User> => {
+  return (await axios.post<User>('/api/users', { name: name, display_name: name, password: pass })).data
+}
