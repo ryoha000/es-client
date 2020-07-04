@@ -26,6 +26,10 @@ export const getMe = async (): Promise<User> => {
   return (await axios.get<User>('/api/me')).data
 }
 
+export const updateMe = async (user: User): Promise<User> => {
+  return (await axios.put<User>('/api/users', { user: user })).data
+}
+
 export const login = async (name: string, pass: string): Promise<User> => {
   return (await axios.post<User>('/api/login', { name: name, password: pass })).data
 }

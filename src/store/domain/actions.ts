@@ -2,10 +2,9 @@ import { defineActions } from 'direct-vuex'
 import { moduleActionContext } from 'src/store'
 import { domain } from './index'
 import { ActionContext } from 'vuex'
-import { getCampaigns, getSchedules, getGame, getMe } from 'src/lib/api'
+import { getCampaigns, getSchedules, getGame, getMe, updateMe, login } from 'src/lib/api'
 import moment, { Moment } from 'moment'
-import { SellSchedule } from 'src/types/root'
-import { setMaxListeners } from 'process'
+import { SellSchedule, User } from 'src/types/root'
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const domainActionContext = (
@@ -48,6 +47,39 @@ export const actions = defineActions({
   async setMe(context) {
     const { commit } = domainActionContext(context)
     const me = await getMe()
+    if (!me.comment) me.comment = ''
+    if (!me.twitter_id) me.twitter_id = ''
+    if (!me.icon_url) me.icon_url = ''
     commit.setMe(me)
+  },
+  async updateMe(context, user: User) {
+    const { commit } = domainActionContext(context)
+    const updated_me = await updateMe(user)
+    if (!updated_me.comment) updated_me.comment = ''
+    if (!updated_me.twitter_id) updated_me.twitter_id = ''
+    if (!updated_me.icon_url) updated_me.icon_url = ''
+    commit.setMe(updated_me)
+  },
+  async login(context, payload: { id: string, pw: string }) {
+    const { dispatch } = domainActionContext(context)
+    await login(payload.id, payload.pw)
+    await dispatch.setMe()
+  },
+  async signup(context, payload: { id: string, pw: string }) {
+    const { dispatch } = domainActionContext(context)
+    await login(payload.id, payload.pw)
+    await dispatch.setMe()
+  },
+  setSocket(context) {
+    console.log('s')
+    const { commit } = domainActionContext(context)
+    const socket = new WebSocket('ws://localhost:8088/api/ws/');
+    socket.addEventListener('open', function (event) {
+      socket.send('Hello Server!');
+    });
+    socket.addEventListener('message', function (event) {
+      console.log('Message from server ', event.data);
+    });
+    commit.setSocket(socket)
   },
 })

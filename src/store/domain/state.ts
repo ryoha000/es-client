@@ -6,6 +6,7 @@ export type S = {
   game: GameAndBrand | null
   gameDetail: GameDetail | null
   me: User | null
+  socket: WebSocket | null
 }
 
 export const state: S = {
@@ -14,4 +15,5 @@ export const state: S = {
   game: null,
   gameDetail: null,
   me: null,
+  socket: null,
 }

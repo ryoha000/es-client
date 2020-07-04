@@ -17,5 +17,8 @@ export const mutations = defineMutations<S>()({
   },
   setMe(state, payload: User) {
     state.me = payload
-  }
+  },
+  setSocket(state, payload: WebSocket) {
+    state.socket = payload
+  },
 })

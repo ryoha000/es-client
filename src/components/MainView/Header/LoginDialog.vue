@@ -43,6 +43,7 @@
 import { defineComponent, ref } from '@vue/composition-api';
 import { login, signup } from 'src/lib/api'
 import LinkC from 'src/components/MainView/GameDetail/Link.vue'
+import store from 'src/store'
 
 export default defineComponent({
   name: 'LoginDialog',
@@ -67,9 +68,9 @@ export default defineComponent({
     const loginPW = ref('')
     const loginOrSignup = async () => {
       if (props.isLogin) {
-        await login(loginId.value, loginPW.value)
+        await store.dispatch.domain.login({ id: loginId.value, pw: loginPW.value })
       } else {
-        await signup(loginId.value, loginPW.value)
+        await store.dispatch.domain.signup({ id: loginId.value, pw: loginPW.value })
       }
       close()
     }

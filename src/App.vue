@@ -100,6 +100,14 @@ export default defineComponent ({
         await store.dispatch.domain.setSchedules()
         await store.dispatch.domain.setMe()
         // await store.dispatch.app.setSeiya()
+        console.log('bbbb')
+        try {
+          console.log('aaaa')
+          await store.dispatch.domain.setSocket()
+
+        } catch (e) {
+          console.error(e)
+        }
       } catch (e) {
         console.error(e)
       }

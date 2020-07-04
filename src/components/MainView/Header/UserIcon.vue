@@ -6,6 +6,7 @@
       </q-avatar>
     </div>
     <login-dialog :isOpen="isOpenLoginDialog" @close="closeLoginDialog" :isLogin="isLogin" />
+    <user-edit-dialog :isOpen="isOpenUserEditDialog" @close="closeUserEditDialog" v-if="isOpenUserEditDialog" />
   </div>
 </template>
 
@@ -14,15 +15,14 @@ import { defineComponent, ref, computed } from '@vue/composition-api';
 import { remote } from 'electron'
 import store from 'src/store'
 import LoginDialog from './LoginDialog.vue'
+import UserEditDialog from './UserEditDialog.vue'
 
 const Menu = remote.Menu;
 const MenuItem = remote.MenuItem;
 
 export default defineComponent({
   name: 'UserIcon',
-  components: {
-    LoginDialog
-  },
+  components: { LoginDialog, UserEditDialog },
   setup() {
     const isOpenLoginDialog = ref(false)
     const openLoginDialog = (isLog: boolean) => {
@@ -33,6 +33,15 @@ export default defineComponent({
       isOpenLoginDialog.value = false
     }
     const isLogin = ref(true)
+
+    const isOpenUserEditDialog = ref(false)
+    const openUserEditDialog = () => {
+      isOpenUserEditDialog.value = true
+    }
+    const closeUserEditDialog = () => {
+      isOpenUserEditDialog.value = false
+    }
+    
     const userIcon = computed(() => {
       const me = store.state.domain.me
       if (store.state.domain.me && me?.icon_url) {
@@ -48,16 +57,20 @@ export default defineComponent({
       menu.append(new MenuItem({ type: 'separator' }));
       
       menu.append(new MenuItem({ label: 'ユーザー登録', click: () => { openLoginDialog(false) }  }))
-      menu.append(new MenuItem({ type: 'separator' }));
 
-      const menuItems = ['編集', 'フォロー', 'メッセージ']
-      for (const item of menuItems) {
-        menu.append(new MenuItem({ label: `${item}` , click: () => { openLoginDialog(true) }  }))
+      if (store.state.domain.me) {
         menu.append(new MenuItem({ type: 'separator' }));
+        menu.append(new MenuItem({ label: '編集', click: () => { openUserEditDialog() }  }))
+
+        const menuItems = ['フォロー', 'メッセージ']
+        for (const item of menuItems) {
+          menu.append(new MenuItem({ type: 'separator' }));
+          menu.append(new MenuItem({ label: `${item}` , click: () => { openLoginDialog(true) }  }))
+        }
       }
       menu.popup()
     }
-    return { userIcon, click, isOpenLoginDialog, closeLoginDialog, isLogin }
+    return { userIcon, click, isOpenLoginDialog, closeLoginDialog, isLogin, isOpenUserEditDialog, closeUserEditDialog }
   }
 });
 </script>
