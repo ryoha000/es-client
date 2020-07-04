@@ -91,23 +91,22 @@ export default defineComponent ({
       } catch (e) {
         alert('設定ファイルを作れません\n管理者権限を与えるか、必要なさそうなところで実行してください')
       }
+      // TODO: 並列化
+      await store.dispatch.entities.setAllMinimalGames()
+      await store.dispatch.entities.setHaveGames()
+      await store.dispatch.app.setLists()
+      await store.dispatch.domain.setCampaign()
+      await store.dispatch.domain.setSchedules()
       try {
-        // TODO: 並列化
-        await store.dispatch.entities.setAllMinimalGames()
-        await store.dispatch.entities.setHaveGames()
-        await store.dispatch.app.setLists()
-        await store.dispatch.domain.setCampaign()
-        await store.dispatch.domain.setSchedules()
-        await store.dispatch.domain.setMe()
-        // await store.dispatch.app.setSeiya()
-        console.log('bbbb')
-        try {
-          console.log('aaaa')
-          await store.dispatch.domain.setSocket()
 
-        } catch (e) {
-          console.error(e)
-        }
+        await store.dispatch.domain.setMe()
+      } catch {}
+      // await store.dispatch.app.setSeiya()
+      console.log('bbbb')
+      try {
+        console.log('aaaa')
+        await store.dispatch.domain.setSocket()
+
       } catch (e) {
         console.error(e)
       }
