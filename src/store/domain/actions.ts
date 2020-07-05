@@ -2,7 +2,7 @@ import { defineActions } from 'direct-vuex'
 import { moduleActionContext } from 'src/store'
 import { domain } from './index'
 import { ActionContext } from 'vuex'
-import { getCampaigns, getSchedules, getGame, getMe, updateMe, login } from 'src/lib/api'
+import { getCampaigns, getSchedules, getGame, getMe, updateMe, login, getMaskedTimeline, getReviews } from 'src/lib/api'
 import moment, { Moment } from 'moment'
 import { SellSchedule, User } from 'src/types/root'
 
@@ -70,13 +70,23 @@ export const actions = defineActions({
     await login(payload.id, payload.pw)
     await dispatch.setMe()
   },
-  setSocket(context) {
-    console.log('s')
+  async addMaskedTimeline(context, id: string) {
+    console.log('cjdnask;')
     const { commit } = domainActionContext(context)
+    try {
+
+      const tl = await getMaskedTimeline(id)
+      console.log(tl)
+      commit.addTimeline(tl)
+    } catch (e) { console.error(e) }
+  },
+  setSocket(context) {
+    const { state ,commit, dispatch } = domainActionContext(context)
     const socket = new WebSocket('ws://localhost:8088/api/ws/');
-    socket.addEventListener('message', function (event) {
-      console.log('Message from server ', event.data);
-    });
+    socket.onmessage = async function(event: MessageEvent) {
+      await dispatch.addMaskedTimeline(event.data)
+    }
+    if (state.socket) state.socket.close()
     commit.setSocket(socket)
   },
 })

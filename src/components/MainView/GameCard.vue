@@ -3,7 +3,7 @@
     <q-img :src="cardInfo.image" :class="$style.image" contain />
     <q-card-section :class="$style.section" @click.stop="onClickContent">
       <div :class="$style.title">{{ cardInfo.title }}</div>
-      <div :class="$style.supplement">{{ cardInfo.supplement }}</div>
+      <slot name="cardSupplement" />
     </q-card-section>
     
     <q-tooltip
@@ -31,10 +31,14 @@ export default defineComponent({
   },
   setup(props) {
     const onClick = async () => {
-      await remote.shell.openExternal(props.cardInfo.url)
+      if (props.cardInfo.url) {
+        await remote.shell.openExternal(props.cardInfo.url)
+      }
     }
     const onClickContent = async () => {
-      await remote.shell.openExternal(props.cardInfo.contentUrl ?? props.cardInfo.url)
+      if (props.cardInfo.url || props.cardInfo.contentUrl) {
+        await remote.shell.openExternal(props.cardInfo.contentUrl ?? props.cardInfo.url ?? '')
+      }
     }
     return { onClick, onClickContent }
   }
@@ -58,12 +62,6 @@ export default defineComponent({
   font-size: 20px;
   font-weight: bold;
   word-wrap: none;
-  overflow: hidden;
-  white-space: nowrap;
-  width: 240px;
-  text-overflow: ellipsis;
-}
-.supplement {
   overflow: hidden;
   white-space: nowrap;
   width: 240px;

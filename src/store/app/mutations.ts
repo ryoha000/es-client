@@ -27,5 +27,8 @@ export const mutations = defineMutations<S>()({
   },
   spliceRouteStack(state, payload: number) {
     state.routeStack.splice(payload)
-  }
+  },
+  setTooltipPoint(state, payload: { x: number, y: number }) {
+    state.tooltipPoint = payload
+  },
 })

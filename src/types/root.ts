@@ -168,3 +168,58 @@ export interface GameAndBrand {
   game: Game,
   brand: Brand,
 }
+
+export interface Timeline {
+  id: string,
+  user_id: string,
+  game_id: string,
+  log_type: number,
+  created_at: string,
+}
+
+export enum LogType {
+  Play,
+  Review,
+  List,
+}
+
+export interface MaskedTimeline {
+  timeline: Timeline,
+  review: Review | null,
+  // list: List | null,
+  game: Game,
+  user: User,
+}
+
+export interface Review {
+  id: string | null,
+  game_id: number,
+  user_id: string,
+  es_user_id: string,
+  tokuten: number | null,
+  tourokubi: string | null,
+  hitokoto: string | null,
+  memo: string | null,
+  netabare: boolean | null,
+  giveup: boolean | null,
+  possession: boolean | null,
+  play: boolean | null,
+  before_hitokoto: string | null,
+  before_tokuten: number | null,
+  before_tourokubi: string | null,
+  display: boolean | null,
+  play_tourokubi: string | null,
+  display_unique_count: number | null,
+  sage: boolean | null,
+  before_purchase_will: string | null,
+  before_sage: boolean | null,
+  total_play_time: number | null,
+  time_before_understanding_fun: number | null,
+  okazu_tokuten: number | null,
+  trial_version_hitokoto: string | null,
+  trial_version_hitokoto_sage: boolean | null,
+  trial_version_hitokoto_tourokubi: string | null,
+  es_id: number | null,
+  created_at: string | null,
+  updated_at: string | null,
+}

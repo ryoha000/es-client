@@ -15,6 +15,8 @@
         <game-detail v-if="routeStack[routeIndex].type === 'Game'" />
       </div>
     </div>
+    
+    <portal-target name="tooltip" :style="styles.tooltip" :class="$style.tooltip"></portal-target>
   </div>
   <div v-else>Now Loading...</div>
 </template>
@@ -25,7 +27,7 @@ import SideBar from './components/SideBar/SideBar.vue'
 import MainViewHeader from './components/MainView/Header/MainViewHeader.vue'
 import Home from './pages/Home.vue'
 import GameDetail from './pages/GameDetail.vue'
-import { defineComponent, reactive, ref, onMounted, computed } from '@vue/composition-api'
+import { defineComponent, reactive, ref, onMounted, computed, ComputedRef } from '@vue/composition-api'
 import { makeStyles } from './lib/style'
 import useJson from './components/use/useJson'
 import store from 'src/store'
@@ -33,12 +35,24 @@ import store from 'src/store'
 import useScraping from './components/use/useScraping'
 import useJudgeGame from './components/use/useJudgeGame'
 
-const useStyles = () => 
+const SIDE_BAR_WIDTH = 240
+const TOOLTIP_WIDTH = 160
+const TOOLTIP_HEIGHT = 200
+const HEADER_HEIGHT = 52
+
+const useStyles = (mouse: ComputedRef<{ x: number, y: number }>) => 
   reactive({
     app: makeStyles(theme => ({
         backgroundColor: theme.background.primary
       })
-    )
+    ),
+    tooltip: makeStyles(() => ({
+        // top: `max(${mouse.value.y - HEADER_HEIGHT - TOOLTIP_HEIGHT - 8}px, 0px)`,
+        bottom: `${window.innerHeight - mouse.value.y}px`,
+
+        left: `${mouse.value.x -TOOLTIP_WIDTH - 8}px`,
+      })
+    ),
   })
 
 export default defineComponent ({
@@ -56,7 +70,8 @@ export default defineComponent ({
     const isLoading = ref(true)
 
     const { jsonSetup, addGameToList } = useJson()
-    const styles = useStyles()
+    const mouse = computed(() => store.state.app.tooltipPoint)
+    const styles = useStyles(mouse)
     const setGame = async (id: number) => {
       isLoading.value = true
       isLoading.value = false
@@ -150,5 +165,9 @@ export default defineComponent ({
   width: 100%;
   padding: 8px;
   padding-bottom: 0;
+}
+
+.tooltip {
+  position: absolute;
 }
 </style>

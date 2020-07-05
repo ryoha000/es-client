@@ -10,7 +10,11 @@
     >
       <div class="row no-wrap">
         <div v-for="(cardInfo, i) in cardInfos" :key="i" :class="$style.card">
-          <game-card :cardInfo="cardInfo" />
+          <game-card :cardInfo="cardInfo">
+            <template #cardSupplement >
+              <div :class="$style.supplement">{{ cardInfo.supplement }}</div>
+            </template>
+          </game-card>
         </div>
       </div>
     </q-scroll-area>
@@ -33,7 +37,7 @@ export interface CardInfo {
   title: string
   supplement: string
   image: string
-  url: string
+  url?: string
   contentUrl?: string
   contain?: boolean
   tooltip?: string
@@ -107,5 +111,11 @@ export default defineComponent({
   :first-child {
     overflow: hidden;
   }
+}
+.supplement {
+  overflow: hidden;
+  white-space: nowrap;
+  width: 240px;
+  text-overflow: ellipsis;
 }
 </style>

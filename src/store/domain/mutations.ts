@@ -1,6 +1,6 @@
 import { defineMutations } from 'direct-vuex'
 import { S } from './state'
-import { Campaign, SellSchedule, GameAndBrand, GameDetail, User } from 'src/types/root'
+import { Campaign, SellSchedule, GameAndBrand, GameDetail, User, MaskedTimeline } from 'src/types/root'
 
 export const mutations = defineMutations<S>()({
   setCampaigns(state, payload: Campaign[]) {
@@ -20,5 +20,11 @@ export const mutations = defineMutations<S>()({
   },
   setSocket(state, payload: WebSocket) {
     state.socket = payload
+  },
+  setTimeline(state, payload: MaskedTimeline[]) {
+    state.maskedTimelines = payload
+  },
+  addTimeline(state, payload: MaskedTimeline) {
+    state.maskedTimelines.push(payload)
   },
 })

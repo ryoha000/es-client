@@ -6,6 +6,7 @@ export type S = {
   lists: List[]
   routeIndex: number
   routeStack: StackType[]
+  tooltipPoint: { x: number, y: number }
 }
 
 export const state: S = {
@@ -13,4 +14,5 @@ export const state: S = {
   lists: [],
   routeIndex: 0,
   routeStack: [{ type: 'Home', id: 0 }],
+  tooltipPoint: { x: 0, y: 0 }
 }
