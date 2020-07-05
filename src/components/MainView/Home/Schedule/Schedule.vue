@@ -1,11 +1,21 @@
 <template>
   <div>
-    <div :class="$style.title">
+    <q-expansion-item
+      expand-separator
+      :class="$style.container"
+      label="発売予定"
+      default-opened
+    >
+      <div :class="$style.wrapper" v-for="(schedule, i) in sellSchedules" :key="i">
+        <schedule-day :schedule="schedule" />
+      </div>
+    </q-expansion-item>
+    <!-- <div :class="$style.title">
       発売予定
     </div>
     <div :class="$style.wrapper" v-for="(schedule, i) in sellSchedules" :key="i">
       <schedule-day :schedule="schedule" />
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -33,5 +43,10 @@ export default defineComponent({
 }
 .wrapper {
   margin-top: 8px;
+  padding-left: 16px;
+}
+.container {
+  width: 100%;
+  font-size: 20px;
 }
 </style>

@@ -1,37 +1,33 @@
 <template>
   <div :class="$style.container">
-    <q-scroll-area
-      horizontal
-      dark
-      ref="scrollRef"
-      @scroll="scrollarea"
-      style="height: 240px; width: 100%;"
-      :class="$style.scrollContainer"
+    <q-expansion-item
+      expand-separator
+      :class="$style.container"
+      label="エロゲーマーアクティビティ"
+      default-opened
     >
-      <div class="row no-wrap">
-        <div v-for="(tl, i) in timelines" :key="i" :class="$style.card">
-          <game-card :cardInfo="cardInfo_by_tl(tl)">
-            <template #cardSupplement>
-              <div :class="$style.supplements">
-                <q-avatar size="32px" :class="$style.avater" >
-                  <img :src="tl.user.icon_url ? tl.user.icon_url : '../../../../statics/icons/user-pict.png'">
-                </q-avatar>
-                <div>{{ tl.user.display_name }}</div>
-                <div :class="$style.typeIcon" @mouseenter="(event) => over(event, tl)" @mouseleave="leave">
-                  <q-icon :name="logIconByTimeline(tl)" size="32px" />
-                </div>
-              </div>
-            </template>
-          </game-card>
-        </div>
-      </div>
-    </q-scroll-area>
-    <q-btn :class="$style.rightButton" color="transparent" @click="onRightClick">
-      <q-icon name=keyboard_arrow_right />
-    </q-btn>
-    <q-btn :class="$style.leftButton" color="transparent" @click="onLeftClick">
-      <q-icon name=keyboard_arrow_left />
-    </q-btn>
+      <horizontal-scroll-area>
+        <template #iter>
+          <div class="row no-wrap">
+            <div v-for="(tl, i) in timelines" :key="i" :class="$style.card">
+              <game-card :cardInfo="cardInfo_by_tl(tl)">
+                <template #cardSupplement>
+                  <div :class="$style.supplements">
+                    <q-avatar size="32px" :class="$style.avater" >
+                      <img :src="tl.user.icon_url ? tl.user.icon_url : '../../../../statics/icons/user-pict.png'">
+                    </q-avatar>
+                    <div>{{ tl.user.display_name }}</div>
+                    <div :class="$style.typeIcon" @mouseenter="(event) => over(event, tl)" @mouseleave="leave">
+                      <q-icon :name="logIconByTimeline(tl)" size="32px" />
+                    </div>
+                  </div>
+                </template>
+              </game-card>
+            </div>
+          </div>
+        </template>
+      </horizontal-scroll-area>
+    </q-expansion-item>
     <portal to="tooltip" v-if="isHover">
       <div :class="[isLeaveAnime ? $style.leaveTooltip : $style.inTooltip, $style.tooltip]">
         <div :class="$style.tooltipContent">{{ tooltipContent }}</div>
@@ -41,47 +37,18 @@
 </template>
 
 <script lang="ts">
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { defineComponent, computed, ref } from '@vue/composition-api';
 import store from 'src/store';
 import GameCard from '../../GameCard.vue';
 import { LogType, MaskedTimeline } from 'src/types/root';
 import { CardInfo } from '../../HorizontalScroll.vue';
-import { } from 'src/lib/style'
 import useTooltipContent from './use/useTooltipContent';
-
-const sleep = (msec: number)=> new Promise(resolve => setTimeout(resolve, msec));
+import HorizontalScrollArea from '../../HorizontalScrollArea.vue'
 
 export default defineComponent({
   name: 'Timeline',
-  props: {
-  },
-  components: { GameCard },
+  components: { GameCard, HorizontalScrollArea },
   setup() {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const scrollRef = ref<any | undefined>()
-    const nowPosition = ref(0)
-    const onRightClick = async () => {
-      for (let i = 0; i < 5; i++) {
-        await sleep(20)
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        scrollRef.value.setScrollPosition(nowPosition.value + 100)
-      }
-    }
-    const onLeftClick = async () => {
-      for (let i = 0; i < 5; i++) {
-        await sleep(20)
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        scrollRef.value.setScrollPosition(nowPosition.value - 100)
-      }
-    }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const scrollarea = (position: any) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      nowPosition.value = position.horizontalPosition
-    }
     const timelines = computed(() => store.state.domain.maskedTimelines)
     const cardInfo_by_tl = (tl: MaskedTimeline): CardInfo => {
       return {
@@ -124,10 +91,6 @@ export default defineComponent({
       }, 500)
     }
     return {
-      onRightClick,
-      onLeftClick,
-      scrollRef,
-      scrollarea,
       timelines,
       cardInfo_by_tl,
       over,
@@ -155,31 +118,11 @@ export default defineComponent({
   cursor: pointer;
 }
 
-.container {
-  position: relative;
-}
 .card {
   width: 260px;
   height: 250px;
   margin-right: 8px;
   overflow: hidden;
-}
-.rightButton {
-  position: absolute;
-  right: 0;
-  top: 0;
-  height: 100%;
-}
-.leftButton {
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-}
-.scrollContainer {
-  :first-child {
-    overflow: hidden;
-  }
 }
 
 .supplements {
@@ -235,5 +178,10 @@ export default defineComponent({
     opacity: 0;
     transform: translateX(-16px);
   }
+}
+
+.container {
+  width: 100%;
+  font-size: 20px;
 }
 </style>

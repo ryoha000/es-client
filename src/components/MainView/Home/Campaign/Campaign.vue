@@ -1,7 +1,15 @@
 <template>
   <div>
-    <div :class="$style.title">キャンペーン情報</div>
-    <campaign-content v-for="(campaign, i) in campaigns" :key="i" :campaign="campaign" />
+    <q-expansion-item
+      expand-separator
+      :class="$style.container"
+      label="キャンペーン情報"
+      default-opened
+    >
+      <div :class="$style.wrapper">
+        <campaign-content v-for="(campaign, i) in campaigns" :key="i" :campaign="campaign" />
+      </div>
+    </q-expansion-item>
   </div>
 </template>
 
@@ -29,5 +37,14 @@ export default defineComponent({
   font-size: 22px;
   margin-left: 8px;
   margin-bottom: 8px;
+}
+
+.wrapper {
+  padding: 16px;
+}
+
+.container {
+  width: 100%;
+  font-size: 20px;
 }
 </style>

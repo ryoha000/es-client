@@ -47,9 +47,7 @@ const useStyles = (mouse: ComputedRef<{ x: number, y: number }>) =>
       })
     ),
     tooltip: makeStyles(() => ({
-        // top: `max(${mouse.value.y - HEADER_HEIGHT - TOOLTIP_HEIGHT - 8}px, 0px)`,
-        bottom: `${window.innerHeight - mouse.value.y}px`,
-
+        bottom: `${window.innerHeight - mouse.value.y - 8}px`,
         left: `${mouse.value.x -TOOLTIP_WIDTH - 8}px`,
       })
     ),

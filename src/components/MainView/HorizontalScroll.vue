@@ -1,13 +1,6 @@
 <template>
-  <div :class="$style.container">
-    <q-scroll-area
-      horizontal
-      dark
-      ref="scrollRef"
-      @scroll="scrollarea"
-      style="height: 240px; width: 100%;"
-      :class="$style.scrollContainer"
-    >
+  <horizontal-scroll-area>
+    <template #iter>
       <div class="row no-wrap">
         <div v-for="(cardInfo, i) in cardInfos" :key="i" :class="$style.card">
           <game-card :cardInfo="cardInfo">
@@ -17,14 +10,8 @@
           </game-card>
         </div>
       </div>
-    </q-scroll-area>
-    <q-btn :class="$style.rightButton" color="transparent" @click="onRightClick">
-      <q-icon name=keyboard_arrow_right />
-    </q-btn>
-    <q-btn :class="$style.leftButton" color="transparent" @click="onLeftClick">
-      <q-icon name=keyboard_arrow_left />
-    </q-btn>
-  </div>
+    </template>
+  </horizontal-scroll-area>
 </template>
 
 <script lang="ts">
@@ -32,6 +19,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { defineComponent, PropType, ref } from '@vue/composition-api';
 import GameCard from './GameCard.vue'
+import HorizontalScrollArea from './HorizontalScrollArea.vue'
 
 export interface CardInfo {
   title: string
@@ -43,8 +31,6 @@ export interface CardInfo {
   tooltip?: string
 }
 
-const sleep = (msec: number)=> new Promise(resolve => setTimeout(resolve, msec));
-
 export default defineComponent({
   name: 'HorizontalScroll',
   props: {
@@ -53,65 +39,21 @@ export default defineComponent({
       default: []
     }
   },
-  components: { GameCard },
+  components: { GameCard, HorizontalScrollArea },
   setup() {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const scrollRef = ref<any | undefined>()
-    const nowPosition = ref(0)
-    const onRightClick = async () => {
-      for (let i = 0; i < 5; i++) {
-        await sleep(20)
-        scrollRef.value.setScrollPosition(nowPosition.value + 100)
-      }
-    }
-    const onLeftClick = async () => {
-      for (let i = 0; i < 5; i++) {
-        await sleep(20)
-        scrollRef.value.setScrollPosition(nowPosition.value - 100)
-      }
-    }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const scrollarea = (position: any) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      nowPosition.value = position.horizontalPosition
-    }
-    return {
-      onRightClick,
-      onLeftClick,
-      scrollRef,
-      scrollarea
-    }
+    return { }
   }
 });
 </script>
 
 <style lang="scss" module>
-.container {
-  position: relative;
-}
 .card {
   width: 260px;
   height: 250px;
   margin-right: 8px;
   overflow: hidden;
 }
-.rightButton {
-  position: absolute;
-  right: 0;
-  top: 0;
-  height: 100%;
-}
-.leftButton {
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-}
-.scrollContainer {
-  :first-child {
-    overflow: hidden;
-  }
-}
+
 .supplement {
   overflow: hidden;
   white-space: nowrap;
