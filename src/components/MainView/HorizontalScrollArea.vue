@@ -33,14 +33,14 @@ export default defineComponent({
     const scrollRef = ref<any | undefined>()
     const nowPosition = ref(0)
     const onRightClick = async () => {
-      for (let i = 0; i < 5; i++) {
-        await sleep(20)
+      for (let i = 0; i < 10; i++) {
+        await sleep(10)
         scrollRef.value.setScrollPosition(nowPosition.value + 100)
       }
     }
     const onLeftClick = async () => {
-      for (let i = 0; i < 5; i++) {
-        await sleep(20)
+      for (let i = 0; i < 10; i++) {
+        await sleep(10)
         scrollRef.value.setScrollPosition(nowPosition.value - 100)
       }
     }
