@@ -53,3 +53,11 @@ export const getFollowRequests = async (): Promise<FollowWithUser[]> => {
 export const responseFollowRequest = async (id: string, approve: boolean): Promise<void> => {
   await axios.post(`/api/follows/${id}`, { approve: approve })
 }
+
+export const getFollowers = async (id: string): Promise<User[]> => {
+  return (await axios.get<User[]>(`/api/users/${id}/followers`)).data
+}
+
+export const getFollowees = async (id: string): Promise<User[]> => {
+  return (await axios.get<User[]>(`/api/users/${id}/followees`)).data
+}

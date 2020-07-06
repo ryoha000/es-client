@@ -25,6 +25,6 @@ export const mutations = defineMutations<S>()({
     state.maskedTimelines = payload
   },
   addTimeline(state, payload: MaskedTimeline) {
-    state.maskedTimelines.push(payload)
+    state.maskedTimelines.unshift(payload)
   },
 })

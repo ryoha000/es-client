@@ -14,10 +14,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, PropType } from '@vue/composition-api';
-import { FollowWithUser, User } from '../../../types/root';
-import { getFollowRequests, responseFollowRequest } from '../../../lib/api';
-import moment from 'moment'
+import { defineComponent, ref, PropType } from '@vue/composition-api';
+import { User } from '../../../types/root';
 
 export default defineComponent({
   name: 'UserListItem',
