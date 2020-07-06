@@ -7,6 +7,7 @@
     </div>
     <login-dialog :isOpen="isOpenLoginDialog" @close="closeLoginDialog" :isLogin="isLogin" />
     <user-edit-dialog :isOpen="isOpenUserEditDialog" @close="closeUserEditDialog" v-if="isOpenUserEditDialog" />
+    <follow-dialog :isOpen="isOpenFollowDialog" @close="closeFollowDialog" v-if="isOpenFollowDialog" />
   </div>
 </template>
 
@@ -16,13 +17,14 @@ import { remote } from 'electron'
 import store from 'src/store'
 import LoginDialog from './LoginDialog.vue'
 import UserEditDialog from './UserEditDialog.vue'
+import FollowDialog from './FollowDialog.vue'
 
 const Menu = remote.Menu;
 const MenuItem = remote.MenuItem;
 
 export default defineComponent({
   name: 'UserIcon',
-  components: { LoginDialog, UserEditDialog },
+  components: { LoginDialog, UserEditDialog, FollowDialog },
   setup() {
     const isOpenLoginDialog = ref(false)
     const openLoginDialog = (isLog: boolean) => {
@@ -40,6 +42,14 @@ export default defineComponent({
     }
     const closeUserEditDialog = () => {
       isOpenUserEditDialog.value = false
+    }
+
+    const isOpenFollowDialog = ref(false)
+    const openFollowDialog = () => {
+      isOpenFollowDialog.value = true
+    }
+    const closeFollowDialog = () => {
+      isOpenFollowDialog.value = false
     }
     
     const userIcon = computed(() => {
@@ -62,7 +72,10 @@ export default defineComponent({
         menu.append(new MenuItem({ type: 'separator' }));
         menu.append(new MenuItem({ label: '編集', click: () => { openUserEditDialog() }  }))
 
-        const menuItems = ['フォロー', 'メッセージ']
+        menu.append(new MenuItem({ type: 'separator' }));
+        menu.append(new MenuItem({ label: 'フォロー', click: () => { openFollowDialog() }  }))
+
+        const menuItems = ['メッセージ']
         for (const item of menuItems) {
           menu.append(new MenuItem({ type: 'separator' }));
           menu.append(new MenuItem({ label: `${item}` , click: () => { openLoginDialog(true) }  }))
@@ -70,7 +83,17 @@ export default defineComponent({
       }
       menu.popup()
     }
-    return { userIcon, click, isOpenLoginDialog, closeLoginDialog, isLogin, isOpenUserEditDialog, closeUserEditDialog }
+    return {
+      userIcon,
+      click,
+      isOpenLoginDialog,
+      closeLoginDialog,
+      isLogin,
+      isOpenUserEditDialog,
+      closeUserEditDialog,
+      isOpenFollowDialog,
+      closeFollowDialog,
+    }
   }
 });
 </script>
