@@ -5,6 +5,7 @@
       :class="$style.container"
       label="エロゲーマーアクティビティ"
       default-opened
+      header-style="font-size: 20px;"
     >
       <horizontal-scroll-area>
         <template #iter>
@@ -182,6 +183,5 @@ export default defineComponent({
 
 .container {
   width: 100%;
-  font-size: 20px;
 }
 </style>

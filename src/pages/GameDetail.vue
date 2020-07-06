@@ -59,7 +59,7 @@ export default defineComponent({
       })
     })
     const createSellDayURL = (sellday: string) => {
-      const [year, month, day] = sellday.split('-')
+      const [year, month] = sellday.split('-')
       return `https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/toukei_hatubaibi_month.php?year=${year}&month=${month}#${sellday}`
     }
     return { gameDetail, styles, createSellDayURL, imgUrl }

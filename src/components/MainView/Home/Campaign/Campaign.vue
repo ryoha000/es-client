@@ -5,6 +5,7 @@
       :class="$style.container"
       label="キャンペーン情報"
       default-opened
+      header-style="font-size: 20px;"
     >
       <div :class="$style.wrapper">
         <campaign-content v-for="(campaign, i) in campaigns" :key="i" :campaign="campaign" />
@@ -45,6 +46,5 @@ export default defineComponent({
 
 .container {
   width: 100%;
-  font-size: 20px;
 }
 </style>

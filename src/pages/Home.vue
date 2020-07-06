@@ -17,7 +17,7 @@ const useStyles = (windowHeight: Ref<number>) =>
   reactive({
     container: makeStyles(() => ({
         height: `calc( ${windowHeight.value}px - 52px )`,
-        position: 'relative'
+        paddingBottom: '16px'
       })
     ),
   })
