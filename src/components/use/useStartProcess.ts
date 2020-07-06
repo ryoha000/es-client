@@ -5,9 +5,10 @@ import * as iconv from 'iconv-lite'
 import * as path from 'path'
 import { ListGame } from 'src/types/root'
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const useStartProcess = (game: ListGame) => {
   const startProcess = async (isAdmin: boolean | undefined) => {
-    const { readFileConsoleErr, override, getHistory } = useJson()
+    const { readFileConsoleErr, override } = useJson()
     if (isAdmin === undefined) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       isAdmin = JSON.parse(await readFileConsoleErr('setting/setting.json')).isVerbRunAs

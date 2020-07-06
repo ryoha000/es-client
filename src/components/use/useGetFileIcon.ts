@@ -5,13 +5,15 @@ const exec = require('child_process').exec
 import * as iconv from 'iconv-lite'
 import * as path from 'path'
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const useGetFileIcon = () => {
   const createCommand = (filePath: string) => {
     const normalizedFile = path.normalize(path.resolve(filePath)).replace(/\'/g,'\'\'')
     return `$Path = '${normalizedFile}' ; $Icon = [System.Drawing.Icon]::ExtractAssociatedIcon($Path) ; $Bitmap = $Icon.ToBitmap() ; $MemoryStream = New-Object System.IO.MemoryStream ; $Bitmap.Save($MemoryStream, [System.Drawing.Imaging.ImageFormat]::Png) ; $Bytes = $MemoryStream.ToArray() ; $MemoryStream.Flush() ; $MemoryStream.Dispose() ; [convert]::ToBase64String($Bytes)`
   }
   const getIcon = (filePaths :{id: number, path: string}[]): Promise<{id: number, path: string, icon: string}[]> => {
-    return new Promise((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    return new Promise((resolve, _reject) => {
       if (filePaths.length === 0 || filePaths.filter(v => v.id === undefined).length > 0) {
         resolve([])
       }

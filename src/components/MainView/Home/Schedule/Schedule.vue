@@ -5,17 +5,12 @@
       :class="$style.container"
       label="発売予定"
       default-opened
+      header-style="font-size: 20px;"
     >
       <div :class="$style.wrapper" v-for="(schedule, i) in sellSchedules" :key="i">
         <schedule-day :schedule="schedule" />
       </div>
     </q-expansion-item>
-    <!-- <div :class="$style.title">
-      発売予定
-    </div>
-    <div :class="$style.wrapper" v-for="(schedule, i) in sellSchedules" :key="i">
-      <schedule-day :schedule="schedule" />
-    </div> -->
   </div>
 </template>
 
@@ -47,6 +42,5 @@ export default defineComponent({
 }
 .container {
   width: 100%;
-  font-size: 20px;
 }
 </style>

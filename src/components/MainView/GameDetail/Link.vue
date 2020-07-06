@@ -14,7 +14,7 @@ import { remote } from 'electron'
 
 const useStyles = (props: { fontSize: number } ) => 
   reactive({
-    title: makeStyles(theme => ({
+    title: makeStyles(() => ({
         fontSize: `${props.fontSize}px`
       })
     )

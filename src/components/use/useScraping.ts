@@ -10,6 +10,7 @@ import { editONP } from './useEditDistance'
 
 const baseURL = 'https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki'
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const useScraping = () => {
   const getDocument = async (url: string) => {
     const option = {

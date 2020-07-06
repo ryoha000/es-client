@@ -96,7 +96,7 @@ const useJudgeGame = (allMinimalGame: Record<string, MinimalGame>) => {
     // 例) {id: 27418, path: 'E:\\Program Files (x86)\\Aonatsu\\Launcher.exe'}(20) と {id: 20228, path: "C:\Users\ユウヤ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\feng\彼女のセイイキ.lnk"}(18 or 19)
     // 例) {id: 23425, path: "C:\Users\ユウヤ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\ゆずソフト\千恋＊万花.lnk"}(20) と {id: 27319, path: "C:\Users\ユウヤ\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\インサルトオーダー\インサルトオーダー.lnk"}(19)
 
-    promiseResultPath.forEach((element, i) => {
+    promiseResultPath.forEach(element => {
       // ちゃんとPathをとれてたとき
       if (element.value !== undefined && element.value) {
         console.log('batch')

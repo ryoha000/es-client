@@ -5,6 +5,7 @@ import { moduleGetterContext } from '../../store'
 import { List, ListGame } from 'src/types/root'
 import { reduceToRecord } from 'src/lib/util/record'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const getterContext = (args: [unknown, unknown, unknown, unknown]) =>
   moduleGetterContext(args, app)
 

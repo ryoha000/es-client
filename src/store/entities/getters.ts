@@ -5,6 +5,7 @@ import {
 } from './index'
 import { moduleGetterContext } from '../../store'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const entitiesGetterContext = (args: [unknown, unknown, unknown, unknown]) =>
   moduleGetterContext(args, entities)
 

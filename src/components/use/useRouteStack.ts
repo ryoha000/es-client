@@ -1,6 +1,7 @@
 import { Ref } from '@vue/composition-api'
 import { StackType } from '../../types/root'
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const useRouteStack = (index: Ref<number>, stack: Ref<StackType[]>) => {
   const next = () => {
     if (stack.value.length > index.value + 1) {

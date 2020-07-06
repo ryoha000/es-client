@@ -17,7 +17,7 @@ function editDistanceONP(str1: string, str2: string) {
     s1 = str2;
     s2 = str1;
   }
-  let x, y, k, p,
+  let k, p,
       v0, v1
   const  len1 = s1.length,
       len2 = s2.length,

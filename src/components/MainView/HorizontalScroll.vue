@@ -15,9 +15,7 @@
 </template>
 
 <script lang="ts">
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { defineComponent, PropType, ref } from '@vue/composition-api';
+import { defineComponent, PropType } from '@vue/composition-api';
 import GameCard from './GameCard.vue'
 import HorizontalScrollArea from './HorizontalScrollArea.vue'
 

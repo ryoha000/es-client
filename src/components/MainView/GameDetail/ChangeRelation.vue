@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, PropType, computed } from '@vue/composition-api';
+import { defineComponent, ref, PropType } from '@vue/composition-api';
 import useJson from '../../use/useJson';
 import { ListGame } from '../../../types/root';
 import { remote } from 'electron';
