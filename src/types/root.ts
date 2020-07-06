@@ -223,3 +223,19 @@ export interface Review {
   created_at: string | null,
   updated_at: string | null,
 }
+
+export interface Follow {
+  id: string,
+  followee_id: string,
+  follower_id: string,
+  allowed: boolean,
+  mutual: boolean,
+  comment: string,
+  created_at: string,
+  deleted_at: string,
+}
+
+export interface FollowWithUser {
+  follow: Follow,
+  user: User
+}

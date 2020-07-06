@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import axios from 'axios';
-import { MinimalGame, Game, Campaign, GameAndBrand, User, MaskedTimeline, Review } from 'src/types/root';
+import { MinimalGame, Game, Campaign, GameAndBrand, User, MaskedTimeline, Review, FollowWithUser } from 'src/types/root';
 
 export const getGamesWithoutNumByIds = async (ids: number[]): Promise<Game[]> => {
   return (await axios.post<Game[]>('/api/games', { ids: ids })).data
@@ -44,4 +44,12 @@ export const getMaskedTimeline = async (id: string): Promise<MaskedTimeline> => 
 
 export const getReviews = async (): Promise<Review[]> => {
   return (await axios.get<Review[]>('/api/reviews')).data
+}
+
+export const getFollowRequests = async (): Promise<FollowWithUser[]> => {
+  return (await axios.get<FollowWithUser[]>('/api/follows')).data
+}
+
+export const responseFollowRequest = async (id: string, approve: boolean): Promise<void> => {
+  await axios.post(`/api/follows/${id}`, { approve: approve })
 }
