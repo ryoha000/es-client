@@ -1,0 +1,88 @@
+<template>
+  <div :class="$style.container">
+    <div :class="$style.userContainer">
+      <q-avatar size="32px" :class="$style.avater" >
+        <img :src="iconByUser(user)">
+      </q-avatar>
+      <div :class="$style.userName">{{ user.display_name }}</div>
+      <div :class="$style.rightComponent">
+        <slot name="supplement"  />
+      </div>
+    </div>
+    <slot name="rightItem" />
+  </div>
+</template>
+
+<script lang="ts">
+import { defineComponent, ref, onMounted, PropType } from '@vue/composition-api';
+import { FollowWithUser, User } from '../../../types/root';
+import { getFollowRequests, responseFollowRequest } from '../../../lib/api';
+import moment from 'moment'
+
+export default defineComponent({
+  name: 'UserListItem',
+  props: {
+    user: {
+      type: Object as PropType<User>,
+      required: true
+    }
+  },
+  components: {
+  },
+  setup() {
+    const iconByUser = (user: User) => {
+      return user.icon_url ?? '../../../statics/icons/user-pict.png'
+    }
+    const isOpenUserDialog = ref(false)
+    const openUserDialog = () => {
+      isOpenUserDialog.value = true
+    }
+    const closeUserDialog = () => {
+      isOpenUserDialog.value = false
+    }
+    return { iconByUser }
+  }
+});
+</script>
+
+<style lang="scss" module>
+.container {
+  align-items: center;
+  display: flex;
+  animation: SlideIn 0.5s 1;
+  width: 100%;
+}
+
+.userContainer {
+  align-items: center;
+  display: flex;
+  cursor: pointer;
+  animation: SlideIn 0.5s 1;
+  width: 100%;
+}
+
+.rightComponent {
+  margin-left: auto;
+}
+
+.avater {
+  justify-self: center;
+  align-self: center;
+}
+
+.userName {
+  margin-left: 8px;
+  font-size: 20px;
+}
+
+@keyframes SlideIn {
+  0% {
+    opacity: 0;/*初期状態では透明に*/
+    transform: translateX(32px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+</style>

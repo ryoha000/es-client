@@ -41,7 +41,6 @@
 
 <script lang="ts">
 import { defineComponent, ref } from '@vue/composition-api';
-import { login, signup } from 'src/lib/api'
 import LinkC from 'src/components/MainView/GameDetail/Link.vue'
 import store from 'src/store'
 
