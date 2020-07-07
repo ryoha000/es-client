@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import axios from 'axios';
-import { MinimalGame, Game, Campaign, GameAndBrand, User, MaskedTimeline, Review, FollowWithUser } from 'src/types/root';
+import { MinimalGame, Game, Campaign, GameAndBrand, User, MaskedTimeline, Review, FollowWithUser, UserDetail } from 'src/types/root';
 
 export const getGamesWithoutNumByIds = async (ids: number[]): Promise<Game[]> => {
   return (await axios.post<Game[]>('/api/games', { ids: ids })).data
@@ -46,8 +46,12 @@ export const getReviews = async (): Promise<Review[]> => {
   return (await axios.get<Review[]>('/api/reviews')).data
 }
 
-export const getFollowRequests = async (): Promise<FollowWithUser[]> => {
+export const getFollowRequestsToMe = async (): Promise<FollowWithUser[]> => {
   return (await axios.get<FollowWithUser[]>('/api/follows')).data
+}
+
+export const getFollowRequestsFromMe = async (): Promise<FollowWithUser[]> => {
+  return (await axios.get<FollowWithUser[]>('/api/me/follows')).data
 }
 
 export const responseFollowRequest = async (id: string, approve: boolean): Promise<void> => {
@@ -60,4 +64,8 @@ export const getFollowers = async (id: string): Promise<User[]> => {
 
 export const getFollowees = async (id: string): Promise<User[]> => {
   return (await axios.get<User[]>(`/api/users/${id}/followees`)).data
+}
+
+export const getUser = async (id: string): Promise<UserDetail> => {
+  return (await axios.get<UserDetail>(`/api/users/${id}`)).data
 }

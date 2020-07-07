@@ -1,7 +1,7 @@
 <template>
   <div :class="$style.container">
-    <div v-if="followRequests.length === 0">未対応のフォローリクエストはありません</div>
-    <div v-for="(fr, i) in followRequests" :key="i">
+    <div v-if="followRequestsFromMe.length === 0">未対応のフォローリクエストはありません</div>
+    <div v-for="(fr, i) in followRequestsFromMe" :key="i">
       <user-list-item :user="fr.user">
         <template #supplement>
           <div :class="$style.day">{{ makeDay(fr.follow.created_at) }}</div>
@@ -20,21 +20,21 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted } from '@vue/composition-api';
 import { FollowWithUser } from '../../../types/root';
-import { getFollowRequestsToMe, responseFollowRequest } from '../../../lib/api';
+import { responseFollowRequest, getFollowRequestsFromMe } from '../../../lib/api';
 import UserListItem from './UserListItem.vue'
 import moment from 'moment'
 
 export default defineComponent({
-  name: 'FollowBoxItem',
+  name: 'FollowRequestItem',
   props: {
   },
   components: {
     UserListItem
   },
   setup() {
-    const followRequests = ref<FollowWithUser[]>([])
+    const followRequestsFromMe = ref<FollowWithUser[]>([])
     onMounted(async () => {
-      followRequests.value = await getFollowRequestsToMe()
+      followRequestsFromMe.value = await getFollowRequestsFromMe()
     })
     const makeDay = (str: string) => {
       const d = moment(str)
@@ -42,9 +42,9 @@ export default defineComponent({
     }
     const responseFollow = async (id: string, isAccept: boolean) => {
       await responseFollowRequest(id, isAccept)
-      followRequests.value.filter(v => v.follow.id !== id)
+      followRequestsFromMe.value.filter(v => v.follow.id !== id)
     }
-    return { followRequests, makeDay, responseFollow }
+    return { followRequestsFromMe, makeDay, responseFollow }
   }
 });
 </script>

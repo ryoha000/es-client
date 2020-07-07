@@ -1,0 +1,136 @@
+<template>
+  <q-dialog v-model="isOpen" @before-hide="close">
+    <div v-if="isLoading">now loading</div>
+    <q-card v-else :class="$style.cardContainer" >
+      <q-card-section>
+        <div :class="$style.headerContainer">
+          <q-img :src="iconByUser(userDetail.user)" :class="$style.avater" />
+          <div :class="$style.detailContainer">
+            <div class="text-h6">{{ userDetail.user.display_name }}</div>
+            <div  :class="$style.snsRootContainer">
+              <div :class="$style.snsContainer">
+                <q-img src="../../statics/icons/es_favicon.png" width="16px" contain />
+                <div :class="$style.snsText">{{ userDetail.user.es_user_id }}</div>
+              </div>
+              <div :class="$style.snsContainer">
+                <q-img src="../../statics/icons/twitter.png" width="16px" contain />
+                <div :class="$style.snsText">{{ userDetail.user.twitter_id ? userDetail.user.twitter_id : '未設定'}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </q-card-section>
+      <q-item>
+        <q-item-section>
+          <q-tabs
+            v-model="tab"
+            narrow-indicator
+            dense
+            align="justify"
+          >
+            <q-tab class="text-blue" name="activity" icon="home"  />
+            <q-tab class="text-blue" name="followers" icon="people_alt" />
+          </q-tabs>
+        </q-item-section>
+      </q-item>
+      <q-item style="height: calc( 100% - 178px )">
+        <q-item-section>
+          <q-scroll-area :class="$style.scrollArea">
+            <user-dialog-activity v-if="tab === 'activity'" :userDetail="userDetail" />
+            <!-- <user-dialog-activity v-if="tabs === 'followers'" :userDetail="userDetail" /> -->
+          </q-scroll-area>
+        </q-item-section>
+      </q-item>
+    </q-card>
+  </q-dialog>
+</template>
+
+<script lang="ts">
+import { defineComponent, ref, onMounted } from '@vue/composition-api';
+import { UserDetail, User } from '../../types/root';
+import { getUser } from 'src/lib/api'
+import UserDialogActivity from './UserDialogActivity.vue'
+
+export default defineComponent({
+  name: 'UserDialog',
+  props: {
+    isOpen: {
+      type: Boolean, required: true
+    },
+    id: {
+      type: String, required: true
+    }
+  },
+  components: {
+    UserDialogActivity
+  },
+  setup(props, context) {
+    const close = () => {
+      context.emit('close')
+    }
+    const iconByUser = (user: User) => {
+      return user.icon_url ?? '../../../statics/icons/user-pict.png'
+    }
+
+    const userDetail = ref<UserDetail | null>(null)
+    const isLoading = ref(false)
+
+    const tab = ref('activity')
+    onMounted(async () => {
+      isLoading.value = true
+      userDetail.value = await getUser(props.id)
+      isLoading.value = false
+    })
+    return { close, userDetail, isLoading, iconByUser, tab }
+  }
+});
+</script>
+
+<style lang="scss" module>
+.cardContainer {
+  padding: 8px;
+  width: 80%;
+  max-width: 100% !important;
+  height: calc(100vh - 48px);
+  background: rgb(252, 249, 249);
+}
+
+.headerContainer {
+  display: flex;
+}
+
+.avater {
+  width: 96px;
+}
+
+.snsContainer {
+  display: flex;
+  width: 45%;
+  margin-right: 8px;
+  cursor: pointer;
+}
+
+
+.snsRootContainer {
+  display: flex;
+  width: 100%;
+  margin-top: auto;
+}
+
+.detailContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+}
+
+.snsText {
+  margin-left: 8px;
+  font-size: 0.95rem;
+}
+
+.scrollArea {
+  height: 100%;
+  width: 100%;
+}
+</style>

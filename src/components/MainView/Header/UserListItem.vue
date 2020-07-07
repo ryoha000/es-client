@@ -1,6 +1,6 @@
 <template>
   <div :class="$style.container">
-    <div :class="$style.userContainer">
+    <div :class="$style.userContainer" @click="openUserDialog">
       <q-avatar size="32px" :class="$style.avater" >
         <img :src="iconByUser(user)">
       </q-avatar>
@@ -10,12 +10,14 @@
       </div>
     </div>
     <slot name="rightItem" />
+    <user-dialog :isOpen="isOpenUserDialog" @close="closeUserDialog" :id="user.id" />
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, PropType } from '@vue/composition-api';
 import { User } from '../../../types/root';
+import UserDialog from '../UserDialog.vue'
 
 export default defineComponent({
   name: 'UserListItem',
@@ -26,6 +28,7 @@ export default defineComponent({
     }
   },
   components: {
+    UserDialog
   },
   setup() {
     const iconByUser = (user: User) => {
@@ -38,7 +41,7 @@ export default defineComponent({
     const closeUserDialog = () => {
       isOpenUserDialog.value = false
     }
-    return { iconByUser }
+    return { iconByUser, isOpenUserDialog, openUserDialog, closeUserDialog }
   }
 });
 </script>

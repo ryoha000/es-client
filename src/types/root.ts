@@ -183,11 +183,9 @@ export enum LogType {
   List,
 }
 
-export interface MaskedTimeline {
-  timeline: Timeline,
+export interface MaskedTimeline extends TimelineWithGame {
   review: Review | null,
   // list: List | null,
-  game: Game,
   user: User,
 }
 
@@ -238,4 +236,16 @@ export interface Follow {
 export interface FollowWithUser {
   follow: Follow,
   user: User
+}
+
+export interface TimelineWithGame {
+  timeline: Timeline,
+  game: Game,
+}
+
+export interface UserDetail {
+  user: User,
+  play: TimelineWithGame[],
+  review: TimelineWithGame[],
+  list: TimelineWithGame[],
 }

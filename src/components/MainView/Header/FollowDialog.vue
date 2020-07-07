@@ -22,12 +22,13 @@
       <q-item>
         <q-item-section>
           <follow-box-item v-if="tab === 'box'" />
+          <follow-request-item v-if="tab === 'send'" />
           <div v-if="tab === 'followees'">
-            <div v-if="followees.length === 0" :class="$style.emptyText">フォローしているユーザーはいません</div>
+            <div v-if="followees.length === 0">フォローしているユーザーはいません</div>
             <user-list-item v-for="(fee, i) in followees" :key="i" :user="fee" />
           </div>
           <div v-if="tab === 'followers'">
-            <div v-if="followers.length === 0" :class="$style.emptyText">フォローされているユーザーはいません</div>
+            <div v-if="followers.length === 0">フォローされているユーザーはいません</div>
             <user-list-item v-for="(fer, i) in followers" :key="i" :user="fer" />
           </div>
         </q-item-section>
@@ -39,6 +40,7 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted } from '@vue/composition-api';
 import FollowBoxItem from './FollowBoxItem.vue'
+import FollowRequestItem from './FollowRequestItem.vue'
 import UserListItem from './UserListItem.vue'
 import { User } from '../../../types/root';
 import { getFollowers, getFollowees } from '../../../lib/api';
@@ -51,7 +53,7 @@ export default defineComponent({
       type: Boolean, required: true
     },
   },
-  components: { FollowBoxItem, UserListItem },
+  components: { FollowBoxItem, UserListItem, FollowRequestItem },
   setup(props, context) {
     const close = () => {
       context.emit('close')
@@ -77,9 +79,5 @@ export default defineComponent({
   padding: 8px;
   height: 70%;
   overflow-x: hidden !important;
-}
-
-.emptyText {
-  font-size: 1.15rem;
 }
 </style>
