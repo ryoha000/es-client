@@ -46,6 +46,10 @@ export const getReviews = async (): Promise<Review[]> => {
   return (await axios.get<Review[]>('/api/reviews')).data
 }
 
+export const postFollowRequest = async (id: string): Promise<void> => {
+  await axios.post(`/api/users/${id}/follows`)
+}
+
 export const getFollowRequestsToMe = async (): Promise<FollowWithUser[]> => {
   return (await axios.get<FollowWithUser[]>('/api/follows')).data
 }

@@ -14,13 +14,16 @@
               <game-card :cardInfo="cardInfo_by_tl(tl)">
                 <template #cardSupplement>
                   <div :class="$style.supplements">
-                    <q-avatar size="32px" :class="$style.avater" >
-                      <img :src="tl.user.icon_url ? tl.user.icon_url : '../../../../statics/icons/user-pict.png'">
-                    </q-avatar>
-                    <div>{{ tl.user.display_name }}</div>
+                    <div :class="$style.supplementsUser" @click="openUserDialog">
+                      <q-avatar size="32px" :class="$style.avater" >
+                        <img :src="tl.user.icon_url ? tl.user.icon_url : '../../../../statics/icons/user-pict.png'">
+                      </q-avatar>
+                      <div>{{ tl.user.display_name }}</div>
+                    </div>
                     <div :class="$style.typeIcon" @mouseenter="(event) => over(event, tl)" @mouseleave="leave">
                       <q-icon :name="logIconByTimeline(tl)" size="32px" />
                     </div>
+                    <user-dialog :isOpen="isOpenUserDialog" @close="closeUserDialog" :id="tl.user.id" v-if="isOpenUserDialog" />
                   </div>
                 </template>
               </game-card>
@@ -41,11 +44,12 @@ import { LogType, MaskedTimeline } from 'src/types/root';
 import { CardInfo } from '../../HorizontalScroll.vue';
 import useTooltipContent from './use/useTooltipContent';
 import HorizontalScrollArea from '../../HorizontalScrollArea.vue'
+import UserDialog from '../../UserDialog.vue'
 import Tooltip from '../../Tooltip.vue'
 
 export default defineComponent({
   name: 'Timeline',
-  components: { GameCard, HorizontalScrollArea, Tooltip },
+  components: { GameCard, HorizontalScrollArea, Tooltip, UserDialog },
   setup() {
     const timelines = computed(() => store.state.domain.maskedTimelines)
     const cardInfo_by_tl = (tl: MaskedTimeline): CardInfo => {
@@ -88,6 +92,14 @@ export default defineComponent({
         isLeaveAnime.value = false
       }, 500)
     }
+
+    const isOpenUserDialog = ref(false)
+    const openUserDialog = () => {
+      isOpenUserDialog.value = true
+    }
+    const closeUserDialog = () => {
+      isOpenUserDialog.value = false
+    }
     return {
       timelines,
       cardInfo_by_tl,
@@ -96,7 +108,10 @@ export default defineComponent({
       isHover,
       isLeaveAnime,
       tooltipContent,
-      logIconByTimeline
+      logIconByTimeline,
+      isOpenUserDialog,
+      openUserDialog,
+      closeUserDialog,
     }
   }
 });
@@ -124,6 +139,11 @@ export default defineComponent({
 }
 
 .supplements {
+  display: flex;
+  align-items: center;
+}
+
+.supplementsUser {
   display: flex;
   align-items: center;
 }

@@ -10,7 +10,7 @@
       </div>
     </div>
     <slot name="rightItem" />
-    <user-dialog :isOpen="isOpenUserDialog" @close="closeUserDialog" :id="user.id" />
+    <user-dialog :isOpen="isOpenUserDialog" @close="closeUserDialog" :id="user.id" v-if="isOpenUserDialog" />
   </div>
 </template>
 

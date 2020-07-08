@@ -27,6 +27,7 @@ const useStartProcess = (game: ListGame) => {
       const addFinishTime = `$date = Get-Date ; Add-Content setting/playtime.json \"end\`n${game.id}\`n$date\"`
       const command = `$now = pwd ; ${addStartTime} ; cd \'${normalizedFile}\' ; powershell Start-Process ${exe ?? ''} ${isAdmin ? '-verb runas' : ''} -Wait ; cd $now.path ; ${addFinishTime}`
       // 何故か if(Buffer.isBuffer(stderr)) で判定してもダメだからanyに
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ChileProcess.exec(`powershell.exe -command "${command}"`, {encoding: 'binary', maxBuffer: 64*1024*1024}, (err, stdout, stderr: any) => {
         if (err) {
           const str = iconv.decode(stderr, 'shiftjis')

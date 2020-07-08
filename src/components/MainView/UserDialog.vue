@@ -6,7 +6,10 @@
         <div :class="$style.headerContainer">
           <q-img :src="iconByUser(userDetail.user)" :class="$style.avater" />
           <div :class="$style.detailContainer">
-            <div class="text-h6">{{ userDetail.user.display_name }}</div>
+            <div :class="$style.userNameContainer">
+              <div class="text-h6">{{ userDetail.user.display_name }}</div>
+              <q-btn :disable="waiting" v-if="me" rounded icon-right="send" label="フォローリクエストを送る" :class="$style.followButton" @click="sendFollowRequest" />
+            </div>
             <div  :class="$style.snsRootContainer">
               <div :class="$style.snsContainer">
                 <q-img src="../../statics/icons/es_favicon.png" width="16px" contain />
@@ -46,10 +49,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from '@vue/composition-api';
+import { defineComponent, ref, onMounted, computed } from '@vue/composition-api';
 import { UserDetail, User } from '../../types/root';
-import { getUser } from 'src/lib/api'
+import { getUser, postFollowRequest } from 'src/lib/api'
 import UserDialogActivity from './UserDialogActivity.vue'
+import store from 'src/store'
+import electron from 'electron'
 
 export default defineComponent({
   name: 'UserDialog',
@@ -73,15 +78,26 @@ export default defineComponent({
     }
 
     const userDetail = ref<UserDetail | null>(null)
-    const isLoading = ref(false)
+    const isLoading = ref(true)
 
+    const me = computed(() => store.state.domain.me)
+    const waiting = ref(false)
+    const sendFollowRequest = async () => {
+      waiting.value = true
+      try {
+        await postFollowRequest(props.id)
+        await electron.remote.dialog.showMessageBox({ message: 'リクエストを送りました' })
+      } catch (e) {
+        electron.remote.dialog.showErrorBox('error', '既にフォローリクエストを送っています')
+      }
+    }
     const tab = ref('activity')
     onMounted(async () => {
       isLoading.value = true
       userDetail.value = await getUser(props.id)
       isLoading.value = false
     })
-    return { close, userDetail, isLoading, iconByUser, tab }
+    return { close, userDetail, isLoading, iconByUser, tab, me, sendFollowRequest, waiting }
   }
 });
 </script>
@@ -97,6 +113,15 @@ export default defineComponent({
 
 .headerContainer {
   display: flex;
+}
+
+.userNameContainer {
+  display: flex;
+}
+
+.followButton {
+  margin-left: auto;
+  margin-right: 16px;
 }
 
 .avater {
