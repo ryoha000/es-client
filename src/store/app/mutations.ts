@@ -1,6 +1,6 @@
 import { defineMutations } from 'direct-vuex'
 import { S } from './state'
-import { Seiya } from '.'
+import { Seiya, LastGameAccessTimeMap } from '.'
 import { List, StackType } from 'src/types/root'
 
 export const mutations = defineMutations<S>()({
@@ -15,6 +15,12 @@ export const mutations = defineMutations<S>()({
   },
   removeList(state, payload: number) {
     state.lists = state.lists.filter(l => l.id !== payload)
+  },
+  setLastGameAccessTime(state, payload: LastGameAccessTimeMap) {
+    state.lastGameAccessTime = payload
+  },
+  addLastGameAccessTime(state, payload: { id: number, aTime: Date }) {
+    state.lastGameAccessTime = Object.assign({ [payload.id]: payload.aTime }, state.lastGameAccessTime)
   },
   setRouteIndex(state, payload: number) {
     state.routeIndex = payload

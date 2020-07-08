@@ -30,6 +30,11 @@ export const actions = defineActions({
     const data = await getGamesWithoutNumByIds(haveGameIDs ?? [])
     commit.setHaveGames(reduceToRecord(data, 'id'))
   },
+  async addHaveGames(context, id: number) {
+    const { commit } = entitiesActionContext(context)
+    const data = await getGame(id)
+    commit.addHaveGame({ id: `${id}`, entity: data.game })
+  },
   async setGameDetails(context, id: number) {
     const { commit, state, rootCommit } = entitiesActionContext(context)
     if (id in state.gameDetails) {

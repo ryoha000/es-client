@@ -88,6 +88,8 @@ export default defineComponent ({
             return
           }
           await addGameToList(0, newListGames[0])
+          await store.dispatch.entities.addHaveGames(newListGames[0].id)
+          await store.dispatch.app.addAccessTimeMap(newListGames[0])
           alert(`${minimalGames[newListGames[0].id].gamename}が追加されました`)
         }
       } catch (e) {
@@ -108,6 +110,7 @@ export default defineComponent ({
       await store.dispatch.entities.setAllMinimalGames()
       await store.dispatch.entities.setHaveGames()
       await store.dispatch.app.setLists()
+      await store.dispatch.app.setAccessTimeMap()
       await store.dispatch.domain.setCampaign()
       await store.dispatch.domain.setSchedules()
       try {

@@ -5,6 +5,7 @@ import { mutations } from './mutations'
 import { actions } from './actions'
 
 export type Seiya = { gamename: string, url: string }[]
+export type LastGameAccessTimeMap = Record<number, Date>
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Undefinedable<T extends Record<string, any>> = Partial<T>
 

@@ -40,8 +40,9 @@ const useJson = () => {
     } catch (e) {
       try {
         const settings = { isVerbRunAs: false }
+        const lists = [{ id: 0, name: '所持ゲーム', games: [] }]
         await override('setting/setting.json', JSON.stringify(settings))
-        await override('setting/lists.json', JSON.stringify([]))
+        await override('setting/lists.json', JSON.stringify(lists))
       } catch (e) {
         console.error(e)
         // throw(e)
@@ -238,6 +239,7 @@ const useJson = () => {
       }
       console.log(newLists)
       store.commit.app.setLists(newLists)
+      await store.dispatch.app.setAccessTimeMap()
       await override('setting/lists.json', JSON.stringify(newLists))
     } catch (e) {
       console.error(e)
