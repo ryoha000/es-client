@@ -11,7 +11,7 @@
       <slot name="iter" />
     </q-scroll-area>
     <q-btn :class="$style.rightButton" color="transparent" @click="onRightClick">
-      <q-icon name="keyboard_arrow_right" color="gray" />
+      <q-icon name="keyboard_arrow_right" />
     </q-btn>
     <q-btn :class="$style.leftButton" color="transparent" @click="onLeftClick">
       <q-icon name="keyboard_arrow_left" />

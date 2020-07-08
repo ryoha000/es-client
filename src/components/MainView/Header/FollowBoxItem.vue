@@ -1,5 +1,6 @@
 <template>
-  <div :class="$style.container">
+  <div v-if="isLoading">now loading</div>
+  <div v-else :class="$style.container">
     <div v-if="followRequests.length === 0">未対応のフォローリクエストはありません</div>
     <div v-for="(fr, i) in followRequests" :key="i">
       <user-list-item :user="fr.user">
@@ -33,18 +34,26 @@ export default defineComponent({
   },
   setup() {
     const followRequests = ref<FollowWithUser[]>([])
+    const isLoading = ref(true)
     onMounted(async () => {
+      isLoading.value = true
       followRequests.value = await getFollowRequestsToMe()
+      isLoading.value = false
     })
     const makeDay = (str: string) => {
       const d = moment(str)
       return d.format('YYYY-MM-DD')
     }
+    const waiting = ref(false)
     const responseFollow = async (id: string, isAccept: boolean) => {
-      await responseFollowRequest(id, isAccept)
-      followRequests.value.filter(v => v.follow.id !== id)
+      if (waiting.value) {
+        waiting.value = true
+        await responseFollowRequest(id, isAccept)
+        followRequests.value.filter(v => v.follow.id !== id)
+        waiting.value = false
+      }
     }
-    return { followRequests, makeDay, responseFollow }
+    return { followRequests, makeDay, responseFollow, isLoading, waiting }
   }
 });
 </script>

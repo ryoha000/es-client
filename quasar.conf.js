@@ -128,7 +128,7 @@ module.exports = configure(function (ctx) {
       proxy: {
         '/api/': {
           target: 'http://localhost:8088',
-        }
+        },
       }
     },
     // animations: 'all', // --- includes all animations

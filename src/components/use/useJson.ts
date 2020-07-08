@@ -31,18 +31,20 @@ const useJson = () => {
         await fs.promises.mkdir('setting')
       } catch (e) {
         console.error(e)
-        throw(e)
+        // throw(e)
       }
     }
     try {
       await readFileConsoleErr('setting/setting.json')
+      await readFileConsoleErr('setting/lists.json')
     } catch (e) {
       try {
         const settings = { isVerbRunAs: false }
         await override('setting/setting.json', JSON.stringify(settings))
+        await override('setting/lists.json', JSON.stringify([]))
       } catch (e) {
         console.error(e)
-        throw(e)
+        // throw(e)
       }
     }
   }

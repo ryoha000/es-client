@@ -1,23 +1,29 @@
 <template>
   <div :class="$style.container">
     <div :class="$style.userContainer" @click="openUserDialog">
-      <q-avatar size="32px" :class="$style.avater" >
-        <img :src="iconByUser(user)">
+      <q-avatar size="32px" :class="$style.avater">
+        <img :src="userIcon" />
       </q-avatar>
       <div :class="$style.userName">{{ user.display_name }}</div>
       <div :class="$style.rightComponent">
-        <slot name="supplement"  />
+        <slot name="supplement" />
       </div>
     </div>
     <slot name="rightItem" />
-    <user-dialog :isOpen="isOpenUserDialog" @close="closeUserDialog" :id="user.id" v-if="isOpenUserDialog" />
+    <user-dialog
+      :isOpen="isOpenUserDialog"
+      @close="closeUserDialog"
+      :id="user.id"
+      v-if="isOpenUserDialog"
+    />
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, PropType } from '@vue/composition-api';
+import { defineComponent, ref, PropType, computed } from '@vue/composition-api';
 import { User } from '../../../types/root';
-import UserDialog from '../UserDialog.vue'
+import UserDialog from '../UserDialog.vue';
+import DefaultIcon from 'src/statics/icons/user_pict.png';
 
 export default defineComponent({
   name: 'UserListItem',
@@ -30,18 +36,16 @@ export default defineComponent({
   components: {
     UserDialog
   },
-  setup() {
-    const iconByUser = (user: User) => {
-      return user.icon_url ?? '../../../statics/icons/user-pict.png'
-    }
-    const isOpenUserDialog = ref(false)
+  setup(props) {
+    const isOpenUserDialog = ref(false);
     const openUserDialog = () => {
-      isOpenUserDialog.value = true
-    }
+      isOpenUserDialog.value = true;
+    };
     const closeUserDialog = () => {
-      isOpenUserDialog.value = false
-    }
-    return { iconByUser, isOpenUserDialog, openUserDialog, closeUserDialog }
+      isOpenUserDialog.value = false;
+    };
+    const userIcon = computed(() => props.user.icon_url ?? DefaultIcon)
+    return { isOpenUserDialog, openUserDialog, closeUserDialog, userIcon };
   }
 });
 </script>
@@ -78,7 +82,7 @@ export default defineComponent({
 
 @keyframes SlideIn {
   0% {
-    opacity: 0;/*初期状態では透明に*/
+    opacity: 0; /*初期状態では透明に*/
     transform: translateX(32px);
   }
   100% {

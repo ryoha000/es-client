@@ -1,6 +1,7 @@
 <template>
-  <div :class="$style.container">
-    <div v-if="followRequestsFromMe.length === 0">未対応のフォローリクエストはありません</div>
+  <div v-if="isLoading">now loading</div>
+  <div v-else :class="$style.container">
+    <div v-if="followRequestsFromMe.length === 0">送信済みのフォローリクエストはありません</div>
     <div v-for="(fr, i) in followRequestsFromMe" :key="i">
       <user-list-item :user="fr.user">
         <template #supplement>
@@ -8,8 +9,9 @@
         </template>
         <template #rightItem>
           <div :class="$style.iconContainer">
-            <q-icon name="done" size="24px" :class="['text-green', $style.icon]" @click="responseFollow(fr.follow.id, true)" />
-            <q-icon name="clear" size="24px" :class="['text-red', $style.icon]" @click="responseFollow(fr.follow.id, false)" />
+            <q-icon v-if="!fr.follow.deleted_at && fr.follow.allowed" name="done" size="24px" :class="['text-green']" />
+            <q-icon v-else-if="!fr.follow.deleted_at" name="fiber_manual_record" size="16px" style="width: 26px;" :class="['text-warning']" />
+            <q-icon v-else name="clear" size="24px" :class="['text-red']" />
           </div>
         </template>
       </user-list-item>
@@ -20,7 +22,7 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted } from '@vue/composition-api';
 import { FollowWithUser } from '../../../types/root';
-import { responseFollowRequest, getFollowRequestsFromMe } from '../../../lib/api';
+import { getFollowRequestsFromMe } from '../../../lib/api';
 import UserListItem from './UserListItem.vue'
 import moment from 'moment'
 
@@ -32,19 +34,18 @@ export default defineComponent({
     UserListItem
   },
   setup() {
+    const isLoading = ref(true)
     const followRequestsFromMe = ref<FollowWithUser[]>([])
     onMounted(async () => {
-      followRequestsFromMe.value = await getFollowRequestsFromMe()
+      isLoading.value = true
+      followRequestsFromMe.value = (await getFollowRequestsFromMe()).sort((a, b) => moment(b.follow.created_at).diff(a.follow.created_at))
+      isLoading.value = false
     })
     const makeDay = (str: string) => {
       const d = moment(str)
-      return d.format('YYYY-MM-DD')
+      return d.format('MM/DD hh:mm')
     }
-    const responseFollow = async (id: string, isAccept: boolean) => {
-      await responseFollowRequest(id, isAccept)
-      followRequestsFromMe.value.filter(v => v.follow.id !== id)
-    }
-    return { followRequestsFromMe, makeDay, responseFollow }
+    return { followRequestsFromMe, makeDay, isLoading }
   }
 });
 </script>
@@ -57,15 +58,13 @@ export default defineComponent({
 
 .iconContainer {
   align-items: center;
+  justify-content: center;
   display: flex;
+  width: 24px;
+  height: 24px;
 }
 
 .day {
   margin-left: auto;
-}
-
-.icon {
-  cursor: pointer;
-  margin-left: 4px;
 }
 </style>

@@ -14,16 +14,28 @@
               <game-card :cardInfo="cardInfo_by_tl(tl)">
                 <template #cardSupplement>
                   <div :class="$style.supplements">
-                    <div :class="$style.supplementsUser" @click="openUserDialog">
-                      <q-avatar size="32px" :class="$style.avater" >
-                        <img :src="tl.user.icon_url ? tl.user.icon_url : '../../../../statics/icons/user-pict.png'">
+                    <div
+                      :class="$style.supplementsUser"
+                      @click="openUserDialog"
+                    >
+                      <q-avatar size="32px" :class="$style.avater">
+                        <img :src="iconByUser(tl.user)" />
                       </q-avatar>
                       <div>{{ tl.user.display_name }}</div>
                     </div>
-                    <div :class="$style.typeIcon" @mouseenter="(event) => over(event, tl)" @mouseleave="leave">
+                    <div
+                      :class="$style.typeIcon"
+                      @mouseenter="event => over(event, tl)"
+                      @mouseleave="leave"
+                    >
                       <q-icon :name="logIconByTimeline(tl)" size="32px" />
                     </div>
-                    <user-dialog :isOpen="isOpenUserDialog" @close="closeUserDialog" :id="tl.user.id" v-if="isOpenUserDialog" />
+                    <user-dialog
+                      :isOpen="isOpenUserDialog"
+                      @close="closeUserDialog"
+                      :id="tl.user.id"
+                      v-if="isOpenUserDialog"
+                    />
                   </div>
                 </template>
               </game-card>
@@ -32,7 +44,11 @@
         </template>
       </horizontal-scroll-area>
     </q-expansion-item>
-    <tooltip :isHover="isHover" :isLeaveAnime="isLeaveAnime" :tooltipContent="tooltipContent" />
+    <tooltip
+      :isHover="isHover"
+      :isLeaveAnime="isLeaveAnime"
+      :tooltipContent="tooltipContent"
+    />
   </div>
 </template>
 
@@ -40,66 +56,72 @@
 import { defineComponent, computed, ref } from '@vue/composition-api';
 import store from 'src/store';
 import GameCard from '../../GameCard.vue';
-import { LogType, MaskedTimeline } from 'src/types/root';
+import { LogType, MaskedTimeline, User } from 'src/types/root';
 import { CardInfo } from '../../HorizontalScroll.vue';
 import useTooltipContent from './use/useTooltipContent';
-import HorizontalScrollArea from '../../HorizontalScrollArea.vue'
-import UserDialog from '../../UserDialog.vue'
-import Tooltip from '../../Tooltip.vue'
+import HorizontalScrollArea from '../../HorizontalScrollArea.vue';
+import UserDialog from '../../UserDialog.vue';
+import Tooltip from '../../Tooltip.vue';
+import DefaultIcon from 'src/statics/icons/user_pict.png';
 
 export default defineComponent({
   name: 'Timeline',
   components: { GameCard, HorizontalScrollArea, Tooltip, UserDialog },
   setup() {
-    const timelines = computed(() => store.state.domain.maskedTimelines)
+    const timelines = computed(() => store.state.domain.maskedTimelines);
     const cardInfo_by_tl = (tl: MaskedTimeline): CardInfo => {
       return {
         title: tl.game.gamename ?? '',
         supplement: '',
         // image: `https://pics.dmm.co.jp/${game.dmm_genre ?? ''}/pcgame/${game.dmm ?? ''}/${game.dmm ?? ''}pl.jpg`,
         image: '',
-        url: tl.timeline.log_type === LogType.Review
-          ? `https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/user_game.php?user=${tl.user.es_user_id}&game=${tl.game.id}`
-          : undefined,
-      }
-    }
+        url:
+          tl.timeline.log_type === LogType.Review
+            ? `https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/user_game.php?user=${tl.user.es_user_id}&game=${tl.game.id}`
+            : undefined
+      };
+    };
     const logIconByTimeline = (tl: MaskedTimeline) => {
-      if (tl.timeline.log_type === LogType.Play) return 'play_arrow'
-      if (tl.timeline.log_type === LogType.Review) return 'chat'
-      if (tl.timeline.log_type === LogType.List) return 'queue'
-      return ''
-    }
+      if (tl.timeline.log_type === LogType.Play) return 'play_arrow';
+      if (tl.timeline.log_type === LogType.Review) return 'chat';
+      if (tl.timeline.log_type === LogType.List) return 'queue';
+      return '';
+    };
 
-    const isHover = ref(false)
-    const isLeaveAnime = ref(false)
-    const tooltipContent = ref('')
+    const isHover = ref(false);
+    const isLeaveAnime = ref(false);
+    const tooltipContent = ref('');
     const over = (event: MouseEvent, tl: MaskedTimeline) => {
-      const { makeContent } = useTooltipContent(tl)
+      const { makeContent } = useTooltipContent(tl);
       if (isLeaveAnime.value) {
-        isHover.value = false
-        isLeaveAnime.value = false
+        isHover.value = false;
+        isLeaveAnime.value = false;
       }
-      isHover.value = true
-      tooltipContent.value = makeContent()
-      store.commit.app.setTooltipPoint({ x: event.clientX, y: event.clientY })
-    }
+      isHover.value = true;
+      tooltipContent.value = makeContent();
+      store.commit.app.setTooltipPoint({ x: event.clientX, y: event.clientY });
+    };
     const leave = () => {
-      isLeaveAnime.value = true
+      isLeaveAnime.value = true;
       setTimeout(() => {
         if (isLeaveAnime.value) {
-          isHover.value = false
+          isHover.value = false;
         }
-        isLeaveAnime.value = false
-      }, 500)
+        isLeaveAnime.value = false;
+      }, 500);
+    };
+
+    const iconByUser = (user: User) => {
+      return user.icon_url ?? DefaultIcon
     }
 
-    const isOpenUserDialog = ref(false)
+    const isOpenUserDialog = ref(false);
     const openUserDialog = () => {
-      isOpenUserDialog.value = true
-    }
+      isOpenUserDialog.value = true;
+    };
     const closeUserDialog = () => {
-      isOpenUserDialog.value = false
-    }
+      isOpenUserDialog.value = false;
+    };
     return {
       timelines,
       cardInfo_by_tl,
@@ -112,7 +134,8 @@ export default defineComponent({
       isOpenUserDialog,
       openUserDialog,
       closeUserDialog,
-    }
+      iconByUser,
+    };
   }
 });
 </script>

@@ -115,9 +115,7 @@ export default defineComponent ({
         await store.dispatch.domain.setMe()
       } catch {}
       // await store.dispatch.app.setSeiya()
-      console.log('bbbb')
       try {
-        console.log('aaaa')
         await store.dispatch.domain.setSocket()
 
       } catch (e) {
