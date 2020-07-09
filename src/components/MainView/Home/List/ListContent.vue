@@ -2,11 +2,11 @@
   <q-expansion-item
     expand-separator
     :class="$style.container"
-    :label="schedule.day + '  (' + schedule.games.length + '本)'"
-    default-opened
+    label="aaa"
   >
     <div :class="$style.gameCards" >
-      <game-card :cardInfo="createCardInfo(game)" :class="$style.gameCard" v-for="(game, i) in schedule.games" :key="i"/>
+      <q-btn label="新しいリストを作成" />
+      <game-card :cardInfo="createCardInfo(game)" :class="$style.gameCard" v-for="(game, i) in list.games" :key="i"/>
     </div>
   </q-expansion-item>
 </template>
@@ -15,13 +15,13 @@
 import { defineComponent, Ref, ref, PropType } from '@vue/composition-api';
 import GameCard from '../../GameCard.vue'
 import { CardInfo } from '../../HorizontalScroll.vue'
-import { SellSchedule, Game } from '../../../../types/root';
+import { Game, ListInServerWithGames } from '../../../../types/root';
 
 export default defineComponent({
   name: 'ScheduleDay',
   props: {
-    schedule: {
-      type: Object as PropType<SellSchedule>,
+    list: {
+      type: Object as PropType<ListInServerWithGames>,
       required: true
     }
   },
@@ -57,7 +57,6 @@ export default defineComponent({
 .gameCards {
   display: flex;
   flex-wrap: wrap;
-  padding-left: 8px;
 }
 .gameCard {
   margin-right: 16px;

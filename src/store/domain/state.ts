@@ -1,4 +1,4 @@
-import { Campaign, SellSchedule, GameAndBrand, GameDetail, User, MaskedTimeline } from 'src/types/root'
+import { Campaign, SellSchedule, GameAndBrand, GameDetail, User, MaskedTimeline, ListInServerWithGames } from 'src/types/root'
 
 export type S = {
   campaigns: Campaign[]
@@ -8,6 +8,7 @@ export type S = {
   me: User | null
   socket: WebSocket | null
   maskedTimelines: MaskedTimeline[]
+  listInServers: ListInServerWithGames[]
 }
 
 export const state: S = {
@@ -18,4 +19,5 @@ export const state: S = {
   me: null,
   socket: null,
   maskedTimelines: [],
+  listInServers: [],
 }

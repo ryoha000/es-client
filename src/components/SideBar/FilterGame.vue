@@ -14,48 +14,61 @@
       :color="isSortByLastAccess ? 'blue' : 'snow'"
       @click="sortAccessTime"
     />
-    <create-list-dialog :isOpen="isOpenCreateListDialog" @close="closeCreateListDialog" />
+    <create-list-dialog
+      :isOpen="isOpenCreateListDialog"
+      @close="closeCreateListDialog"
+    />
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, computed } from '@vue/composition-api';
-import CreateListDialog from '../CreateListDialog.vue'
-import store from 'src/store'
+import CreateListDialog from '../CreateListDialog.vue';
+import store from 'src/store';
 
 export default defineComponent({
   name: 'FilterGame',
   props: {
     isSortByLastAccess: {
-      type: Boolean, required: true
-    },
+      type: Boolean,
+      required: true
+    }
   },
   components: {
     CreateListDialog
   },
   setup(props, context) {
-    const model = ref('所持ゲーム')
-    const options = computed(() => [...store.state.app.lists.map(v => ({label: v.name, id: v.id})), '新しいリストを作成'])
+    const model = ref('所持ゲーム');
+    const options = computed(() => [
+      ...store.state.app.lists.map(v => ({ label: v.name, id: v.id })),
+      '新しいコレクションを作成'
+    ]);
     const sortAccessTime = () => {
-      context.emit('sortByLastAccess')
-    }
-    const isOpenCreateListDialog = ref(false)
+      context.emit('sortByLastAccess');
+    };
+    const isOpenCreateListDialog = ref(false);
     const closeCreateListDialog = () => {
-      isOpenCreateListDialog.value = false
-    }
-    const input = (v: string | {label: string, id: number}) => {
-
+      isOpenCreateListDialog.value = false;
+    };
+    const input = (v: string | { label: string; id: number }) => {
       if (typeof v === 'string') {
-        if (v === '新しいリストを作成') {
-          model.value = '所持ゲーム'
-          isOpenCreateListDialog.value = true
+        if (v === '新しいコレクションを作成') {
+          model.value = '所持ゲーム';
+          isOpenCreateListDialog.value = true;
         }
       }
       if (typeof v === 'object') {
-        context.emit('filter', v)
+        context.emit('filter', v);
       }
-    }
-    return { model, options, sortAccessTime, isOpenCreateListDialog, closeCreateListDialog, input }
+    };
+    return {
+      model,
+      options,
+      sortAccessTime,
+      isOpenCreateListDialog,
+      closeCreateListDialog,
+      input
+    };
   }
 });
 </script>
@@ -70,7 +83,7 @@ export default defineComponent({
 }
 
 .select {
-  width: calc( 100% - 28px );
+  width: calc(100% - 28px);
   height: 32px;
   :nth-child(n) {
     height: 32px;

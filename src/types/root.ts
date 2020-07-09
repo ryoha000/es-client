@@ -249,3 +249,20 @@ export interface UserDetail {
   review: TimelineWithGame[],
   list: TimelineWithGame[],
 }
+
+export interface ListInServer {
+  id: string,
+  user_id: string,
+  name: string,
+  comment: string,
+  priority: number,
+  url: string | null,
+  is_public: boolean,
+  created_at: string,
+  updated_at: string
+}
+
+export interface ListInServerWithGames {
+  list: ListInServer,
+  games: Game[]
+}

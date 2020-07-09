@@ -1,6 +1,6 @@
 import { defineMutations } from 'direct-vuex'
 import { S } from './state'
-import { Campaign, SellSchedule, GameAndBrand, GameDetail, User, MaskedTimeline } from 'src/types/root'
+import { Campaign, SellSchedule, GameAndBrand, GameDetail, User, MaskedTimeline, ListInServerWithGames } from 'src/types/root'
 
 export const mutations = defineMutations<S>()({
   setCampaigns(state, payload: Campaign[]) {
@@ -26,5 +26,17 @@ export const mutations = defineMutations<S>()({
   },
   addTimeline(state, payload: MaskedTimeline) {
     state.maskedTimelines.unshift(payload)
+  },
+  setListInServers(state, payload: ListInServerWithGames[]) {
+    state.listInServers = payload
+  },
+  upsertListInServer(state, payload: ListInServerWithGames) {
+    const index = state.listInServers.findIndex(v => v.list.id === payload.list.id)
+    if (index < 0) {
+      state.listInServers.push(payload)
+      state.listInServers.sort((a, b) => a.list.priority > b.list.priority ? 1 : -1)
+    } else {
+      state.listInServers[index] = payload
+    }
   },
 })

@@ -1,8 +1,9 @@
 <template>
   <div :class="$style.container">
-    <q-list dark  separator dense>
+    <q-list dark separator dense>
       <q-item
-        v-for="(path, i) in games" :key="i"
+        v-for="(path, i) in games"
+        :key="i"
         clickable
         v-ripple
         style="padding: 0;width: 231px;"
@@ -14,20 +15,27 @@
             <q-img :ratio="1" :src="'data:image/png;base64,' + path.icon" />
           </q-avatar>
         </q-item-section>
-        <q-item-section :class="$style.titleWrapper"><div :class="$style.title">{{ gameName(path.id) }}</div></q-item-section>
+        <q-item-section :class="$style.titleWrapper"
+          ><div :class="$style.title">
+            {{ gameName(path.id) }}
+          </div></q-item-section
+        >
       </q-item>
     </q-list>
-    <create-list-dialog :isOpen="isOpenCreateListDialog" @close="closeCreateListDialog" />
+    <create-list-dialog
+      :isOpen="isOpenCreateListDialog"
+      @close="closeCreateListDialog"
+    />
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, computed, ref, PropType } from '@vue/composition-api';
 import { ListGame } from '../../types/root';
-import createListDialog from '../CreateListDialog.vue'
+import createListDialog from '../CreateListDialog.vue';
 import useJson from '../use/useJson';
-import useStartProcess from '../use/useStartProcess'
-import store from 'src/store'
+import useStartProcess from '../use/useStartProcess';
+import store from 'src/store';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const remote = require('electron').remote;
@@ -44,72 +52,101 @@ export default defineComponent({
     createListDialog
   },
   setup(props, context) {
-    const haveGameInfo = computed(() => store.state.entities.haveGames)
-    const clicked = ref(false)
+    const haveGameInfo = computed(() => store.state.entities.haveGames);
+    const clicked = ref(false);
     const onClick = async (game: ListGame) => {
       if (clicked.value) {
         clicked.value = false;
-        const { startProcess } = useStartProcess(game)
-        await startProcess(undefined)
+        const { startProcess } = useStartProcess(game);
+        await startProcess(undefined);
         return;
       }
-      await store.dispatch.app.goDetail(game.id)
+      await store.dispatch.app.goDetail(game.id);
 
       clicked.value = true;
 
-      setTimeout(function () {
+      setTimeout(function() {
         clicked.value = false;
       }, 300);
-    }
+    };
     const gameName = (id: number) => {
-      return haveGameInfo.value[id]?.gamename ?? ''
-    }
-    const isOpenCreateListDialog = ref(false)
+      return haveGameInfo.value[id]?.gamename ?? '';
+    };
+    const isOpenCreateListDialog = ref(false);
 
-    const lists = computed(() => store.state.app.lists)
+    const lists = computed(() => store.state.app.lists);
     const rightClick = (game: ListGame) => {
-      const { addGameToList, removeGameFromList, updateImage } = useJson()
+      const { addGameToList, removeGameFromList, updateImage } = useJson();
 
-      const menu = new Menu()
-      menu.append(new MenuItem({ label: '一覧から削除', click: async() => {
-        await removeGameFromList(props.filterListId, game)
-        context.emit('createList');
-      }}));
+      const menu = new Menu();
+      menu.append(
+        new MenuItem({
+          label: '一覧から削除',
+          click: async () => {
+            await removeGameFromList(props.filterListId, game);
+            context.emit('createList');
+          }
+        })
+      );
       menu.append(new MenuItem({ type: 'separator' }));
 
-      menu.append(new MenuItem({ label: 'アイコンを変更', click: async() => {
-        const result = await remote.dialog.showOpenDialog({
-          properties: ['openFile'],
-          filters: [{ name: 'Images', extensions: ['jpg', 'png'] }],
-          title: 'フォルダ(複数選択)',
-          defaultPath: '.'
+      menu.append(
+        new MenuItem({
+          label: 'アイコンを変更',
+          click: async () => {
+            const result = await remote.dialog.showOpenDialog({
+              properties: ['openFile'],
+              filters: [{ name: 'Images', extensions: ['jpg', 'png'] }],
+              title: 'フォルダ(複数選択)',
+              defaultPath: '.'
+            });
+            if (result.filePaths.length > 0) {
+              await updateImage(game.path, result.filePaths[0]);
+            }
+            context.emit('createList');
+          }
         })
-        if (result.filePaths.length > 0) {
-          await updateImage(game.path, result.filePaths[0])
-        }
-        context.emit('createList');
-      }}));
+      );
       menu.append(new MenuItem({ type: 'separator' }));
 
       for (const list of lists.value) {
-        if (list.id === 0) continue
-        menu.append(new MenuItem({ label: `${list.name}に追加`, click: async() => {
-          await addGameToList(list.id, game);
-          context.emit('createList');
-        }}))
+        if (list.id === 0) continue;
+        menu.append(
+          new MenuItem({
+            label: `${list.name}に追加`,
+            click: async () => {
+              await addGameToList(list.id, game);
+              context.emit('createList');
+            }
+          })
+        );
         menu.append(new MenuItem({ type: 'separator' }));
       }
 
-      menu.append(new MenuItem({ label: '新しいリストを作成', click: () => { isOpenCreateListDialog.value = true} }));
-      menu.popup()
-    }
+      menu.append(
+        new MenuItem({
+          label: '新しいコレクションを作成',
+          click: () => {
+            isOpenCreateListDialog.value = true;
+          }
+        })
+      );
+      menu.popup();
+    };
     const closeCreateListDialog = () => {
-      isOpenCreateListDialog.value = false
-    }
+      isOpenCreateListDialog.value = false;
+    };
     const createList = () => {
-      context.emit('createList')
-    }
-    return { onClick, gameName, rightClick, isOpenCreateListDialog, closeCreateListDialog, createList }
+      context.emit('createList');
+    };
+    return {
+      onClick,
+      gameName,
+      rightClick,
+      isOpenCreateListDialog,
+      closeCreateListDialog,
+      createList
+    };
   }
 });
 </script>
@@ -134,5 +171,4 @@ export default defineComponent({
     user-select: none;
   }
 }
-
 </style>

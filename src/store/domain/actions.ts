@@ -2,9 +2,9 @@ import { defineActions } from 'direct-vuex'
 import { moduleActionContext } from 'src/store'
 import { domain } from './index'
 import { ActionContext } from 'vuex'
-import { getCampaigns, getSchedules, getGame, getMe, updateMe, login, getMaskedTimeline } from 'src/lib/api'
+import { getCampaigns, getSchedules, getGame, getMe, updateMe, login, getMaskedTimeline, getMyListInServers, postListInServer, addGameToListInServer, getListInServer } from 'src/lib/api'
 import moment, { Moment } from 'moment'
-import { SellSchedule, User } from 'src/types/root'
+import { SellSchedule, User, ListInServerWithGames } from 'src/types/root'
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const domainActionContext = (
@@ -85,5 +85,20 @@ export const actions = defineActions({
     }
     if (state.socket) state.socket.close()
     commit.setSocket(socket)
+  },
+  async setListInServers(context) {
+    const { commit } = domainActionContext(context)
+    const lists = await getMyListInServers()
+    commit.setListInServers(lists.map(v => ({ list: v, games: [] })))
+  },
+  async addListInServer(context, payload: { name: string, comment: string, priority: number, url: string | null, isPublic: boolean }) {
+    const { commit } = domainActionContext(context)
+    const newList = await postListInServer(payload)
+    commit.upsertListInServer({ list: newList, games: [] })
+  },
+  async addGames(context, payload: { list_id: string, game_ids: number[] }) {
+    const { commit } = domainActionContext(context)
+    await addGameToListInServer(payload.list_id, payload.game_ids)
+    commit.upsertListInServer(await getListInServer(payload.list_id))
   },
 })

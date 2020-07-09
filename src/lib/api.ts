@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import axios from 'axios';
-import { MinimalGame, Game, Campaign, GameAndBrand, User, MaskedTimeline, Review, FollowWithUser, UserDetail } from 'src/types/root';
+import { MinimalGame, Game, Campaign, GameAndBrand, User, MaskedTimeline, Review, FollowWithUser, UserDetail, ListInServerWithGames, ListInServer } from 'src/types/root';
 
 // axios.defaults.baseURL = 'http://localhost:8088'
 
@@ -74,4 +74,38 @@ export const getFollowees = async (id: string): Promise<User[]> => {
 
 export const getUser = async (id: string): Promise<UserDetail> => {
   return (await axios.get<UserDetail>(`/api/users/${id}`)).data
+}
+
+export const getMyListInServers = async (): Promise<ListInServer[]> => {
+  return (await axios.get<ListInServer[]>('/api/lists')).data
+}
+
+export const postListInServer = async (payload: { name: string, comment: string, priority: number, url: string | null, isPublic: boolean }): Promise<ListInServer> => {
+  return (await axios.post<ListInServer>('/api/lists', {
+    name: payload.name,
+    comment: payload.comment,
+    priority: payload.priority,
+    url: payload.url,
+    is_public: payload.isPublic,
+  })).data
+}
+
+export const getListInServer = async (id: string): Promise<ListInServerWithGames> => {
+  return (await axios.get<ListInServerWithGames>(`/api/lists/${id}`)).data
+}
+
+export const putListInServer = async (id: string, updateList: ListInServer): Promise<void> => {
+  await axios.put(`/api/lists/${id}`, { name: updateList.name, comment: updateList.comment, priority: updateList.priority, url: updateList.url, is_public: updateList.is_public })
+}
+
+export const addGameToListInServer = async (id: string, gameIds: number[] ): Promise<void> => {
+  await axios.post(`/api/lists/${id}`, { game_ids: gameIds })
+}
+
+export const deleteGameFromListInServer = async (id: string, gameIds: number[]): Promise<void> => {
+  await axios.patch(`/api/lists/${id}`, { game_ids: gameIds })
+}
+
+export const playGame = async (gameId: string): Promise<void> => {
+  await axios.post(`/api/play/${gameId}`)
 }
