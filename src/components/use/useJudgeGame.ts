@@ -260,10 +260,16 @@ const useJudgeGame = (allMinimalGame: Record<string, MinimalGame>) => {
         await override('setting/memory.json', JSON.stringify(linkPaths))
         const paths = await getEXE(differencePaths)
         const games = await readListGames(0)
-        const listGames = Object.entries(games).map(v => v[1])
-        listGames.push(...paths)
+        const listGames = Object.values(games)
+        const resPaths: ListGame[] = []
+        for (const p of paths) {
+          if (!listGames.find(v => v.id === p.id)) {
+            listGames.push(p)
+            resPaths.push(p)
+          }
+        }
         await updateOrInsertList({id: 0, name: '所持ゲーム', games: listGames})
-        return paths
+        return resPaths
       } catch (e) {
         console.error(e)
         return []

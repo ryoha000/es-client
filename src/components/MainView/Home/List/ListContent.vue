@@ -1,21 +1,30 @@
 <template>
-  <q-expansion-item
-    expand-separator
-    :class="$style.container"
-    label="aaa"
-  >
-    <div :class="$style.gameCards" >
-      <q-btn label="新しいリストを作成" />
-      <game-card :cardInfo="createCardInfo(game)" :class="$style.gameCard" v-for="(game, i) in list.games" :key="i"/>
-    </div>
-  </q-expansion-item>
+  <div>
+    <q-expansion-item
+      expand-separator
+      :class="$style.container"
+      :label="list.list.name"
+      @show="openToggle"
+    >
+      <div :class="$style.gameCards" >
+        <q-card dark :class="$style.cContainer" v-if="!isLoading">
+          <q-btn icon="add" label="ゲームを追加" stack size="xl" :class="$style.addButton" @click="openAddGameDialog"/>
+        </q-card>
+        <game-card :cardInfo="createCardInfo(game)" :class="$style.gameCard" v-for="(game, i) in list.games" :key="i"/>
+      </div>
+    </q-expansion-item>
+    <add-game-to-list-dialog :isOpen="isOpenAddGameDialog" @close="closeAddGameDialog" v-if="isOpenAddGameDialog" />
+  </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, Ref, ref, PropType } from '@vue/composition-api';
 import GameCard from '../../GameCard.vue'
 import { CardInfo } from '../../HorizontalScroll.vue'
-import { Game, ListInServerWithGames } from '../../../../types/root';
+import { Game, ListInServerWithGames } from 'src/types/root';
+import AddGameToListDialog from './AddGameToListDialog.vue'
+import { getListInServer } from '../../../../lib/api';
+import store from 'src/store'
 
 export default defineComponent({
   name: 'ScheduleDay',
@@ -25,15 +34,8 @@ export default defineComponent({
       required: true
     }
   },
-  components: { GameCard },
-  setup() {
-    const demo: Ref<CardInfo> = ref({
-      title: '美少女万華鏡 -理と迷宮の少女-',
-      supplement: '5本5,000円まとめ買いキャンペーン!!',
-      //image: 'https://trap.jp/assets/logo/icon_blue.svg?v=3da93e42ac',
-      image: '../../statics/icons/ESClient_demo_image.jpg',
-      url: 'https://www.dlsite.com/maniax/campaign/matome202005'
-    })
+  components: { GameCard, AddGameToListDialog },
+  setup(props) {
     const createCardInfo = (game: Game) => {
       return {
         title: game.gamename,
@@ -44,7 +46,30 @@ export default defineComponent({
         contain: true
       }
     }
-    return { demo, createCardInfo }
+
+    const addCardClick = () => {
+      console.log('addCardClick')
+    }
+
+    const onClickContent = () => {
+      console.log('onClickContent')
+    }
+
+    const isOpenAddGameDialog = ref(false)
+    const openAddGameDialog = () => {
+      isOpenAddGameDialog.value = true
+    }
+    const closeAddGameDialog = () => {
+      isOpenAddGameDialog.value = false
+    }
+
+    const isLoading = ref(false)
+    const openToggle = async () => {
+      isLoading.value = true
+      await store.dispatch.domain.setLatestList(props.list.list.id)
+      isLoading.value = false
+    }
+    return { createCardInfo, addCardClick, onClickContent, isOpenAddGameDialog, openAddGameDialog, closeAddGameDialog, isLoading, openToggle }
   }
 });
 </script>
@@ -57,9 +82,21 @@ export default defineComponent({
 .gameCards {
   display: flex;
   flex-wrap: wrap;
+  padding-left: 16px;
+  padding-top: 8px;
 }
 .gameCard {
   margin-right: 16px;
   margin-top: 16px;
+}
+
+.cContainer {
+  max-width: 250px;
+  height: 196px;
+  cursor: pointer;
+}
+.addButton {
+  width: 250px;
+  height: 196px;
 }
 </style>

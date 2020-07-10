@@ -64,6 +64,7 @@ export const actions = defineActions({
     const { dispatch } = domainActionContext(context)
     await login(payload.id, payload.pw)
     await dispatch.setMe()
+    await dispatch.setListInServers()
   },
   async signup(context, payload: { id: string, pw: string }) {
     const { dispatch } = domainActionContext(context)
@@ -100,5 +101,10 @@ export const actions = defineActions({
     const { commit } = domainActionContext(context)
     await addGameToListInServer(payload.list_id, payload.game_ids)
     commit.upsertListInServer(await getListInServer(payload.list_id))
+  },
+  async setLatestList(context, listId: string) {
+    const { commit } = domainActionContext(context)
+    const latestList = await getListInServer(listId)
+    commit.upsertListInServer(latestList)
   },
 })

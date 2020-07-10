@@ -91,7 +91,8 @@ export default defineComponent({
     const diff = async () => {
       loading.value = true
       const newGames = await searchDifference()
-      await store.dispatch.app.addListGames({ id: 0, games: newGames })
+      await store.dispatch.entities.setHaveGames()
+      await store.dispatch.app.setAccessTimeMap()
       loading.value = false
       let message = ''
       for (const g of newGames) {
@@ -101,14 +102,12 @@ export default defineComponent({
         message = '追加されたゲームはありません'
       }
       await remote.dialog.showMessageBox({ title: '追加されたゲーム', message: message })
-      alert(message)
       close()
     }
     const all = async () => {
       loading.value = true
       try {
         const newGames = await searchAll()
-        await store.dispatch.app.setListGames({ id: 0, games: newGames })
         await store.dispatch.entities.setHaveGames()
         await store.dispatch.app.setAccessTimeMap()
       } catch (e) {
