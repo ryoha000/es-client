@@ -282,7 +282,7 @@ const useJudgeGame = (allMinimalGame: Record<string, MinimalGame>) => {
       return paths
     }
   }
-  return { searchAll, searchDifference, getEXE }
+  return { searchAll, searchDifference, getEXE, isLinkAsGame }
 }
 
 export default useJudgeGame

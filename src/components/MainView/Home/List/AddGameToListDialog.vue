@@ -23,6 +23,7 @@ import { defineComponent, ref, computed } from '@vue/composition-api';
 import AddInputRow from 'src/components/AddInputRow.vue'
 import store from 'src/store';
 import { remote } from 'electron'
+import useGameIds from './use/useGameIds'
 
 export default defineComponent({
   name: 'AddGameToListDialog',
@@ -42,25 +43,30 @@ export default defineComponent({
     };
     const tabs = ref<'name' | 'id' | 'csv'>('name')
     const click = async (strs: string[]) => {
+      const { toNumArrFromNumStr, toIdArrFromTitle, toIdArrFromCSV } = useGameIds(store.state.entities.minimalGames)
+      let ids: number[] = []
+      let failedTitles: string[] = []
       switch (tabs.value) {
         case 'name':
+          const res = toIdArrFromTitle(strs)
+          ids = res.ids
+          failedTitles = res.unknownTitles
           break
         case 'id':
           try {
-            const ids = strs.map(v => {
-              const num = Number(v)
-              if (isNaN(num)) throw '入力されたIDが数字でありません'
-              return num
-            })
-            await store.dispatch.domain.addGames({ list_id: props.listId, game_ids: ids})
+            ids = toNumArrFromNumStr(strs)
           } catch (e) {
             remote.dialog.showErrorBox('エラー', e)
+            return
           }
           break
         case 'csv':
           break
       }
-      console.log('追加')
+      await store.dispatch.domain.addGames({ list_id: props.listId, game_ids: ids })
+      if (failedTitles.length !== 0) {
+        remote.dialog.showErrorBox('判断できないタイトルがありました', failedTitles.join('\n'))
+      }
     }
 
     return { close, click, tabs };
