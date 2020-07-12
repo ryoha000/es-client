@@ -23,8 +23,11 @@
       </q-item>
     </q-list>
     <create-list-dialog
+      v-if="isOpenCreateListDialog"
       :isOpen="isOpenCreateListDialog"
       @close="closeCreateListDialog"
+      @confirm="create"
+      :iGames="[]"
     />
   </div>
 </template>
@@ -136,16 +139,17 @@ export default defineComponent({
     const closeCreateListDialog = () => {
       isOpenCreateListDialog.value = false;
     };
-    const createList = () => {
-      context.emit('createList');
-    };
+    const create = async (payload: { title: string, games: ListGame[] }) => {
+      const { createNewList } = useJson()
+      await createNewList(payload.title, payload.games);
+    }
     return {
       onClick,
       gameName,
       rightClick,
       isOpenCreateListDialog,
       closeCreateListDialog,
-      createList
+      create
     };
   }
 });

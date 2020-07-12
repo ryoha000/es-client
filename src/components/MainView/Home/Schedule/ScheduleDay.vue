@@ -27,13 +27,6 @@ export default defineComponent({
   },
   components: { GameCard },
   setup() {
-    const demo: Ref<CardInfo> = ref({
-      title: '美少女万華鏡 -理と迷宮の少女-',
-      supplement: '5本5,000円まとめ買いキャンペーン!!',
-      //image: 'https://trap.jp/assets/logo/icon_blue.svg?v=3da93e42ac',
-      image: '../../statics/icons/ESClient_demo_image.jpg',
-      url: 'https://www.dlsite.com/maniax/campaign/matome202005'
-    })
     const createCardInfo = (game: Game) => {
       return {
         title: game.gamename,
@@ -44,7 +37,7 @@ export default defineComponent({
         contain: true
       }
     }
-    return { demo, createCardInfo }
+    return { createCardInfo }
   }
 });
 </script>

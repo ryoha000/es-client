@@ -2,9 +2,9 @@
   <q-dialog v-model="isOpen" @before-hide="close">
     <q-card style="width: 400px">
       <q-card-section>
-        <div class="text-h6">新しいコレクションの作成</div>
+        <div class="text-h6">{{ cardHeader }}</div>
       </q-card-section>
-      <q-item dense>
+      <q-item dense v-if="cardHeader === '新しいコレクションの作成'">
         <q-item-section>
           <q-input v-model="title" label="List Name" />
         </q-item-section>
@@ -29,7 +29,7 @@
                 v-ripple
                 :class="$style.game"
                 :style="
-                  initialGames.includes(path) ? 'background: skyblue;' : ''
+                  initialGames.find(v => v.id === path.id) ? 'background: skyblue;' : ''
                 "
                 @click="onClick(path)"
               >
@@ -53,7 +53,7 @@
           <q-btn
             :class="$style.btn"
             color="primary"
-            label="Create"
+            :label="label"
             @click="create"
           />
         </q-item-section>
@@ -63,8 +63,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from '@vue/composition-api';
-import useJson from './use/useJson';
+import { defineComponent, ref, computed, PropType, onMounted } from '@vue/composition-api';
 import { ListGame } from '../types/root';
 import store from 'src/store';
 
@@ -74,10 +73,19 @@ export default defineComponent({
     isOpen: {
       type: Boolean,
       required: true
+    },
+    cardHeader: {
+      type: String, default: '新しいコレクションの作成',
+    },
+    label: {
+      type: String, default: '作成'
+    },
+    iGames: {
+      type: Array as PropType<ListGame[]>,
+      default: [],
     }
   },
   setup(props, context) {
-    const { createNewList } = useJson();
     const title = ref('');
     const searchString = ref('');
     const close = () => {
@@ -87,14 +95,19 @@ export default defineComponent({
     };
     const initialGames = ref<ListGame[]>([]);
     const onClick = (game: ListGame) => {
-      initialGames.value.push(game);
+      const i = initialGames.value.findIndex(v => v.id === game.id)
+      if (i < 0) {
+        initialGames.value.push(game);
+      } else {
+        initialGames.value.splice(i, 1)
+      }
     };
     const allGames = computed(() => store.state.entities.minimalGames);
     const gameName = (id: number) => {
       return allGames.value[id]?.gamename ?? '';
     };
-    const create = async () => {
-      await createNewList(title.value, initialGames.value);
+    const create = () => {
+      context.emit('confirm', { title: title.value, games: initialGames.value })
       close();
     };
     const games = computed(() => {
@@ -104,12 +117,15 @@ export default defineComponent({
           return true;
         }
         return (
-          allGames.value[v.id]?.gamename
+          gameName(v.id)
             .toLowerCase()
-            .includes(searchString.value) ?? false
+            .includes(searchString.value)
         );
       });
     });
+    onMounted(() => {
+      initialGames.value = [...props.iGames]
+    })
     return {
       title,
       close,

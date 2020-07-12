@@ -187,6 +187,23 @@ const useJson = () => {
       console.error(e)
     }
   }
+  const setGamesToList = async (id :number, games: ListGame[]) => {
+    const list: List = {id: id, name: '', games: games}
+    try {
+      const jsonLists: List[] = JSON.parse(await readFileConsoleErr('setting/lists.json'))
+      if (!Array.isArray(jsonLists)) throw new Error()
+      for (const jsonList of jsonLists) {
+        if (jsonList.id === id) {
+          list.name = jsonList.name
+          console.log(list)
+          break
+        }
+      }
+      await updateOrInsertList(list)
+    } catch (e) {
+      console.error(e)
+    }
+  }
   const removeGameFromList = async (id :number, game: ListGame) => {
     const list: List = {id: id, name: '', games: []}
     try {
@@ -330,7 +347,8 @@ const useJson = () => {
     updateImage,
     getHaveGameIdArray,
     removeList,
-    getLists
+    getLists,
+    setGamesToList
   }
 }
 

@@ -1,4 +1,4 @@
-import { ListInServerWithGames, ListInServer } from "src/types/root";
+import { ListInServer } from 'src/types/root';
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const usePriority = (listInServers: ListInServer[]) => {

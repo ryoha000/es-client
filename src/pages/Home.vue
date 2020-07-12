@@ -1,6 +1,7 @@
 <template>
   <q-scroll-area :style="styles.container">
     <timeline />
+    <collection />
     <list v-if="me"/>
     <campaign-c :class="$style.item" />
     <schedule :class="$style.item" />
@@ -12,6 +13,7 @@ import { defineComponent, ref, reactive, Ref, onMounted, computed } from '@vue/c
 import CampaignC from '../components/MainView/Home/Campaign/Campaign.vue'
 import Schedule from '../components/MainView/Home/Schedule/Schedule.vue'
 import List from '../components/MainView/Home/List/List.vue'
+import Collection from '../components/MainView/Home/Collection/Collection.vue'
 import Timeline from '../components/MainView/Home/Timeline/Timeline.vue'
 import { makeStyles } from '../lib/style'
 import store from '../store';
@@ -29,7 +31,7 @@ export default defineComponent({
   name: 'Home',
   props: {
   },
-  components: { Timeline, CampaignC, Schedule, List },
+  components: { Timeline, CampaignC, Schedule, List, Collection },
   setup() {
     const windowHeight = ref(window.innerHeight)
     const styles = useStyles(windowHeight)
