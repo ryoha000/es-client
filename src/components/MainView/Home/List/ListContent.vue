@@ -15,7 +15,7 @@
       </div>
     </q-expansion-item>
     <add-game-to-list-dialog :isOpen="isOpenAddGameDialog" @close="closeAddGameDialog" v-if="isOpenAddGameDialog" :listId="list.list.id" />
-    <list-dialog :isOpen="isOpenEditListDialog" @close="closeEditListDialog" cardHeader="リストを編集" buttonLabel="確定" v-if="isOpenEditListDialog" />
+    <list-dialog :isOpen="isOpenEditListDialog" @close="closeEditListDialog" cardHeader="リストを編集" buttonLabel="確定" v-if="isOpenEditListDialog" @confirm="edit" :list="list.list" />
     <list-arrangement-dialog :isOpen="isOpenArrangementListDialog" @close="closeArrangementListDialog" v-if="isOpenArrangementListDialog" />
   </div>
 </template>
@@ -23,7 +23,7 @@
 <script lang="ts">
 import { defineComponent, ref, PropType } from '@vue/composition-api';
 import GameCard from '../../GameCard.vue'
-import { Game, ListInServerWithGames } from 'src/types/root';
+import { Game, ListInServerWithGames, PostListStruct } from 'src/types/root';
 import AddGameToListDialog from './AddGameToListDialog.vue'
 import ListArrangementDialog from './ListArrangementDialog.vue'
 import ListDialog from './ListDialog.vue'
@@ -81,6 +81,9 @@ export default defineComponent({
     const closeEditListDialog = () => {
       isOpenEditListDialog.value = false
     }
+    const edit = async (payload: PostListStruct) => {
+      await store.dispatch.domain.putLists({ [props.list.list.id]: payload })
+    }
 
     const isOpenArrangementListDialog = ref(false)
     const openArrangementListDialog = () => {
@@ -108,6 +111,7 @@ export default defineComponent({
       closeEditListDialog,
       isOpenArrangementListDialog,
       closeArrangementListDialog,
+      edit
     }
   }
 });

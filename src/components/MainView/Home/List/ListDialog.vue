@@ -22,7 +22,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from '@vue/composition-api';
+import { defineComponent, ref, PropType, onMounted } from '@vue/composition-api';
+import { ListInServer } from '../../../../types/root';
 
 export default defineComponent({
   name: 'ListDialog',
@@ -35,6 +36,10 @@ export default defineComponent({
     },
     buttonLabel: {
       type: String, required: true,
+    },
+    list: {
+      type: Object as PropType<ListInServer | undefined>,
+      default: undefined
     }
   },
   setup(props, context) {
@@ -51,11 +56,20 @@ export default defineComponent({
       context.emit('confirm', {
         name: name.value,
         comment: comment.value,
-        priority: 0,
+        priority: props.list?.priority ?? 0,
         url: url.value ?? null,
         isPublic: isPublic.value
       })
     }
+
+    onMounted(() => {
+      if (props.list) {
+        name.value = props.list.name
+        comment.value = props.list.comment
+        url.value = props.list.url ?? ''
+        isPublic.value = props.list.is_public
+      }
+    })
     return { close, name, comment, url, isPublic, click };
   }
 });

@@ -91,6 +91,7 @@ export const actions = defineActions({
     const { commit } = domainActionContext(context)
     const lists = await getMyListInServers()
     commit.setListInServers(lists.map(v => ({ list: v, games: [] })))
+    commit.sortListInSercer()
   },
   async addListInServer(context, payload: { name: string, comment: string, priority: number, url: string | null, isPublic: boolean }) {
     const { commit } = domainActionContext(context)
