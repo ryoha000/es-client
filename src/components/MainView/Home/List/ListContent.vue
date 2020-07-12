@@ -94,7 +94,7 @@ export default defineComponent({
     }
     const rightClick = () => {
       const { setupMenuList } = useListRightClick()
-      const menu = setupMenuList(openEditListDialog, openArrangementListDialog, () => { console.log('delete') })
+      const menu = setupMenuList('リスト', openEditListDialog, openArrangementListDialog, () => { console.log('delete') })
       menu.popup()
     }
     return {

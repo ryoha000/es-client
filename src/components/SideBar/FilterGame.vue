@@ -17,6 +17,7 @@
     <create-list-dialog
       :isOpen="isOpenCreateListDialog"
       @close="closeCreateListDialog"
+      :iGames="[]"
     />
   </div>
 </template>

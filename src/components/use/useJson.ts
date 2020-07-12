@@ -58,6 +58,10 @@ const useJson = () => {
       return []
     }
   }
+  const setLists = async (lists: List[]) => {
+    await override('setting/lists.json', JSON.stringify(lists))
+    store.commit.app.setLists(lists)
+  }
   const updateOrInsertList = async (list: List) => {
     try {
       const jsonLists = JSON.parse(await readFileConsoleErr('setting/lists.json'))
@@ -348,7 +352,8 @@ const useJson = () => {
     getHaveGameIdArray,
     removeList,
     getLists,
-    setGamesToList
+    setGamesToList,
+    setLists,
   }
 }
 

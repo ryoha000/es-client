@@ -47,6 +47,7 @@ export type ListGame = {
 export interface List {
   id: number,
   name: string
+  priority?: number
   games: ListGame[]
 }
 

@@ -22,7 +22,7 @@ export const actions = defineActions({
   async setLists(context) {
     const { commit } = appActionContext(context)
     const { getLists } = useJson()
-    commit.setLists(await getLists())
+    commit.setLists((await getLists()).sort((a, b) => (a.priority ?? 0) < (b.priority ?? 0) ? -1 : 1))
   },
   addListGames(context, payload: { id: number , games: ListGame[] }) {
     const { commit, state } = appActionContext(context)

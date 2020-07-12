@@ -6,6 +6,7 @@ const MenuItem = remote.MenuItem;
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const useListRightClick = () => {
   const setupMenuList = (
+    label: string,
     openEditDialog: () => void,
     openArrangementDialog: () => void,
     deleteList: () => void,
@@ -13,7 +14,7 @@ const useListRightClick = () => {
     const menu = new Menu();
     menu.append(
       new MenuItem({
-        label: 'リストを編集',
+        label: `${label}を編集`,
         click: openEditDialog
       })
     );
@@ -21,7 +22,7 @@ const useListRightClick = () => {
 
     menu.append(
       new MenuItem({
-        label: 'リストを並べ替え',
+        label: `${label}を並べ替え`,
         click: openArrangementDialog
       })
     );
@@ -29,7 +30,7 @@ const useListRightClick = () => {
 
     menu.append(
       new MenuItem({
-        label: 'リストを削除',
+        label: `${label}を削除`,
         click: deleteList
       })
     );

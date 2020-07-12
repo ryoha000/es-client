@@ -4,6 +4,7 @@
       expand-separator
       :class="$style.container"
       :label="list.name"
+      @click.right.prevent="rightClick"
     >
       <div :class="$style.gameCards">
         <q-card dark :class="$style.cContainer">
@@ -21,6 +22,10 @@
       :iGames="list.games"
       v-if="isOpenAddGameDialog"
     />
+    <collection-arrangement-dialog
+      :isOpen="isOpenCollectionArrangementDialog"
+      @close="closeCollectionArrangementDialog"
+    />
   </div>
 </template>
 
@@ -31,6 +36,8 @@ import { List, ListGame } from 'src/types/root';
 import store from 'src/store'
 import AddGameCollectionDialog from 'src/components/CreateListDialog.vue'
 import useJson from 'src/components/use/useJson'
+import useListRightClick from '../List/use/useListRightClick';
+import CollectionArrangementDialog from './CollectionArrangementList.vue'
 
 export default defineComponent({
   name: 'ListContent',
@@ -40,7 +47,7 @@ export default defineComponent({
       required: true
     }
   },
-  components: { GameCard, AddGameCollectionDialog },
+  components: { GameCard, AddGameCollectionDialog, CollectionArrangementDialog },
   setup(props) {
     const haveGames = computed(() => store.state.entities.haveGames)
     const createCardInfo = (g: ListGame) => {
@@ -62,10 +69,22 @@ export default defineComponent({
     const closeAddGameDialog = () => {
       isOpenAddGameDialog.value = false
     }
+    const { setGamesToList, removeList } = useJson()
     const addGames = async (payload: { title: string, games: ListGame[] }) => {
-      const { setGamesToList } = useJson()
       await setGamesToList(props.list.id, payload.games)
-      console.log(payload)
+    }
+
+    const isOpenCollectionArrangementDialog = ref(false)
+    const openCollectionArrangementDialog = () => {
+      isOpenCollectionArrangementDialog.value = true
+    }
+    const closeCollectionArrangementDialog = () => {
+      isOpenCollectionArrangementDialog.value = false
+    }
+    const rightClick = () => {
+      const { setupMenuList } = useListRightClick()
+      const menu = setupMenuList('コレクション', () => { console.log('edit') }, openCollectionArrangementDialog, () => { console.log('delete') })
+      menu.popup()
     }
     return {
       createCardInfo,
@@ -73,6 +92,9 @@ export default defineComponent({
       openAddGameDialog,
       closeAddGameDialog,
       addGames,
+      isOpenCollectionArrangementDialog,
+      closeCollectionArrangementDialog,
+      rightClick,
     }
   }
 });
