@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import axios from 'axios';
-import { MinimalGame, Game, Campaign, GameAndBrand, User, MaskedTimeline, Review, FollowWithUser, UserDetail, ListInServerWithGames, ListInServer } from 'src/types/root';
+import { MinimalGame, Game, Campaign, GameAndBrand, User, MaskedTimeline, Review, FollowWithUser, UserDetail, ListInServerWithGames, ListInServer, PostListStruct } from 'src/types/root';
 
 // axios.defaults.baseURL = 'http://localhost:8088'
 
@@ -94,8 +94,8 @@ export const getListInServer = async (id: string): Promise<ListInServerWithGames
   return (await axios.get<ListInServerWithGames>(`/api/lists/${id}`)).data
 }
 
-export const putListInServer = async (id: string, updateList: ListInServer): Promise<void> => {
-  await axios.put(`/api/lists/${id}`, { name: updateList.name, comment: updateList.comment, priority: updateList.priority, url: updateList.url, is_public: updateList.is_public })
+export const putListInServer = async (id: string, payload: PostListStruct): Promise<void> => {
+  await axios.put(`/api/lists/${id}`, { name: payload.name, comment: payload.comment, priority: payload.priority, url: payload.url, is_public: payload.isPublic })
 }
 
 export const addGameToListInServer = async (id: string, gameIds: number[] ): Promise<void> => {

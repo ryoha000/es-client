@@ -178,5 +178,6 @@ export default defineComponent({
 
 .container {
   width: 100%;
+  margin-top: 8px;
 }
 </style>

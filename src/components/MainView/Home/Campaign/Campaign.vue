@@ -4,7 +4,6 @@
       expand-separator
       :class="$style.container"
       label="キャンペーン情報"
-      default-opened
       header-style="font-size: 20px;"
     >
       <div :class="$style.wrapper">

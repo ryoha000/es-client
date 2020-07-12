@@ -2,9 +2,9 @@ import { defineActions } from 'direct-vuex'
 import { moduleActionContext } from 'src/store'
 import { domain } from './index'
 import { ActionContext } from 'vuex'
-import { getCampaigns, getSchedules, getGame, getMe, updateMe, login, getMaskedTimeline, getMyListInServers, postListInServer, addGameToListInServer, getListInServer } from 'src/lib/api'
+import { getCampaigns, getSchedules, getGame, getMe, updateMe, login, getMaskedTimeline, getMyListInServers, postListInServer, addGameToListInServer, getListInServer, putListInServer } from 'src/lib/api'
 import moment, { Moment } from 'moment'
-import { SellSchedule, User, ListInServerWithGames } from 'src/types/root'
+import { SellSchedule, User, PostListStruct } from 'src/types/root'
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const domainActionContext = (
@@ -107,4 +107,17 @@ export const actions = defineActions({
     const latestList = await getListInServer(listId)
     commit.upsertListInServer(latestList)
   },
+  async putLists(context, payload: Record<string, PostListStruct>) {
+    const { commit } = domainActionContext(context)
+    const promises: Promise<void>[] = []
+    const update = async (id: string, struct: PostListStruct) => {
+      await putListInServer(id, struct)
+      commit.updateListInSercerByPostListStruct({ id: id, struct: struct })
+    }
+    for (const p of Object.entries(payload)) {
+      promises.push(update(p[0], p[1]))
+    }
+    await Promise.all(promises)
+    commit.sortListInSercer()
+  }
 })

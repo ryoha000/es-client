@@ -19,7 +19,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from '@vue/composition-api';
+import { defineComponent, ref } from '@vue/composition-api';
 import AddInputRow from 'src/components/AddInputRow.vue'
 import store from 'src/store';
 import { remote } from 'electron'

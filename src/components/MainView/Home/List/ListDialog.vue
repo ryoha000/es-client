@@ -2,7 +2,7 @@
   <q-dialog v-model="isOpen" @before-hide="close">
     <q-card style="width: 400px">
       <q-card-section>
-        <div class="text-h6">新しいリストの作成</div>
+        <div class="text-h6">{{ cardHeader }}</div>
       </q-card-section>
       <q-item>
         <q-item-section>
@@ -14,7 +14,7 @@
       </q-item>
       <q-item>
         <q-item-section>
-          <q-btn label="作成" @click="click" color="primary" />
+          <q-btn :label="buttonLabel" @click="click" color="primary" />
         </q-item-section>
       </q-item>
     </q-card>
@@ -22,15 +22,19 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from '@vue/composition-api';
-import store from 'src/store';
+import { defineComponent, ref } from '@vue/composition-api';
 
 export default defineComponent({
-  name: 'NewListDialog',
+  name: 'ListDialog',
   props: {
     isOpen: {
-      type: Boolean,
-      required: true
+      type: Boolean, required: true,
+    },
+    cardHeader: {
+      type: String, required: true,
+    },
+    buttonLabel: {
+      type: String, required: true,
     }
   },
   setup(props, context) {
@@ -43,18 +47,11 @@ export default defineComponent({
     const url = ref('')
     const isPublic = ref(true)
 
-    const click = async () => {
-      let mostLowPriority = 0
-      for (const l of store.state.domain.listInServers) {
-        const p = l.list.priority
-        if (p < mostLowPriority) {
-          mostLowPriority = p
-        }
-      }
-      await store.dispatch.domain.addListInServer({
+    const click = () => {
+      context.emit('confirm', {
         name: name.value,
         comment: comment.value,
-        priority: mostLowPriority,
+        priority: 0,
         url: url.value ?? null,
         isPublic: isPublic.value
       })

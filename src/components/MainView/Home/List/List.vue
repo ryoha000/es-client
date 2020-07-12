@@ -4,15 +4,27 @@
       expand-separator
       :class="$style.container"
       label="リスト"
-      default-opened
       header-style="font-size: 20px;"
     >
       <div :class="$style.wrapper">
-        <q-btn label="新しいリストを作成" icon="add" rounded @click="openCreateListDialog" :class="$style.addBtn" />
+        <q-btn
+          label="新しいリストを作成"
+          icon="add"
+          rounded
+          @click="openCreateListDialog"
+          :class="$style.addBtn"
+        />
         <list-content v-for="(list, i) in lists" :key="i" :list="list" />
       </div>
     </q-expansion-item>
-    <new-list-dialog v-if="isOpenCreateListDialog" :isOpen="isOpenCreateListDialog" @close="closeCreateListDialog" />
+    <list-dialog
+      v-if="isOpenCreateListDialog"
+      :isOpen="isOpenCreateListDialog"
+      @close="closeCreateListDialog"
+      buttonLabel="作成"
+      cardHeader="新しいリストを作成"
+      @confirm="createNewList"
+    />
   </div>
 </template>
 
@@ -20,15 +32,17 @@
 import { defineComponent, computed, ref } from '@vue/composition-api';
 import store from 'src/store';
 import ListContent from './ListContent.vue'
-import NewListDialog from './NewListDialog.vue'
+import ListDialog from './ListDialog.vue'
+import usePriority from './use/usePriority'
+import { PostListStruct } from '../../../../types/root';
 
 export default defineComponent({
   name: 'List',
   props: {
   },
-  components: { ListContent, NewListDialog },
+  components: { ListContent, ListDialog },
   setup() {
-    const lists = computed(() => store.state.domain.listInServers)
+    const lists = computed(() => store.getters.domain.getLists())
 
     const isOpenCreateListDialog = ref(false)
     const openCreateListDialog = () => {
@@ -37,7 +51,19 @@ export default defineComponent({
     const closeCreateListDialog = () => {
       isOpenCreateListDialog.value = false
     }
-    return { lists, isOpenCreateListDialog, openCreateListDialog, closeCreateListDialog }
+
+    const createNewList = async (payload: PostListStruct) => {
+      const { getMostLowPriority } = usePriority(store.getters.domain.getSimpleLists())
+      await store.dispatch.domain.addListInServer({
+        name: payload.name,
+        comment: payload.comment,
+        priority: getMostLowPriority() - 100,
+        url: payload.url ?? null,
+        isPublic: payload.isPublic
+      })
+      isOpenCreateListDialog.value = false
+    }
+    return { lists, isOpenCreateListDialog, openCreateListDialog, closeCreateListDialog, createNewList }
   }
 });
 </script>

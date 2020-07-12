@@ -266,3 +266,11 @@ export interface ListInServerWithGames {
   list: ListInServer,
   games: Game[]
 }
+
+export interface PostListStruct {
+  name: string,
+  comment: string,
+  priority: number,
+  url: string | null,
+  isPublic: boolean,
+}

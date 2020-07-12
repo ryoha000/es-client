@@ -4,7 +4,6 @@
       expand-separator
       :class="$style.container"
       label="発売予定"
-      default-opened
       header-style="font-size: 20px;"
     >
       <div :class="$style.wrapper" v-for="(schedule, i) in sellSchedules" :key="i">
