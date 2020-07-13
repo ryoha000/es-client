@@ -14,7 +14,7 @@
           @click="openCreateListDialog"
           :class="$style.addBtn"
         />
-        <list-content v-for="(list, i) in lists" :key="i" :listId="list.list.id" :games="getGames(list.list.id)" :list="list" />
+        <list-content v-for="(list, i) in lists" :key="i" :list="list" />
       </div>
     </q-expansion-item>
     <list-dialog

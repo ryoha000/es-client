@@ -13,6 +13,7 @@
         <q-tab name="csv" label="CSV" />
       </q-tabs>
       <add-input-row label="追加" @confirm="click" v-if="tabs !== 'csv'" :class="$style.row" />
+      <from-c-s-v @add="click" v-else :class="$style.row" />
     </q-card>
   </q-dialog>
 </template>
@@ -20,6 +21,7 @@
 <script lang="ts">
 import { defineComponent, ref } from '@vue/composition-api';
 import AddInputRow from 'src/components/AddInputRow.vue'
+import FromCSV from './FromCSV.vue'
 import store from 'src/store';
 import { remote } from 'electron'
 import useGameIds from './use/useGameIds'
@@ -35,7 +37,7 @@ export default defineComponent({
       type: String, required: true
     }
   },
-  components: { AddInputRow },
+  components: { AddInputRow, FromCSV },
   setup(props, context) {
     const close = () => {
       context.emit('close');
@@ -61,6 +63,11 @@ export default defineComponent({
           }
           break
         case 'csv':
+          if (strs.length === 1) {
+            const res_csv = await toIdArrFromCSV(strs[0])
+            ids = res_csv.ids
+            failedTitles = res_csv.unknownTitles
+          }
           break
       }
       await store.dispatch.domain.addGames({ list_id: props.listId, game_ids: ids })

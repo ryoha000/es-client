@@ -46,7 +46,7 @@
 import { defineComponent, ref, computed } from '@vue/composition-api';
 import store from 'src/store'
 import useJson from 'src/components/use/useJson'
-import { PostListStruct, List } from '../../../../types/root';
+import { List } from '../../../../types/root';
 
 export default defineComponent({
   name: 'CollectionRelationDialog',

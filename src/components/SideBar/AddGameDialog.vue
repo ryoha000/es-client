@@ -107,7 +107,7 @@ export default defineComponent({
     const all = async () => {
       loading.value = true
       try {
-        const newGames = await searchAll()
+        await searchAll()
         await store.dispatch.entities.setHaveGames()
         await store.dispatch.app.setAccessTimeMap()
       } catch (e) {

@@ -26,29 +26,21 @@ const useGameIds = (allMinimalGame: Record<string, MinimalGame>) => {
     }
     return { ids: ids, unknownTitles: unknownTitles }
   }
-  const toIdArrFromCSV = (path: string) => {
-    let res: { ids: number[], unknownTitles: string[] } = { ids: [], unknownTitles: [] }
-    //処理（跡でpipeに食べさせる
-    const parser = parse((error, data: string[][]) => {
-
-      //内容出力
-      console.log('初期データ');
-      console.log(data);
-
-      const titles: string[] = [];
-      for (const row of data) {
-        for (const col of row) {
-          titles.push(col)
+  const toIdArrFromCSV = async (path: string) => {
+    const str = await fs.promises.readFile(path)
+    const res: Promise<{ ids: number[], unknownTitles: string[] }> = new Promise((resolve) => {
+      parse(str,{}, (error, data: string[][]) => {
+        const titles: string[] = [];
+        for (const row of data) {
+          for (const col of row) {
+            titles.push(col)
+          }
         }
-      }
-
-      console.log('処理データ');
-      console.log(titles);
-
-      res = toIdArrFromTitle(titles)
+        const ret = toIdArrFromTitle(titles)
+        resolve(ret)
+      })
     })
-    fs.createReadStream(path).pipe(parser);
-    return res
+    return await res
   }
   return { toNumArrFromNumStr, toIdArrFromTitle, toIdArrFromCSV }
 }
