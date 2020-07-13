@@ -236,6 +236,7 @@ const useJson = () => {
         }
         lists.push(jsonList)
       }
+      store.commit.app.setLists(lists)
       await override('setting/lists.json', JSON.stringify(lists))
     } catch (e) {
       console.error(e)

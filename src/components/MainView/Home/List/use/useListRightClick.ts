@@ -9,7 +9,7 @@ const useListRightClick = () => {
     label: string,
     openEditDialog: () => void,
     openArrangementDialog: () => void,
-    deleteList: () => void,
+    deleteList: () => Promise<void>,
   ) => {
     const menu = new Menu();
     menu.append(
@@ -31,7 +31,7 @@ const useListRightClick = () => {
     menu.append(
       new MenuItem({
         label: `${label}を削除`,
-        click: deleteList
+        click: async () => await deleteList()
       })
     );
     return menu

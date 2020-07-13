@@ -67,8 +67,8 @@ export default defineComponent({
 
     const meIcon = computed(() => {
       const me = store.state.domain.me
-      if (me) {
-        return me.icon_url ?? DefaultIcon
+      if (me?.icon_url) {
+        return me.icon_url
       }
       return DefaultIcon
     })

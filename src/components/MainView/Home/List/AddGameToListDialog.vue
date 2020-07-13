@@ -1,19 +1,18 @@
 <template>
   <q-dialog v-model="isOpen" @before-hide="close">
-    <q-card style="width: 400px">
+    <q-card :class="$style.container">
       <q-card-section>
         <div class="text-h6">リストにゲームを追加</div>
       </q-card-section>
       <q-tabs
         v-model="tabs"
         no-caps
-        class="bg-orange text-white shadow-2"
       >
         <q-tab name="name" label="Name" />
         <q-tab name="id" label="ID" />
         <q-tab name="csv" label="CSV" />
       </q-tabs>
-      <add-input-row label="追加" @confirm="click" v-if="tabs !== 'csv'" />
+      <add-input-row label="追加" @confirm="click" v-if="tabs !== 'csv'" :class="$style.row" />
     </q-card>
   </q-dialog>
 </template>
@@ -57,6 +56,7 @@ export default defineComponent({
             ids = toNumArrFromNumStr(strs)
           } catch (e) {
             remote.dialog.showErrorBox('エラー', e)
+            close()
             return
           }
           break
@@ -67,6 +67,7 @@ export default defineComponent({
       if (failedTitles.length !== 0) {
         remote.dialog.showErrorBox('判断できないタイトルがありました', failedTitles.join('\n'))
       }
+      close()
     }
 
     return { close, click, tabs };
@@ -75,18 +76,12 @@ export default defineComponent({
 </script>
 
 <style lang="scss" module>
-.input {
-  display: flex;
-  :first-child {
-    width: 320px;
-  }
-  :nth-child(2) {
-    width: 42px;
-    height: 42px;
-  }
+.container {
+  width: 400px;
+  height: 80%;
 }
-.addBtn {
-  margin: 0 auto;
-  width: 42px;
+
+.row {
+  height: calc( 100% - 112px );
 }
 </style>

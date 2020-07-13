@@ -41,16 +41,20 @@ export const mutations = defineMutations<S>()({
   setHaveGames: setMutation('haveGames'),
   setMinimalGames: setMutation('minimalGames'),
   setGameDetails: setMutation('gameDetails'),
+  setListInServerGames: setMutation('listInServerGames'),
 
   extendHaveGames: extendMutation('haveGames'),
   extentMinimalGames: extendMutation('minimalGames'),
   extentGameDetails: extendMutation('gameDetails'),
+  extentListInServerGames: extendMutation('listInServerGames'),
 
   addHaveGame: addMutation('haveGames'),
   addMinimalGame: addMutation('minimalGames'),
   addGameDetail: addMutation('gameDetails'),
+  addListInServerGame: addMutation('listInServerGames'),
 
   deleteHaveGame: deleteMutation('haveGames'),
   deleteMinimalGame: deleteMutation('minimalGames'),
   deleteGameDetail: deleteMutation('gameDetails'),
+  deleteListInServerGame: deleteMutation('listInServerGames'),
 })

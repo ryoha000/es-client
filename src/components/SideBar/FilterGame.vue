@@ -17,6 +17,7 @@
     <create-list-dialog
       :isOpen="isOpenCreateListDialog"
       @close="closeCreateListDialog"
+      @confirm="create"
       :iGames="[]"
     />
   </div>
@@ -26,6 +27,8 @@
 import { defineComponent, ref, computed } from '@vue/composition-api';
 import CreateListDialog from '../CreateListDialog.vue';
 import store from 'src/store';
+import useJson from '../use/useJson';
+import { ListGame } from '../../types/root';
 
 export default defineComponent({
   name: 'FilterGame',
@@ -62,13 +65,18 @@ export default defineComponent({
         context.emit('filter', v);
       }
     };
+    const create = async (payload: { title: string, games: ListGame[] }) => {
+      const { createNewList } = useJson()
+      await createNewList(payload.title, payload.games)
+    }
     return {
       model,
       options,
       sortAccessTime,
       isOpenCreateListDialog,
       closeCreateListDialog,
-      input
+      input,
+      create
     };
   }
 });

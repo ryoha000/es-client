@@ -14,7 +14,7 @@
           @click="openCreateListDialog"
           :class="$style.addBtn"
         />
-        <list-content v-for="(list, i) in lists" :key="i" :list="list" />
+        <list-content v-for="(list, i) in lists" :key="i" :listId="list.list.id" :games="getGames(list.list.id)" :list="list" />
       </div>
     </q-expansion-item>
     <list-dialog
@@ -43,6 +43,9 @@ export default defineComponent({
   components: { ListContent, ListDialog },
   setup() {
     const lists = computed(() => store.getters.domain.getLists())
+    const getGames = (id: string) => {
+      return store.getters.domain.getListGamesById(id) ?? []
+    }
 
     const isOpenCreateListDialog = ref(false)
     const openCreateListDialog = () => {
@@ -63,7 +66,7 @@ export default defineComponent({
       })
       isOpenCreateListDialog.value = false
     }
-    return { lists, isOpenCreateListDialog, openCreateListDialog, closeCreateListDialog, createNewList }
+    return { lists, isOpenCreateListDialog, openCreateListDialog, closeCreateListDialog, createNewList, getGames }
   }
 });
 </script>

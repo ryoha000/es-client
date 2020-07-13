@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="list">
     <q-expansion-item
       expand-separator
       :class="$style.container"
@@ -11,34 +11,39 @@
         <q-card dark :class="$style.cContainer">
           <q-btn icon="add" label="ゲームを追加" stack size="xl" :class="$style.addButton" @click="openAddGameDialog"/>
         </q-card>
-        <game-card :cardInfo="createCardInfo(game)" :class="$style.gameCard" v-for="(game, i) in list.games" :key="i"/>
+        <game-card :cardInfo="createCardInfo(game)" :class="$style.gameCard" v-for="(game, i) in games" :key="i"/>
       </div>
     </q-expansion-item>
     <add-game-to-list-dialog :isOpen="isOpenAddGameDialog" @close="closeAddGameDialog" v-if="isOpenAddGameDialog" :listId="list.list.id" />
     <list-dialog :isOpen="isOpenEditListDialog" @close="closeEditListDialog" cardHeader="リストを編集" buttonLabel="確定" v-if="isOpenEditListDialog" @confirm="edit" :list="list.list" />
     <list-arrangement-dialog :isOpen="isOpenArrangementListDialog" @close="closeArrangementListDialog" v-if="isOpenArrangementListDialog" />
+    <collection-relation-dialog :isOpen="isOpenCollectionRelationDialog" @close="closeCollectionRelationDialog" v-if="isOpenCollectionRelationDialog" :listId="list.list.id" />
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, PropType } from '@vue/composition-api';
+import { defineComponent, ref, computed, PropType } from '@vue/composition-api';
 import GameCard from '../../GameCard.vue'
-import { Game, ListInServerWithGames, PostListStruct } from 'src/types/root';
+import { Game, PostListStruct, ListInServerWithGames } from 'src/types/root';
 import AddGameToListDialog from './AddGameToListDialog.vue'
 import ListArrangementDialog from './ListArrangementDialog.vue'
+import CollectionRelationDialog from './CollectionRelationDialog.vue'
 import ListDialog from './ListDialog.vue'
 import useListRightClick from './use/useListRightClick'
 import store from 'src/store'
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const remote = require('electron').remote;
+const MenuItem = remote.MenuItem;
 
 export default defineComponent({
   name: 'ListContent',
   props: {
     list: {
-      type: Object as PropType<ListInServerWithGames>,
-      required: true
-    }
+      type: Object as PropType<ListInServerWithGames>, required: true
+    },
   },
-  components: { GameCard, AddGameToListDialog, ListDialog, ListArrangementDialog },
+  components: { GameCard, AddGameToListDialog, ListDialog, ListArrangementDialog, CollectionRelationDialog },
   setup(props) {
     const createCardInfo = (game: Game) => {
       return {
@@ -50,14 +55,7 @@ export default defineComponent({
         contain: true
       }
     }
-
-    const addCardClick = () => {
-      console.log('addCardClick')
-    }
-
-    const onClickContent = () => {
-      console.log('onClickContent')
-    }
+    const games = computed(() => store.state.entities.listInServerGames[props.list.list.id] ?? [])
 
     const isOpenAddGameDialog = ref(false)
     const openAddGameDialog = () => {
@@ -67,10 +65,20 @@ export default defineComponent({
       isOpenAddGameDialog.value = false
     }
 
+    const isOpenCollectionRelationDialog = ref(false)
+    const openCollectionRelationDialog = () => {
+      isOpenCollectionRelationDialog.value = true
+    }
+    const closeCollectionRelationDialog = () => {
+      isOpenCollectionRelationDialog.value = false
+    }
+
     const isLoading = ref(false)
     const openToggle = async () => {
       isLoading.value = true
-      await store.dispatch.domain.setLatestList(props.list.list.id)
+      if (props.list) {
+        await store.dispatch.domain.setLatestList(props.list.list.id)
+      }
       isLoading.value = false
     }
 
@@ -82,7 +90,9 @@ export default defineComponent({
       isOpenEditListDialog.value = false
     }
     const edit = async (payload: PostListStruct) => {
-      await store.dispatch.domain.putLists({ [props.list.list.id]: payload })
+      if (props.list) {
+        await store.dispatch.domain.putLists({ [props.list.list.id]: payload })
+      }
     }
 
     const isOpenArrangementListDialog = ref(false)
@@ -92,15 +102,31 @@ export default defineComponent({
     const closeArrangementListDialog = () => {
       isOpenArrangementListDialog.value = false
     }
+
+    const deleteList = async () => {
+      if (props.list) {
+        const res = window.confirm(`リスト: 「${props.list.list.name}」を本当に削除しますか？`)
+        if (res) {
+          await store.dispatch.domain.deleteList(props.list.list.id)
+        }
+      }
+    }
     const rightClick = () => {
       const { setupMenuList } = useListRightClick()
-      const menu = setupMenuList('リスト', openEditListDialog, openArrangementListDialog, () => { console.log('delete') })
+      const menu = setupMenuList('リスト', openEditListDialog, openArrangementListDialog, async () => { await deleteList() })
+      menu.append(new MenuItem({ type: 'separator' }));
+
+      menu.append(
+        new MenuItem({
+          label: 'コレクションとの関連付け',
+          click: openCollectionRelationDialog
+        })
+      );
       menu.popup()
     }
     return {
+      games,
       createCardInfo,
-      addCardClick,
-      onClickContent,
       isOpenAddGameDialog,
       openAddGameDialog,
       closeAddGameDialog,
@@ -111,7 +137,9 @@ export default defineComponent({
       closeEditListDialog,
       isOpenArrangementListDialog,
       closeArrangementListDialog,
-      edit
+      edit,
+      isOpenCollectionRelationDialog,
+      closeCollectionRelationDialog,
     }
   }
 });

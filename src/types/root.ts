@@ -48,6 +48,7 @@ export interface List {
   id: number,
   name: string
   priority?: number
+  relation?: string
   games: ListGame[]
 }
 

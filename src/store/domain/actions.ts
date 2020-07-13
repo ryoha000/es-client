@@ -2,7 +2,7 @@ import { defineActions } from 'direct-vuex'
 import { moduleActionContext } from 'src/store'
 import { domain } from './index'
 import { ActionContext } from 'vuex'
-import { getCampaigns, getSchedules, getGame, getMe, updateMe, login, getMaskedTimeline, getMyListInServers, postListInServer, addGameToListInServer, getListInServer, putListInServer } from 'src/lib/api'
+import { getCampaigns, getSchedules, getGame, getMe, updateMe, login, getMaskedTimeline, getMyListInServers, postListInServer, addGameToListInServer, getListInServer, putListInServer, deleteListInServer, signup } from 'src/lib/api'
 import moment, { Moment } from 'moment'
 import { SellSchedule, User, PostListStruct } from 'src/types/root'
 
@@ -68,7 +68,7 @@ export const actions = defineActions({
   },
   async signup(context, payload: { id: string, pw: string }) {
     const { dispatch } = domainActionContext(context)
-    await login(payload.id, payload.pw)
+    await signup(payload.id, payload.pw)
     await dispatch.setMe()
   },
   async addMaskedTimeline(context, id: string) {
@@ -93,20 +93,29 @@ export const actions = defineActions({
     commit.setListInServers(lists.map(v => ({ list: v, games: [] })))
     commit.sortListInSercer()
   },
+  async deleteList(context, payload: string) {
+    const { commit, rootCommit } = domainActionContext(context)
+    await deleteListInServer(payload)
+    commit.deleteListInSercer(payload)
+    rootCommit.entities.deleteListInServerGame(payload)
+  },
   async addListInServer(context, payload: { name: string, comment: string, priority: number, url: string | null, isPublic: boolean }) {
     const { commit } = domainActionContext(context)
     const newList = await postListInServer(payload)
     commit.upsertListInServer({ list: newList, games: [] })
   },
   async addGames(context, payload: { list_id: string, game_ids: number[] }) {
-    const { commit } = domainActionContext(context)
+    const { commit, rootCommit } = domainActionContext(context)
     await addGameToListInServer(payload.list_id, payload.game_ids)
-    commit.upsertListInServer(await getListInServer(payload.list_id))
+    const list = await getListInServer(payload.list_id)
+    commit.upsertListInServer(list)
+    rootCommit.entities.addListInServerGame({ id: list.list.id, entity: list.games })
   },
   async setLatestList(context, listId: string) {
-    const { commit } = domainActionContext(context)
+    const { commit, rootCommit } = domainActionContext(context)
     const latestList = await getListInServer(listId)
     commit.upsertListInServer(latestList)
+    rootCommit.entities.addListInServerGame({ id: latestList.list.id, entity: latestList.games })
   },
   async putLists(context, payload: Record<string, PostListStruct>) {
     const { commit } = domainActionContext(context)

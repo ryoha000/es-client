@@ -24,6 +24,7 @@
               <q-item-section>
                 <q-item-label
                   :class="$style.item"
+                  v-if="element.id !== 0"
                 >
                   {{ element.name }}
                 </q-item-label>
@@ -46,7 +47,6 @@ import { defineComponent, ref, computed } from '@vue/composition-api';
 import store from 'src/store'
 import draggable from 'vuedraggable';
 import usePriority from './use/usePriority'
-import { List } from 'src/types/root'
 import useJson from 'src/components/use/useJson'
 
 export default defineComponent({
@@ -62,7 +62,7 @@ export default defineComponent({
       context.emit('close');
     };
     
-    const lists = ref(store.state.app.lists.map((v, i) => ({ ...v, priority: i * 100, fixed: true })))
+    const lists = ref(store.state.app.lists.map((v, i) => ({ ...v, priority: i * 100, fixed: true })).filter(v => v.id !== 0))
 
     const dragOptions = computed(() => ({
       animation: 200,
@@ -81,7 +81,10 @@ export default defineComponent({
 
     const confirm = async () => {
       const { setLists } = useJson()
-      await setLists(lists.value)
+      const have = store.getters.app.getListById(0)
+      if (have) {
+        await setLists([have, ...lists.value])
+      }
       close()
     }
     return { close, lists, confirm, dragOptions, drag, change };

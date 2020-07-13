@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="$style.container">
     <q-item v-for="(str, i) in strs" :key="i">
       <q-item-section>
         <div :class="$style.input">
@@ -13,7 +13,7 @@
         <q-btn flat :class="$style.addBtn" round icon="add" @click="addRow" />
       </q-item-section>
     </q-item>
-    <q-item>
+    <q-item :class="$style.confirmBtn">
       <q-item-section>
         <q-btn color="primary" :label="label" @click="confirm"/>
       </q-item-section>
@@ -61,6 +61,11 @@ export default defineComponent({
 </script>
 
 <style lang="scss" module>
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
 .input {
   display: flex;
   :first-child {
@@ -75,5 +80,9 @@ export default defineComponent({
 .addBtn {
   margin: 0 auto;
   width: 42px;
+}
+
+.confirmBtn {
+  margin-top: auto;
 }
 </style>

@@ -4,7 +4,7 @@
       <q-card-section>
         <div class="text-h6">{{ cardHeader }}</div>
       </q-card-section>
-      <q-item dense v-if="cardHeader === '新しいコレクションの作成'">
+      <q-item dense v-if="isName">
         <q-item-section>
           <q-input v-model="title" label="List Name" />
         </q-item-section>
@@ -83,7 +83,13 @@ export default defineComponent({
     iGames: {
       type: Array as PropType<ListGame[]>,
       default: [],
-    }
+    },
+    isName: {
+      type: Boolean, default: true,
+    },
+    iName: {
+      type: String, default: '',
+    },
   },
   setup(props, context) {
     const title = ref('');
@@ -125,6 +131,7 @@ export default defineComponent({
     });
     onMounted(() => {
       initialGames.value = [...props.iGames]
+      title.value = props.iName
     })
     return {
       title,

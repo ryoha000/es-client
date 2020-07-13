@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="list.id !== 0">
     <q-expansion-item
       expand-separator
       :class="$style.container"
@@ -16,11 +16,23 @@
     <add-game-collection-dialog
       :isOpen="isOpenAddGameDialog"
       @close="closeAddGameDialog"
-      @confirm="addGames"
+      @confirm="editList"
       cardHeader="コレクションにゲームを追加"
       label="追加"
       :iGames="list.games"
       v-if="isOpenAddGameDialog"
+      :isName="false"
+      :iName="list.name"
+    />
+    <add-game-collection-dialog
+      :isOpen="isOpenEditCollectionDialog"
+      @close="closeEditCollectionDialog"
+      @confirm="editList"
+      cardHeader="コレクションを編集"
+      label="確定"
+      :iGames="list.games"
+      v-if="isOpenEditCollectionDialog"
+      :iName="list.name"
     />
     <collection-arrangement-dialog
       :isOpen="isOpenCollectionArrangementDialog"
@@ -69,9 +81,12 @@ export default defineComponent({
     const closeAddGameDialog = () => {
       isOpenAddGameDialog.value = false
     }
-    const { setGamesToList, removeList } = useJson()
-    const addGames = async (payload: { title: string, games: ListGame[] }) => {
-      await setGamesToList(props.list.id, payload.games)
+    const { removeList, updateOrInsertList } = useJson()
+    const editList = async (payload: { title: string, games: ListGame[] }) => {
+      await updateOrInsertList({ ...props.list, name: payload.title, games: payload.games })
+      if (props.list.relation) {
+        await store.dispatch.domain.addGames({ list_id: props.list.relation, game_ids: payload.games.map(v => v.id) })
+      }
     }
 
     const isOpenCollectionArrangementDialog = ref(false)
@@ -81,9 +96,24 @@ export default defineComponent({
     const closeCollectionArrangementDialog = () => {
       isOpenCollectionArrangementDialog.value = false
     }
+
+    const isOpenEditCollectionDialog = ref(false)
+    const openEditCollectionDialog = () => {
+      isOpenEditCollectionDialog.value = true
+    }
+    const closeEditCollectionDialog = () => {
+      isOpenEditCollectionDialog.value = false
+    }
+
+    const deleteCollection = async () => {
+      const result = window.confirm(`コレクション: 「${props.list.name}」を本当に削除しますか？`)
+      if (result) {
+        await removeList(props.list.id)
+      }
+    }
     const rightClick = () => {
       const { setupMenuList } = useListRightClick()
-      const menu = setupMenuList('コレクション', () => { console.log('edit') }, openCollectionArrangementDialog, () => { console.log('delete') })
+      const menu = setupMenuList('コレクション', openEditCollectionDialog, openCollectionArrangementDialog, async() => { await deleteCollection() })
       menu.popup()
     }
     return {
@@ -91,10 +121,12 @@ export default defineComponent({
       isOpenAddGameDialog,
       openAddGameDialog,
       closeAddGameDialog,
-      addGames,
+      editList,
       isOpenCollectionArrangementDialog,
       closeCollectionArrangementDialog,
       rightClick,
+      isOpenEditCollectionDialog,
+      closeEditCollectionDialog,
     }
   }
 });

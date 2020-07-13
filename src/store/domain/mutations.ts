@@ -56,4 +56,7 @@ export const mutations = defineMutations<S>()({
   sortListInSercer(state) {
     state.listInServers.sort((a, b) => a.list.priority < b.list.priority ? -1 : 1)
   },
+  deleteListInSercer(state, payload: string) {
+    state.listInServers = state.listInServers.filter(v => v.list.id !== payload)
+  },
 })

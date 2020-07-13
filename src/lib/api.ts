@@ -106,6 +106,10 @@ export const deleteGameFromListInServer = async (id: string, gameIds: number[]):
   await axios.patch(`/api/lists/${id}`, { game_ids: gameIds })
 }
 
+export const deleteListInServer = async (id: string): Promise<void> => {
+  await axios.delete(`/api/lists/${id}`)
+}
+
 export const playGame = async (gameId: string): Promise<void> => {
   await axios.post(`/api/play/${gameId}`)
 }
