@@ -1,14 +1,25 @@
 <template>
   <div :class="$style.container">
-    <q-btn @click="getFile" label="ファイルを選択" />
-    <div>{{ displayPath }}</div>
-    <q-btn :class="$style.addBtn" @click="addGames" label="ゲームを追加" />
+    <q-btn
+      outline
+      rounded
+      @click="getFile"
+      label="ファイルを選択"
+      :class="$style.input"
+      icon="folder_open"
+    />
+    <div :class="$style.text">{{ displayPath }}</div>
+    <q-btn
+      :class="$style.addBtn"
+      @click="addGames"
+      color="primary"
+      label="ゲームを追加"
+    />
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed, PropType } from '@vue/composition-api';
-import store from 'src/store'
+import { defineComponent, ref, computed } from '@vue/composition-api';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const remote = require('electron').remote;
@@ -49,9 +60,20 @@ export default defineComponent({
 .container {
   display: flex;
   flex-direction: column;
+  padding: 8px;
+}
+
+.input {
+  width: 100%;
+}
+
+.text {
+  font-size: 1.12rem;
+  margin-top: 8px;
 }
 
 .addBtn {
+  width: 100%;
   margin-top: auto;
 }
 </style>
