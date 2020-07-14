@@ -1,5 +1,5 @@
 <template>
-  <q-card dark :class="$style.container" @click="onClick">
+  <q-card dark :class="$style.container" @click="onClick" @click.right.prevent="rightClick">
     <q-img :src="cardInfo.image" :class="$style.image" contain />
     <q-card-section :class="$style.section" @click.stop="onClickContent">
       <div :class="$style.title">{{ cardInfo.title }}</div>
@@ -29,7 +29,7 @@ export default defineComponent({
   },
   components: {
   },
-  setup(props) {
+  setup(props, context) {
     const onClick = async () => {
       if (props.cardInfo.url) {
         await remote.shell.openExternal(props.cardInfo.url)
@@ -40,7 +40,11 @@ export default defineComponent({
         await remote.shell.openExternal(props.cardInfo.contentUrl ?? props.cardInfo.url ?? '')
       }
     }
-    return { onClick, onClickContent }
+
+    const rightClick = () => {
+      context.emit('rightClick', props.cardInfo.title)
+    }
+    return { onClick, onClickContent, rightClick }
   }
 });
 </script>

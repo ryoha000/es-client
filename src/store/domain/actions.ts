@@ -131,7 +131,7 @@ export const actions = defineActions({
     commit.sortListInSercer()
   },
   async deleteGamesFromListInServer(context, payload: { listId: string, gameIds: number[] }) {
-    const { commit, state, getters } = domainActionContext(context)
+    const { commit, state, getters, rootCommit } = domainActionContext(context)
     const nowList = getters.getListById(payload.listId)
     if (!nowList) {
       console.error('list is not found')
@@ -141,5 +141,6 @@ export const actions = defineActions({
     const updatedGames = state.listInServers.find(v => v.list.id === payload.listId)?.games.filter(v => !payload.gameIds.includes(v.id)) ?? []
     nowList.games = updatedGames
     commit.upsertListInServer(nowList)
+    rootCommit.entities.addListInServerGame({ id: nowList.list.id, entity: updatedGames })
   }
 })
