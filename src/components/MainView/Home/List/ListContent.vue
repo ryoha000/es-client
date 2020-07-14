@@ -11,13 +11,42 @@
         <q-card dark :class="$style.cContainer">
           <q-btn icon="add" label="ゲームを追加" stack size="xl" :class="$style.addButton" @click="openAddGameDialog"/>
         </q-card>
-        <game-card :cardInfo="createCardInfo(game)" :class="$style.gameCard" v-for="(game, i) in games" :key="i"/>
+        <game-card @click.right.prevent="rightCardClick(game)" :cardInfo="createCardInfo(game)" :class="$style.gameCard" v-for="(game, i) in games" :key="i"/>
       </div>
     </q-expansion-item>
-    <add-game-to-list-dialog :isOpen="isOpenAddGameDialog" @close="closeAddGameDialog" v-if="isOpenAddGameDialog" :listId="list.list.id" />
-    <list-dialog :isOpen="isOpenEditListDialog" @close="closeEditListDialog" cardHeader="リストを編集" buttonLabel="確定" v-if="isOpenEditListDialog" @confirm="edit" :list="list.list" />
-    <list-arrangement-dialog :isOpen="isOpenArrangementListDialog" @close="closeArrangementListDialog" v-if="isOpenArrangementListDialog" />
-    <collection-relation-dialog :isOpen="isOpenCollectionRelationDialog" @close="closeCollectionRelationDialog" v-if="isOpenCollectionRelationDialog" :listId="list.list.id" />
+    <add-game-to-list-dialog
+      :isOpen="isOpenAddGameDialog"
+      @close="closeAddGameDialog"
+      v-if="isOpenAddGameDialog"
+      :listId="list.list.id"
+    />
+    <list-dialog
+      :isOpen="isOpenEditListDialog"
+      @close="closeEditListDialog"
+      cardHeader="リストを編集"
+      buttonLabel="確定"
+      v-if="isOpenEditListDialog"
+      @confirm="edit"
+      :list="list.list"
+    />
+    <list-arrangement-dialog
+      :isOpen="isOpenArrangementListDialog"
+      @close="closeArrangementListDialog"
+      v-if="isOpenArrangementListDialog"
+    />
+    <collection-relation-dialog
+      :isOpen="isOpenCollectionRelationDialog"
+      @close="closeCollectionRelationDialog"
+      v-if="isOpenCollectionRelationDialog"
+      :listId="list.list.id"
+    />
+    <remove-game-dialog
+      v-if="isOpenRemoveGameDialog"
+      :isOpen="isOpenRemoveGameDialog"
+      @close="closeRemoveGameDialog"
+      :listId="list.list.id"
+      :games="games"
+    />
   </div>
 </template>
 
@@ -28,6 +57,7 @@ import { Game, PostListStruct, ListInServerWithGames } from 'src/types/root';
 import AddGameToListDialog from './AddGameToListDialog.vue'
 import ListArrangementDialog from './ListArrangementDialog.vue'
 import CollectionRelationDialog from './CollectionRelationDialog.vue'
+import RemoveGameDialog from './RemoveGameDialog.vue'
 import ListDialog from './ListDialog.vue'
 import useListRightClick from './use/useListRightClick'
 import store from 'src/store'
@@ -43,7 +73,7 @@ export default defineComponent({
       type: Object as PropType<ListInServerWithGames>, required: true
     },
   },
-  components: { GameCard, AddGameToListDialog, ListDialog, ListArrangementDialog, CollectionRelationDialog },
+  components: { GameCard, AddGameToListDialog, ListDialog, ListArrangementDialog, CollectionRelationDialog, RemoveGameDialog },
   setup(props) {
     const createCardInfo = (game: Game) => {
       return {
@@ -103,6 +133,17 @@ export default defineComponent({
       isOpenArrangementListDialog.value = false
     }
 
+    const isOpenRemoveGameDialog = ref(false)
+    const openRemoveGameDialog = async () => {
+      if (props.list) {
+        await store.dispatch.domain.setLatestList(props.list.list.id)
+      }
+      isOpenRemoveGameDialog.value = true
+    }
+    const closeRemoveGameDialog = () => {
+      isOpenRemoveGameDialog.value = false
+    }
+
     const deleteList = async () => {
       if (props.list) {
         const res = window.confirm(`リスト: 「${props.list.list.name}」を本当に削除しますか？`)
@@ -111,17 +152,31 @@ export default defineComponent({
         }
       }
     }
+    const { setupMenuList, setupCardMenuList } = useListRightClick()
     const rightClick = () => {
-      const { setupMenuList } = useListRightClick()
       const menu = setupMenuList('リスト', openEditListDialog, openArrangementListDialog, async () => { await deleteList() })
-      menu.append(new MenuItem({ type: 'separator' }));
 
+      menu.append(new MenuItem({ type: 'separator' }));
+      menu.append(
+        new MenuItem({
+          label: 'ゲームを一括削除',
+          click: openRemoveGameDialog
+        })
+      );
+
+      menu.append(new MenuItem({ type: 'separator' }));
       menu.append(
         new MenuItem({
           label: 'コレクションとの関連付け',
           click: openCollectionRelationDialog
         })
       );
+      menu.popup()
+    }
+
+    const rightCardClick = (game: Game) => {
+      const { setupMenuList } = useListRightClick()
+      const menu = setupCardMenuList(game.gamename ?? '', async () => { await store.dispatch.domain.deleteGamesFromListInServer({ listId: props.list.list.id, gameIds: [game.id] }) })
       menu.popup()
     }
     return {
@@ -140,6 +195,9 @@ export default defineComponent({
       edit,
       isOpenCollectionRelationDialog,
       closeCollectionRelationDialog,
+      isOpenRemoveGameDialog,
+      closeRemoveGameDialog,
+      rightCardClick,
     }
   }
 });

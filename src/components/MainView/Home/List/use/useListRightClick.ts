@@ -36,7 +36,20 @@ const useListRightClick = () => {
     );
     return menu
   }
-  return { setupMenuList }
+  const setupCardMenuList = (
+    label: string,
+    deleteGameFromList: () => Promise<void>,
+  ) => {
+    const menu = new Menu();
+    menu.append(
+      new MenuItem({
+        label: `${label}をリストから削除`,
+        click: async () => await deleteGameFromList()
+      })
+    );
+    return menu
+  }
+  return { setupMenuList, setupCardMenuList }
 }
 
 export default useListRightClick

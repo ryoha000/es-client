@@ -1,8 +1,8 @@
 <template>
   <q-scroll-area :style="styles.container">
-    <timeline />
-    <collection />
-    <list v-if="me"/>
+    <timeline :class="$style.item" />
+    <collection :class="$style.item" />
+    <list v-if="me" :class="$style.item" />
     <campaign-c :class="$style.item" />
     <schedule :class="$style.item" />
   </q-scroll-area>

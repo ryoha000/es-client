@@ -59,4 +59,7 @@ export const mutations = defineMutations<S>()({
   deleteListInSercer(state, payload: string) {
     state.listInServers = state.listInServers.filter(v => v.list.id !== payload)
   },
+  deleteGamesFromListInServer(state, payload: { listId: string, gameIds: number[] }) {
+    const updatedGames = state.listInServers.find(v => v.list.id === payload.listId)?.games.filter(v => !payload.gameIds.includes(v.id))
+  },
 })

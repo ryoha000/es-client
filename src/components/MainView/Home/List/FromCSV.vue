@@ -1,20 +1,27 @@
 <template>
   <div :class="$style.container">
-    <q-btn
-      outline
-      rounded
-      @click="getFile"
-      label="ファイルを選択"
-      :class="$style.input"
-      icon="folder_open"
-    />
-    <div :class="$style.text">{{ displayPath }}</div>
-    <q-btn
-      :class="$style.addBtn"
-      @click="addGames"
-      color="primary"
-      label="ゲームを追加"
-    />
+    <q-item>
+      <q-item-section>
+        <q-btn
+          outline
+          rounded
+          @click="getFile"
+          label="ファイルを選択"
+          :class="$style.input"
+          icon="folder_open"
+        />
+        <div :class="$style.text">{{ displayPath }}</div>
+      </q-item-section>
+    </q-item>
+    <q-item :class="$style.addBtn">
+      <q-item-section>
+        <q-btn
+          @click="addGames"
+          color="primary"
+          label="追加"
+        />
+      </q-item-section>
+    </q-item>
   </div>
 </template>
 
@@ -60,7 +67,6 @@ export default defineComponent({
 .container {
   display: flex;
   flex-direction: column;
-  padding: 8px;
 }
 
 .input {
@@ -74,6 +80,7 @@ export default defineComponent({
 
 .addBtn {
   width: 100%;
-  margin-top: auto;
+  margin: auto;
+  margin-bottom: 0;
 }
 </style>

@@ -2,7 +2,7 @@ import { defineActions } from 'direct-vuex'
 import { moduleActionContext } from 'src/store'
 import { domain } from './index'
 import { ActionContext } from 'vuex'
-import { getCampaigns, getSchedules, getGame, getMe, updateMe, login, getMaskedTimeline, getMyListInServers, postListInServer, addGameToListInServer, getListInServer, putListInServer, deleteListInServer, signup } from 'src/lib/api'
+import { getCampaigns, getSchedules, getGame, getMe, updateMe, login, getMaskedTimeline, getMyListInServers, postListInServer, addGameToListInServer, getListInServer, putListInServer, deleteListInServer, signup, deleteGameFromListInServer } from 'src/lib/api'
 import moment, { Moment } from 'moment'
 import { SellSchedule, User, PostListStruct } from 'src/types/root'
 
@@ -129,5 +129,17 @@ export const actions = defineActions({
     }
     await Promise.all(promises)
     commit.sortListInSercer()
+  },
+  async deleteGamesFromListInServer(context, payload: { listId: string, gameIds: number[] }) {
+    const { commit, state, getters } = domainActionContext(context)
+    const nowList = getters.getListById(payload.listId)
+    if (!nowList) {
+      console.error('list is not found')
+      return
+    }
+    await deleteGameFromListInServer(payload.listId, payload.gameIds)
+    const updatedGames = state.listInServers.find(v => v.list.id === payload.listId)?.games.filter(v => !payload.gameIds.includes(v.id)) ?? []
+    nowList.games = updatedGames
+    commit.upsertListInServer(nowList)
   }
 })
