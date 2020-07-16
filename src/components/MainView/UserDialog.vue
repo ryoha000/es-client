@@ -13,6 +13,8 @@
                 v-if="me"
                 rounded
                 icon-right="send"
+                color="primary"
+                outline
                 label="フォローリクエストを送る"
                 :class="$style.followButton"
                 @click="sendFollowRequest"
@@ -52,6 +54,7 @@
           <q-tabs v-model="tab" narrow-indicator dense align="justify">
             <q-tab class="text-blue" name="activity" icon="home" />
             <q-tab class="text-blue" name="followers" icon="people_alt" />
+            <q-tab class="text-blue" name="lists" icon="folder" />
           </q-tabs>
         </q-item-section>
       </q-item>
@@ -61,6 +64,10 @@
             <user-dialog-activity
               v-if="tab === 'activity'"
               :userDetail="userDetail"
+            />
+            <user-dialog-list
+              v-if="tab === 'lists'"
+              :userId="userDetail.user.id"
             />
             <!-- <user-dialog-activity v-if="tabs === 'followers'" :userDetail="userDetail" /> -->
           </q-scroll-area>
@@ -80,6 +87,7 @@ import {
 import { UserDetail } from '../../types/root';
 import { getUser, postFollowRequest } from 'src/lib/api';
 import UserDialogActivity from './UserDialogActivity.vue';
+import UserDialogList from './UserDialogList.vue'
 import store from 'src/store';
 import electron from 'electron';
 import DefaultIcon from 'src/statics/icons/user_pict.png'
@@ -97,7 +105,8 @@ export default defineComponent({
     }
   },
   components: {
-    UserDialogActivity
+    UserDialogActivity,
+    UserDialogList
   },
   setup(props, context) {
     const close = () => {

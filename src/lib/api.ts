@@ -113,3 +113,7 @@ export const deleteListInServer = async (id: string): Promise<void> => {
 export const playGame = async (gameId: string): Promise<void> => {
   await axios.post(`/api/play/${gameId}`)
 }
+
+export const getListInServerByUserId = async (userId: string): Promise<ListInServer[]> => {
+  return (await axios.get<ListInServer[]>(`/api/users/${userId}/lists`)).data
+}
