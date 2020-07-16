@@ -46,10 +46,10 @@ export default defineComponent({
     }
     const waiting = ref(false)
     const responseFollow = async (id: string, isAccept: boolean) => {
-      if (waiting.value) {
+      if (!waiting.value) {
         waiting.value = true
         await responseFollowRequest(id, isAccept)
-        followRequests.value.filter(v => v.follow.id !== id)
+        followRequests.value = followRequests.value.filter(v => v.follow.id !== id)
         waiting.value = false
       }
     }
