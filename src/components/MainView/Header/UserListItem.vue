@@ -44,7 +44,10 @@ export default defineComponent({
     const closeUserDialog = () => {
       isOpenUserDialog.value = false;
     };
-    const userIcon = computed(() => props.user.icon_url ?? DefaultIcon)
+    const userIcon = computed(() => {
+      if (props.user.icon_url === '') return DefaultIcon
+      return props.user.icon_url ?? DefaultIcon
+    })
     return { isOpenUserDialog, openUserDialog, closeUserDialog, userIcon };
   }
 });

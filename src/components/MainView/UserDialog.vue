@@ -53,7 +53,6 @@
         <q-item-section>
           <q-tabs v-model="tab" narrow-indicator dense align="justify">
             <q-tab class="text-blue" name="activity" icon="home" />
-            <q-tab class="text-blue" name="followers" icon="people_alt" />
             <q-tab class="text-blue" name="lists" icon="folder" />
           </q-tabs>
         </q-item-section>
@@ -69,7 +68,6 @@
               v-if="tab === 'lists'"
               :userId="userDetail.user.id"
             />
-            <!-- <user-dialog-activity v-if="tabs === 'followers'" :userDetail="userDetail" /> -->
           </q-scroll-area>
         </q-item-section>
       </q-item>
@@ -118,7 +116,12 @@ export default defineComponent({
 
     const me = computed(() => store.state.domain.me);
 
-    const userIcon = computed(() => userDetail.value?.user.icon_url ?? DefaultIcon)
+    const userIcon = computed(() => {
+      if (userDetail.value?.user.icon_url === '') {
+        return DefaultIcon
+      }
+      return userDetail.value?.user.icon_url ?? DefaultIcon
+    })
     const waiting = ref(false);
     const sendFollowRequest = async () => {
       waiting.value = true;
