@@ -4,6 +4,7 @@ import * as ChileProcess from 'child_process'
 import * as iconv from 'iconv-lite'
 import * as path from 'path'
 import { ListGame } from 'src/types/root'
+import { playGame } from 'src/lib/api'
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const useStartProcess = (game: ListGame) => {
@@ -22,6 +23,11 @@ const useStartProcess = (game: ListGame) => {
         await readFileConsoleErr('setting/playtime.json')
       } catch (e) {
         await override('setting/playtime.json', '')
+      }
+      try {
+        await playGame(game.id)
+      } catch (e) {
+        console.error(e)
       }
       const addStartTime = `$date = Get-Date ; Add-Content setting/playtime.json \"start\`n${game.id}\`n$date\"`
       const addFinishTime = `$date = Get-Date ; Add-Content setting/playtime.json \"end\`n${game.id}\`n$date\"`

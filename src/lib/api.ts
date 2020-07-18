@@ -110,7 +110,7 @@ export const deleteListInServer = async (id: string): Promise<void> => {
   await axios.delete(`/api/lists/${id}`)
 }
 
-export const playGame = async (gameId: string): Promise<void> => {
+export const playGame = async (gameId: number): Promise<void> => {
   await axios.post(`/api/play/${gameId}`)
 }
 
