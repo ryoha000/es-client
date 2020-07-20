@@ -13,30 +13,7 @@
             <div v-for="(tl, i) in timelines" :key="i" :class="$style.card">
               <game-card :cardInfo="cardInfo_by_tl(tl)">
                 <template #cardSupplement>
-                  <div :class="$style.supplements">
-                    <div
-                      :class="$style.supplementsUser"
-                      @click="openUserDialog"
-                    >
-                      <q-avatar size="32px" :class="$style.avater">
-                        <img :src="iconByUser(tl.user)" />
-                      </q-avatar>
-                      <div>{{ tl.user.display_name }}</div>
-                    </div>
-                    <div
-                      :class="$style.typeIcon"
-                      @mouseenter="event => over(event, tl)"
-                      @mouseleave="leave"
-                    >
-                      <q-icon :name="logIconByTimeline(tl)" size="32px" />
-                    </div>
-                    <user-dialog
-                      :isOpen="isOpenUserDialog"
-                      @close="closeUserDialog"
-                      :id="tl.user.id"
-                      v-if="isOpenUserDialog"
-                    />
-                  </div>
+                  <timeline-supplement :tl="tl" />
                 </template>
               </game-card>
             </div>
@@ -44,29 +21,21 @@
         </template>
       </horizontal-scroll-area>
     </q-expansion-item>
-    <tooltip
-      :isHover="isHover"
-      :isLeaveAnime="isLeaveAnime"
-      :tooltipContent="tooltipContent"
-    />
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref } from '@vue/composition-api';
+import { defineComponent, computed } from '@vue/composition-api';
 import store from 'src/store';
 import GameCard from '../../GameCard.vue';
-import { LogType, MaskedTimeline, User } from 'src/types/root';
+import { LogType, MaskedTimeline } from 'src/types/root';
 import { CardInfo } from '../../HorizontalScroll.vue';
-import useTooltipContent from './use/useTooltipContent';
 import HorizontalScrollArea from '../../HorizontalScrollArea.vue';
-import UserDialog from '../../UserDialog.vue';
-import Tooltip from '../../Tooltip.vue';
-import DefaultIcon from 'src/statics/icons/user_pict.png';
+import TimelineSupplement from './TimelineSupplement.vue'
 
 export default defineComponent({
   name: 'Timeline',
-  components: { GameCard, HorizontalScrollArea, Tooltip, UserDialog },
+  components: { GameCard, HorizontalScrollArea, TimelineSupplement },
   setup() {
     const timelines = computed(() => store.state.domain.maskedTimelines);
     const cardInfo_by_tl = (tl: MaskedTimeline): CardInfo => {
@@ -81,60 +50,9 @@ export default defineComponent({
             : undefined
       };
     };
-    const logIconByTimeline = (tl: MaskedTimeline) => {
-      if (tl.timeline.log_type === LogType.Play) return 'play_arrow';
-      if (tl.timeline.log_type === LogType.Review) return 'chat';
-      if (tl.timeline.log_type === LogType.List) return 'queue';
-      return '';
-    };
-
-    const isHover = ref(false);
-    const isLeaveAnime = ref(false);
-    const tooltipContent = ref('');
-    const over = (event: MouseEvent, tl: MaskedTimeline) => {
-      const { makeContent } = useTooltipContent(tl);
-      if (isLeaveAnime.value) {
-        isHover.value = false;
-        isLeaveAnime.value = false;
-      }
-      isHover.value = true;
-      tooltipContent.value = makeContent();
-      store.commit.app.setTooltipPoint({ x: event.clientX, y: event.clientY });
-    };
-    const leave = () => {
-      isLeaveAnime.value = true;
-      setTimeout(() => {
-        if (isLeaveAnime.value) {
-          isHover.value = false;
-        }
-        isLeaveAnime.value = false;
-      }, 500);
-    };
-
-    const iconByUser = (user: User) => {
-      return user.icon_url ?? DefaultIcon
-    }
-
-    const isOpenUserDialog = ref(false);
-    const openUserDialog = () => {
-      isOpenUserDialog.value = true;
-    };
-    const closeUserDialog = () => {
-      isOpenUserDialog.value = false;
-    };
     return {
       timelines,
       cardInfo_by_tl,
-      over,
-      leave,
-      isHover,
-      isLeaveAnime,
-      tooltipContent,
-      logIconByTimeline,
-      isOpenUserDialog,
-      openUserDialog,
-      closeUserDialog,
-      iconByUser,
     };
   }
 });
@@ -147,33 +65,11 @@ export default defineComponent({
   margin-bottom: 8px;
 }
 
-.avater {
-  justify-self: center;
-  margin-right: 8px;
-  align-self: center;
-  cursor: pointer;
-}
-
 .card {
   width: 260px;
   height: 250px;
   margin-right: 8px;
   overflow: hidden;
-}
-
-.supplements {
-  display: flex;
-  align-items: center;
-}
-
-.supplementsUser {
-  display: flex;
-  align-items: center;
-}
-
-.typeIcon {
-  margin-left: auto;
-  z-index: 3;
 }
 
 .container {
