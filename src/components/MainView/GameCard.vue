@@ -5,14 +5,6 @@
       <div :class="$style.title">{{ cardInfo.title }}</div>
       <slot name="cardSupplement" />
     </q-card-section>
-    
-    <q-tooltip
-      v-if="cardInfo.tooltip"
-      transition-show="rotate"
-      transition-hide="rotate"
-    >
-      {{ cardInfo.tooltip }}
-    </q-tooltip>
   </q-card>
 </template>
 
