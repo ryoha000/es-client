@@ -2,7 +2,7 @@ import { defineActions } from 'direct-vuex'
 import { moduleActionContext } from 'src/store'
 import { domain } from './index'
 import { ActionContext } from 'vuex'
-import { getCampaigns, getSchedules, getGame, getMe, updateMe, login, getMaskedTimeline, getMyListInServers, postListInServer, addGameToListInServer, getListInServer, putListInServer, deleteListInServer, signup, deleteGameFromListInServer } from 'src/lib/api'
+import { getCampaigns, getSchedules, getGame, getMe, updateMe, login, getMaskedTimeline, getMyListInServers, postListInServer, addGameToListInServer, getListInServer, putListInServer, deleteListInServer, signup, deleteGameFromListInServer, getMaskedTimelines } from 'src/lib/api'
 import moment, { Moment } from 'moment'
 import { SellSchedule, User, PostListStruct } from 'src/types/root'
 
@@ -63,19 +63,35 @@ export const actions = defineActions({
   async login(context, payload: { id: string, pw: string }) {
     const { dispatch } = domainActionContext(context)
     await login(payload.id, payload.pw)
+    // TODO: 並列
     await dispatch.setMe()
     await dispatch.setListInServers()
+    await dispatch.setMaskedTimeline()
   },
   async signup(context, payload: { id: string, pw: string }) {
     const { dispatch } = domainActionContext(context)
     await signup(payload.id, payload.pw)
     await dispatch.setMe()
   },
+  async setMaskedTimeline(context) {
+    const { commit } = domainActionContext(context)
+    try {
+      const tls = await getMaskedTimelines(0)
+      commit.setTimeline(tls)
+    } catch (e) { console.error(e) }
+  },
   async addMaskedTimeline(context, id: string) {
     const { commit } = domainActionContext(context)
     try {
       const tl = await getMaskedTimeline(id)
       commit.addTimeline(tl)
+    } catch (e) { console.error(e) }
+  },
+  async updateMaskedTimeline(context, id: string) {
+    const { commit } = domainActionContext(context)
+    try {
+      const tl = await getMaskedTimeline(id)
+      commit.updateTimeline(tl)
     } catch (e) { console.error(e) }
   },
   setSocket(context) {

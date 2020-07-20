@@ -27,6 +27,14 @@ export const mutations = defineMutations<S>()({
   addTimeline(state, payload: MaskedTimeline) {
     state.maskedTimelines.unshift(payload)
   },
+  updateTimeline(state, payload: MaskedTimeline) {
+    state.maskedTimelines = state.maskedTimelines.map(v => {
+      if (v.timeline.id === payload.timeline.id) {
+        return payload
+      }
+      return v
+    })
+  },
   setListInServers(state, payload: ListInServerWithGames[]) {
     state.listInServers = payload
   },

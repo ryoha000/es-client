@@ -40,6 +40,10 @@ export const signup = async (name: string, pass: string): Promise<User> => {
   return (await axios.post<User>('/api/users', { name: name, display_name: name, password: pass })).data
 }
 
+export const getMaskedTimelines = async (offset: number): Promise<MaskedTimeline[]> => {
+  return (await axios.get<MaskedTimeline[]>(`/api/timelines?offset=${offset}`)).data
+}
+
 export const getMaskedTimeline = async (id: string): Promise<MaskedTimeline> => {
   return (await axios.get<MaskedTimeline>(`/api/timelines/${id}`)).data
 }

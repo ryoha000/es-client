@@ -113,6 +113,7 @@ export default defineComponent ({
       await store.dispatch.app.setAccessTimeMap()
       await store.dispatch.domain.setCampaign()
       await store.dispatch.domain.setSchedules()
+      await store.dispatch.domain.setMaskedTimeline()
       // await store.dispatch.app.setSeiya()
       try {
         await store.dispatch.domain.setSocket()
