@@ -53,7 +53,7 @@
     "request-promise-native": "^1.0.8",
     "shvl": "^2.0.0",
     "ts-node": "^8.10.2",
-    "typescript": "^3.9.6",
+    "typescript": "^3.9.7",
     "vue-cli-plugin-electron-builder": "~1.4.6",
     "vue-loader": "^15.9.2",
     "vuedraggable": "^2.24.0",
