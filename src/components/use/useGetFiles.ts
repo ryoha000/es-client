@@ -1,6 +1,7 @@
 import * as fs from 'fs'
 import * as path from 'path'
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const useGetFile = () => {
   const showFilesDepth1 = async (dirpath: string) => {
     return await fs.promises.readdir(dirpath, {withFileTypes: true});

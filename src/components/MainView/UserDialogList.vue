@@ -8,9 +8,9 @@
 
 <script lang="ts">
 import { defineComponent, ref, onMounted } from '@vue/composition-api';
-import { Game, ListInServer } from '../../types/root';
+import { ListInServer } from '../../types/root';
 import GameCard from 'src/components/MainView/GameCard.vue'
-import { getListInServerByUserId, getListInServer } from '../../lib/api';
+import { getListInServerByUserId } from '../../lib/api';
 import UserDialogListContent from './UserDialogListContent.vue'
 
 export default defineComponent({
@@ -52,9 +52,3 @@ export default defineComponent({
   }
 });
 </script>
-
-<style lang="scss" module>
-.container {
-
-}
-</style>

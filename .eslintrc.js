@@ -74,6 +74,7 @@ module.exports = {
 
   // add your custom rules here
   rules: {
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
     'prefer-promise-reject-errors': 'off',
 
     // TypeScript

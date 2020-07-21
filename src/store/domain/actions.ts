@@ -60,11 +60,14 @@ export const actions = defineActions({
     if (!updated_me.icon_url) updated_me.icon_url = ''
     commit.setMe(updated_me)
   },
-  async login(context, payload: { id: string, pw: string }) {
-    const { dispatch } = domainActionContext(context)
-    await login(payload.id, payload.pw)
+  async login(context, payload: { header: string }) {
+    const { dispatch, commit } = domainActionContext(context)
+    const me = await login(payload.header)
+    if (!me.comment) me.comment = ''
+    if (!me.twitter_id) me.twitter_id = ''
+    if (!me.icon_url) me.icon_url = ''
+    commit.setMe(me)
     // TODO: 並列
-    await dispatch.setMe()
     await dispatch.setListInServers()
     await dispatch.setMaskedTimeline()
   },

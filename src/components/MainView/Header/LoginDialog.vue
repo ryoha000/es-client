@@ -43,6 +43,7 @@
 import { defineComponent, ref } from '@vue/composition-api';
 import LinkC from 'src/components/MainView/GameDetail/Link.vue'
 import store from 'src/store'
+import { esLogin, google } from '../../../lib/erogameScape';
 
 export default defineComponent({
   name: 'LoginDialog',
@@ -66,8 +67,14 @@ export default defineComponent({
     const loginId = ref('')
     const loginPW = ref('')
     const loginOrSignup = async () => {
+      try {
+        const header = await esLogin(loginId.value, loginPW.value)
+        console.log(header)
+        await store.dispatch.domain.login({ header: header })
+      } catch (e) {
+        alert(e)
+      }
       if (props.isLogin) {
-        await store.dispatch.domain.login({ id: loginId.value, pw: loginPW.value })
       } else {
         await store.dispatch.domain.signup({ id: loginId.value, pw: loginPW.value })
       }

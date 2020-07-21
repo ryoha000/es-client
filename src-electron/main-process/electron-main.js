@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/no-floating-promises */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { app, BrowserWindow, nativeTheme } from 'electron'
+import { app, BrowserWindow, nativeTheme, session } from 'electron'
+
 
 try {
   if (process.platform === 'win32' && nativeTheme.shouldUseDarkColors === true) {
@@ -20,6 +21,16 @@ if (process.env.PROD) {
 let mainWindow
 
 function createWindow () {
+  session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+    callback({
+      cancel: false,
+      responseHeaders: {
+        ...details.responseHeaders,
+        'Access-Control-Allow-Origin': ['*'],
+        'Access-Control-Allow-Credentials': 'true',
+      },
+    });
+  });
   /**
    * Initial window options
    */
@@ -29,6 +40,7 @@ function createWindow () {
     minWidth: 1200,
     minHeight: 800,
     useContentSize: true,
+    webSecurity: false,
     webPreferences: {
       // Change from /quasar.conf.js > electron > nodeIntegration;
       // More info: https://quasar.dev/quasar-cli/developing-electron-apps/node-integration
@@ -37,6 +49,7 @@ function createWindow () {
 
       // More info: /quasar-cli/developing-electron-apps/electron-preload-script
       // preload: path.resolve(__dirname, 'electron-preload.js')
+      webSecurity: false,
     }
   })
 
