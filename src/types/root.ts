@@ -82,7 +82,8 @@ export interface MinimalGame {
 
 export interface User {
   id: string
-  es_user_id: string
+  es_user_id: string | null
+  name: string
   display_name: string
   comment: string | null
   show_all_users: boolean | null

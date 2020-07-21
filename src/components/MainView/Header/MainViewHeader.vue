@@ -10,7 +10,6 @@
     </q-input>
     <user-icon />
     <q-btn flat icon="settings" @click="openSettingDialog" :class="$style.settingButton" />
-
     <setting :isOpen="isOpenSettingDialog" @close="closeSettingDialog" />
   </div>
 </template>

@@ -6,6 +6,7 @@
       </q-avatar>
     </div>
     <login-dialog
+      v-if="isOpenLoginDialog"
       :isOpen="isOpenLoginDialog"
       @close="closeLoginDialog"
       :isLogin="isLogin"

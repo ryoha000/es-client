@@ -2,11 +2,19 @@
   <q-dialog v-model="isOpen" @before-hide="close" >
     <q-card style="width: 390px" :class="$style.cardContainer" >
       <q-card-section>
-        <div class="text-h6" :class="$style.headerTitle">{{ cardHeader }}</div>
+        <div :class="$style.headerContainer">
+          <q-img
+              style="width: 32px"
+              :ratio="1"
+              class="rounded-borders"
+              src="../../../statics/icons/es_favicon.png"
+            />
+          <div class="text-h6" :class="$style.headerTitle">ErogameScape</div>
+        </div>
       </q-card-section>
       <q-item>
         <q-item-section>
-          <q-input v-model="loginName" label="名前" />
+          <q-input v-model="loginName" label="ログインID" />
         </q-item-section>
       </q-item>
       <q-item>
@@ -14,13 +22,17 @@
           <q-input v-model="loginPW" type="password" label="パスワード" />
         </q-item-section>
       </q-item>
-        <div :class="$style.toggleContainer">
-          <q-btn flat color="primary" label="ログイン" @click="toggleIsLogin(true)"/>
-          <q-btn flat color="primary" label="ユーザー登録" @click="toggleIsLogin(false)"/>
-        </div>
+      <div :class="$style.linkContainer">
+        <link-c
+          title="批評空間のアカウントを持ってない人はこちら"
+          url="https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/regForm.php"
+          :icon="false"
+          :fontSize="16"
+        />
+      </div>
       <q-item>
         <q-item-section>
-          <q-btn color="primary" :label="cardHeader" @click="loginOrSignup"/>
+          <q-btn color="primary" :label="isLogin ? 'ログイン' : 'ユーザー登録'" @click="loginOrSignup"/>
         </q-item-section>
       </q-item>
     </q-card>
@@ -28,7 +40,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed, onMounted } from '@vue/composition-api';
+import { defineComponent, ref } from '@vue/composition-api';
 import LinkC from 'src/components/MainView/GameDetail/Link.vue'
 import store from 'src/store'
 import { remote } from 'electron';
@@ -54,16 +66,8 @@ export default defineComponent({
     }
     const loginName = ref('')
     const loginPW = ref('')
-    const isLogin = ref(true)
-    const cardHeader = computed(() => isLogin.value ? 'ログイン' : 'ユーザー登録')
-    const toggleIsLogin = (islog: boolean) => {
-      isLogin.value = islog
-    }
-    onMounted(() => {
-      isLogin.value = props.isLogin
-    })
     const loginOrSignup = async () => {
-      if (isLogin.value) {
+      if (props.isLogin) {
         try {
           await store.dispatch.domain.login({ name: loginName.value, password: loginPW.value })
           close()
@@ -79,7 +83,7 @@ export default defineComponent({
         }
       }
     }
-    return { close, loginName, loginPW, loginOrSignup, toggleIsLogin, cardHeader }
+    return { close, loginName, loginPW, loginOrSignup }
   }
 });
 </script>
@@ -87,9 +91,6 @@ export default defineComponent({
 <style lang="scss" module>
 .cardContainer {
   padding: 8px;
-  height: 70%;
-  display: flex;
-  flex-direction: column;
 }
 .headerContainer {
   display: flex;
@@ -97,11 +98,9 @@ export default defineComponent({
 .headerTitle {
   margin-left: 8px;
 }
-.toggleContainer {
-  margin-top: auto;
+.linkContainer {
+  margin-top: 40px;
   margin-bottom: 8px;
   padding: 0 16px;
-  display: flex;
-  justify-content: center;
 }
 </style>
