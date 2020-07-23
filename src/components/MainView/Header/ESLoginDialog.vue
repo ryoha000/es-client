@@ -14,7 +14,7 @@
       </q-card-section>
       <q-item>
         <q-item-section>
-          <q-input v-model="loginName" label="ログインID" />
+          <q-input v-model="loginId" label="ログインID" />
         </q-item-section>
       </q-item>
       <q-item>
@@ -32,7 +32,7 @@
       </div>
       <q-item>
         <q-item-section>
-          <q-btn color="primary" :label="isLogin ? 'ログイン' : 'ユーザー登録'" @click="loginOrSignup"/>
+          <q-btn color="primary" label="ログイン" @click="login"/>
         </q-item-section>
       </q-item>
     </q-card>
@@ -42,16 +42,12 @@
 <script lang="ts">
 import { defineComponent, ref } from '@vue/composition-api';
 import LinkC from 'src/components/MainView/GameDetail/Link.vue'
-import store from 'src/store'
-import { remote } from 'electron';
+import { ipcRenderer, remote } from 'electron';
 
 export default defineComponent({
   name: 'LoginDialog',
   props: {
     isOpen: {
-      type: Boolean, required: true
-    },
-    isLogin: {
       type: Boolean, required: true
     },
   },
@@ -60,30 +56,32 @@ export default defineComponent({
   },
   setup(props, context) {
     const close = () => {
-      loginName.value = ''
+      loginId.value = ''
       loginPW.value = ''
       context.emit('close')
     }
-    const loginName = ref('')
+    const loginId = ref('')
     const loginPW = ref('')
-    const loginOrSignup = async () => {
-      if (props.isLogin) {
-        try {
-          await store.dispatch.domain.login({ name: loginName.value, password: loginPW.value })
-          close()
-        } catch (e) {
-          remote.dialog.showErrorBox('名前とパスワードの組が間違っています', '確認してください')
-        }
-      } else {
-        try {
-          await store.dispatch.domain.signup({ id: loginName.value, pw: loginPW.value })
-          close()
-        } catch (e) {
-          remote.dialog.showErrorBox('既に使われている名前です', '違う名前にしてください')
-        }
-      }
+    const login = () => {
+      ipcRenderer.send('es-login', { id: loginId.value, password: loginPW.value})
+      ipcRenderer.on('es-login-reply', (event, header) => {
+        console.log(event)
+        console.log(header)
+        remote.session.defaultSession.cookies.get({ url: 'https://erogamescape.dyndns.org' })
+          .then((cookies) => {
+            console.log(cookies)
+            if (cookies.length < 3) {
+              remote.dialog.showErrorBox(
+                'error',
+                'ログインIDかパスワードが違います'
+              );
+            }
+          }).catch((error) => {
+            console.log(error)
+          })
+      })
     }
-    return { close, loginName, loginPW, loginOrSignup }
+    return { close, loginId, loginPW, login }
   }
 });
 </script>

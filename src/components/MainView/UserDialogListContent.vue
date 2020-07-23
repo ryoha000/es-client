@@ -12,11 +12,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, PropType } from '@vue/composition-api';
+import { defineComponent, ref, PropType } from '@vue/composition-api';
 import { Game, ListInServer } from '../../types/root';
 import UserDialogActivityItem from './UserDialogActivityItem.vue'
 import GameCard from 'src/components/MainView/GameCard.vue'
-import { getListInServerByUserId, getListInServer } from '../../lib/api';
+import { getListInServer } from '../../lib/api';
 
 export default defineComponent({
   name: 'UserDialogListContent',

@@ -46,7 +46,7 @@ export default defineComponent({
         image: '',
         url:
           tl.timeline.log_type === LogType.Review
-            ? `https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/user_game.php?user=${tl.user.es_user_id}&game=${tl.game.id}`
+            ? `https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/user_game.php?user=${tl.user.es_user_id ?? ''}&game=${tl.game.id}`
             : undefined
       };
     };

@@ -36,7 +36,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed, PropType, onMounted } from '@vue/composition-api';
+import { defineComponent, ref, PropType, onMounted } from '@vue/composition-api';
 import store from 'src/store'
 import { Game } from '../../../../types/root';
 

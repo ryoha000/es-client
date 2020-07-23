@@ -12,9 +12,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, Ref, ref, PropType } from '@vue/composition-api';
+import { defineComponent, PropType } from '@vue/composition-api';
 import GameCard from '../../GameCard.vue'
-import { CardInfo } from '../../HorizontalScroll.vue'
 import { SellSchedule, Game } from '../../../../types/root';
 
 export default defineComponent({

@@ -7,10 +7,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref } from '@vue/composition-api';
-import store from 'src/store';
-import GameCard from '../../GameCard.vue';
-import { LogType, MaskedTimeline } from 'src/types/root';
+import { defineComponent } from '@vue/composition-api';
 
 export default defineComponent({
   name: 'Timeline',

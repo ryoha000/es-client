@@ -35,10 +35,10 @@ import store from 'src/store'
 import useScraping from './components/use/useScraping'
 import useJudgeGame from './components/use/useJudgeGame'
 
-const SIDE_BAR_WIDTH = 240
+// const SIDE_BAR_WIDTH = 240
 const TOOLTIP_WIDTH = 160
-const TOOLTIP_HEIGHT = 200
-const HEADER_HEIGHT = 52
+// const TOOLTIP_HEIGHT = 200
+// const HEADER_HEIGHT = 52
 
 const useStyles = (mouse: ComputedRef<{ x: number, y: number }>) => 
   reactive({

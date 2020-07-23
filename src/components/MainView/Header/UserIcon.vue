@@ -6,10 +6,15 @@
       </q-avatar>
     </div>
     <login-dialog
-      v-if="isOpenLoginDialog"
       :isOpen="isOpenLoginDialog"
       @close="closeLoginDialog"
       :isLogin="isLogin"
+      v-if="isOpenLoginDialog"
+    />
+    <e-s-login-dialog
+      :isOpen="isOpenESLoginDialog"
+      @close="closeESLoginDialog"
+      v-if="isOpenESLoginDialog"
     />
     <user-edit-dialog
       :isOpen="isOpenUserEditDialog"
@@ -26,19 +31,17 @@
 
 <script lang="ts">
 import { defineComponent, ref, computed } from '@vue/composition-api';
-import { remote } from 'electron';
 import store from 'src/store';
+import useIconDialog from './use/useIconDialog'
 import LoginDialog from './LoginDialog.vue';
+import ESLoginDialog from './ESLoginDialog.vue'
 import UserEditDialog from './UserEditDialog.vue';
 import FollowDialog from './FollowDialog.vue';
 import DefaultIcon from 'src/statics/icons/user_pict.png';
 
-const Menu = remote.Menu;
-const MenuItem = remote.MenuItem;
-
 export default defineComponent({
   name: 'UserIcon',
-  components: { LoginDialog, UserEditDialog, FollowDialog },
+  components: { LoginDialog, ESLoginDialog, UserEditDialog, FollowDialog },
   setup() {
     const isOpenLoginDialog = ref(false);
     const openLoginDialog = (isLog: boolean) => {
@@ -66,70 +69,31 @@ export default defineComponent({
       isOpenFollowDialog.value = false;
     };
 
+    const isOpenESLoginDialog = ref(false);
+    const openESLoginDialog = () => {
+      isOpenESLoginDialog.value = true;
+    };
+    const closeESLoginDialog = () => {
+      isOpenESLoginDialog.value = false;
+    };
+
+    const me = computed(() => store.state.domain.me)
     const meIcon = computed(() => {
-      const me = store.state.domain.me
-      if (me?.icon_url) {
-        return me.icon_url
+      if (me.value?.icon_url) {
+        return me.value.icon_url
       }
       return DefaultIcon
     })
 
     const click = () => {
-      const menu = new Menu();
-
-      menu.append(
-        new MenuItem({
-          label: 'ログイン',
-          click: () => {
-            openLoginDialog(true);
-          }
-        })
+      const { setupMenuList } = useIconDialog()
+      const menu = setupMenuList(
+        openLoginDialog,
+        openUserEditDialog,
+        openFollowDialog,
+        openESLoginDialog,
+        me
       );
-      menu.append(new MenuItem({ type: 'separator' }));
-
-      menu.append(
-        new MenuItem({
-          label: 'ユーザー登録',
-          click: () => {
-            openLoginDialog(false);
-          }
-        })
-      );
-
-      if (store.state.domain.me) {
-        menu.append(new MenuItem({ type: 'separator' }));
-        menu.append(
-          new MenuItem({
-            label: '編集',
-            click: () => {
-              openUserEditDialog();
-            }
-          })
-        );
-
-        menu.append(new MenuItem({ type: 'separator' }));
-        menu.append(
-          new MenuItem({
-            label: 'フォロー',
-            click: () => {
-              openFollowDialog();
-            }
-          })
-        );
-
-        const menuItems = ['メッセージ'];
-        for (const item of menuItems) {
-          menu.append(new MenuItem({ type: 'separator' }));
-          menu.append(
-            new MenuItem({
-              label: `${item}`,
-              click: () => {
-                openLoginDialog(true);
-              }
-            })
-          );
-        }
-      }
       menu.popup();
     };
     return {
@@ -141,7 +105,9 @@ export default defineComponent({
       isOpenUserEditDialog,
       closeUserEditDialog,
       isOpenFollowDialog,
-      closeFollowDialog
+      closeFollowDialog,
+      isOpenESLoginDialog,
+      closeESLoginDialog,
     };
   }
 });

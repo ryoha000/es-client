@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/no-floating-promises */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { app, BrowserWindow, nativeTheme, session } from 'electron'
-
+import { app, BrowserWindow, nativeTheme, session, ipcMain } from 'electron'
+import { esLogin } from './erogameScape'
 
 try {
   if (process.platform === 'win32' && nativeTheme.shouldUseDarkColors === true) {
@@ -26,7 +26,7 @@ function createWindow () {
       cancel: false,
       responseHeaders: {
         ...details.responseHeaders,
-        'Access-Control-Allow-Origin': ['*'],
+        'Access-Control-Allow-Origin': ['http://localhost:8081'],
         'Access-Control-Allow-Credentials': 'true',
       },
     });
@@ -51,6 +51,12 @@ function createWindow () {
       // preload: path.resolve(__dirname, 'electron-preload.js')
       webSecurity: false,
     }
+  })
+
+  ipcMain.on('es-login', (event, payload) => {
+    console.log('main es-login')
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    esLogin(payload.id, payload.password).then(header => event.sender.send('es-login-reply', header))
   })
 
   mainWindow.loadURL(process.env.APP_URL)

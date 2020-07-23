@@ -11,6 +11,17 @@
 /* eslint-env node */
 /* eslint-disable @typescript-eslint/no-var-requires */
 const { configure } = require('quasar/wrappers');
+const webpack = require('webpack');
+const fs = require('fs');
+
+const nodeModules = {};
+fs.readdirSync('node_modules')
+  .filter(function(x) {
+    return ['.bin'].indexOf(x) === -1;
+  })
+  .forEach(function(mod) {
+    nodeModules[mod] = 'commonjs ' + mod;
+  });
 
 module.exports = configure(function (ctx) {
     return {
@@ -91,12 +102,12 @@ module.exports = configure(function (ctx) {
       extendWebpack (cfg) {
           // linting is slow in TS projects, we execute it only for production builds
         if (ctx.prod) {
-        cfg.module.rules.push({
-          enforce: 'pre',
-          test: /\.(js|vue)$/,
-          loader: 'eslint-loader',
-          exclude: /node_modules/
-        })
+          cfg.module.rules.push({
+            enforce: 'pre',
+            test: /\.(js|vue)$/,
+            loader: 'eslint-loader',
+            exclude: /node_modules/
+          })
         }
         cfg.module.rules.push({
           test: /\.(tsx|ts)$/,
@@ -117,6 +128,10 @@ module.exports = configure(function (ctx) {
             }
           ]
         })
+        // cfg.plugins.push(new webpack.IgnorePlugin(/canvas|jsdom/))
+        cfg.externals = nodeModules
+        // cfg.node = { ...cfg.node, canvas: 'empty' }
+        console.log(cfg)
       },
     },
 

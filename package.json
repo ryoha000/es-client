@@ -46,10 +46,11 @@
     "eslint-config-prettier": "^6.9.0",
     "eslint-loader": "^4.0.2",
     "eslint-plugin-vue": "^6.1.2",
-    "iconv-lite": "git+https://github.com/ashtuchkin/iconv-lite.git",
+    "iconv-lite": "^0.6.2",
     "idb-keyval": "^3.2.0",
     "jsdom": "git+https://github.com/ryoha000/jsdom.git",
     "moment": "^2.27.0",
+    "node-html-parser": "^1.2.20",
     "portal-vue": "^2.1.7",
     "request": "^2.88.2",
     "request-promise-native": "^1.0.8",
@@ -59,7 +60,8 @@
     "vue-cli-plugin-electron-builder": "~1.4.6",
     "vue-loader": "^15.9.2",
     "vuedraggable": "^2.24.0",
-    "vuex-persist": "^2.2.0"
+    "vuex-persist": "^2.2.0",
+    "webpack": "^4.43.0"
   },
   "engines": {
     "node": ">= 10.18.1",

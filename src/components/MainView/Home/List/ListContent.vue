@@ -178,7 +178,6 @@ export default defineComponent({
       console.log('aa')
       const game = games.value.find(v => v.gamename === title)
       if (game) {
-        const { setupMenuList } = useListRightClick()
         const menu = setupCardMenuList(game.gamename ?? '', async () => { await store.dispatch.domain.deleteGamesFromListInServer({ listId: props.list.list.id, gameIds: [game.id] }) })
         menu.popup()
       }
