@@ -294,7 +294,6 @@ const useJson = () => {
       let isStart = 0
       let isEnd = 0
       for (const row of pt.split('\n')) {
-        console.log(row)
         if (isStart === 1) {
           isStart++
           nowStart.id = +(row)

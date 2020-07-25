@@ -44,10 +44,7 @@ export default defineComponent({
         supplement: '',
         // image: `https://pics.dmm.co.jp/${game.dmm_genre ?? ''}/pcgame/${game.dmm ?? ''}/${game.dmm ?? ''}pl.jpg`,
         image: '',
-        url:
-          tl.timeline.log_type === LogType.Review
-            ? `https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/user_game.php?user=${tl.user.es_user_id ?? ''}&game=${tl.game.id}`
-            : undefined
+        url: `https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=${tl.game.id}`
       };
     };
     return {
