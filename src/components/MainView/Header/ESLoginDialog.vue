@@ -19,7 +19,7 @@
       </q-item>
       <q-item>
         <q-item-section>
-          <q-input v-model="loginPW" type="password" label="パスワード" />
+          <q-input v-model="loginPW" type="password" @keypress="pressEnter" label="パスワード" />
         </q-item-section>
       </q-item>
       <div :class="$style.linkContainer">
@@ -32,7 +32,7 @@
       </div>
       <q-item>
         <q-item-section>
-          <q-btn color="primary" label="ログイン" @click="login"/>
+          <q-btn color="primary" label="ログイン" :disable="isLoading" @click="login"/>
         </q-item-section>
       </q-item>
     </q-card>
@@ -62,26 +62,34 @@ export default defineComponent({
     }
     const loginId = ref('')
     const loginPW = ref('')
+    const isLoading = ref(false)
     const login = () => {
+      isLoading.value = true
       ipcRenderer.send('es-login', { id: loginId.value, password: loginPW.value})
-      ipcRenderer.on('es-login-reply', (event, header) => {
-        console.log(event)
-        console.log(header)
+      ipcRenderer.on('es-login-reply', () => {
         remote.session.defaultSession.cookies.get({ url: 'https://erogamescape.dyndns.org' })
           .then((cookies) => {
-            console.log(cookies)
+            isLoading.value = false
             if (cookies.length < 3) {
               remote.dialog.showErrorBox(
                 'error',
                 'ログインIDかパスワードが違います'
               );
+              return
             }
+            close()
           }).catch((error) => {
+            isLoading.value = false
             console.log(error)
           })
       })
     }
-    return { close, loginId, loginPW, login }
+    const pressEnter = (e: KeyboardEvent) => {
+      if (e.keyCode === 13) {
+        login()
+      }
+    }
+    return { close, loginId, loginPW, login, pressEnter, isLoading }
   }
 });
 </script>

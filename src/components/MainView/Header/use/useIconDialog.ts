@@ -15,13 +15,6 @@ const useIconDialog = () => {
     openESLoginDialog: () => void,
     me: ComputedRef<User | null>,
   ) => {
-    // すべてのクッキーをクエリーします。
-    remote.session.defaultSession.cookies.get({ url: 'http://localhost:8081' })
-    .then((cookies) => {
-      console.log(cookies)
-    }).catch((error) => {
-      console.log(error)
-    })
     const menu = new Menu();
 
     if (!me.value) {

@@ -32,9 +32,20 @@
             <q-item-label>管理者権限無しで実行</q-item-label>
           </q-item-section>
         </q-item>
+        <q-item clickable v-close-popup @click="openPostReviewDialog">
+          <q-item-section>
+            <q-item-label>レビューを投稿</q-item-label>
+          </q-item-section>
+        </q-item>
       </q-list>
     </q-btn-dropdown>
     <change-relation @close="closeRelationDialog" :isOpen="isOpenRelationDialog" :listGame="nowListGame" />
+    <post-review-dialog
+      @close="closePostReviewDialog"
+      :isOpen="isOpenPostReviewDialog"
+      :id="id"
+      v-if="isOpenPostReviewDialog"
+    />
   </div>
 </template>
 
@@ -43,13 +54,15 @@ import { defineComponent, ref, computed } from '@vue/composition-api';
 import ChangeRelation from './ChangeRelation.vue'
 import useStartProcess from '../../use/useStartProcess'
 import store from 'src/store'
+import PostReviewDialog from './PostReviewDialog.vue'
 
 export default defineComponent({
   name: 'PlayButton',
   props: {
   },
-  components: { ChangeRelation },
+  components: { ChangeRelation, PostReviewDialog },
   setup() {
+    const id = computed(() => store.state.domain.gameDetail?.id ?? 0)
     const nowListGame = computed(() => store.getters.app.getListGameByGameId(store.state.domain.gameDetail?.id ?? 0))
     const startProcess = async (isAdmin: boolean | undefined) => {
       if (!nowListGame.value) return
@@ -63,7 +76,15 @@ export default defineComponent({
     const openRelationDialog = () => {
       isOpenRelationDialog.value = true
     }
-    return { startProcess, isOpenRelationDialog, openRelationDialog, closeRelationDialog, nowListGame }
+
+    const isOpenPostReviewDialog = ref(false)
+    const closePostReviewDialog = () => {
+      isOpenPostReviewDialog.value = false
+    }
+    const openPostReviewDialog = () => {
+      isOpenPostReviewDialog.value = true
+    }
+    return { startProcess, isOpenRelationDialog, openRelationDialog, closeRelationDialog, nowListGame, isOpenPostReviewDialog, openPostReviewDialog, closePostReviewDialog, id }
   }
 });
 </script>

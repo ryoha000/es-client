@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { app, BrowserWindow, nativeTheme, session, ipcMain } from 'electron'
-import { esLogin } from './erogameScape'
+import { esLogin, postReview } from './erogameScape'
 
 try {
   if (process.platform === 'win32' && nativeTheme.shouldUseDarkColors === true) {
@@ -57,6 +57,12 @@ function createWindow () {
     console.log('main es-login')
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     esLogin(payload.id, payload.password).then(header => event.sender.send('es-login-reply', header))
+  })
+
+  ipcMain.on('es-review', (event, payload) => {
+    console.log('main es-review')
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    postReview(payload.id, payload.reviewForm).then(() => { event.sender.send('es-review-reply') })
   })
 
   mainWindow.loadURL(process.env.APP_URL)
