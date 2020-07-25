@@ -11,7 +11,7 @@
       </q-item>
       <q-item>
         <q-item-section>
-          <q-input v-model="loginPW" type="password" label="パスワード" />
+          <q-input v-model="loginPW" type="password" label="パスワード" @keypress="pressEnter" />
         </q-item-section>
       </q-item>
         <div :class="$style.toggleContainer">
@@ -20,7 +20,7 @@
         </div>
       <q-item>
         <q-item-section>
-          <q-btn color="primary" :label="cardHeader" @click="loginOrSignup"/>
+          <q-btn color="primary" :label="cardHeader" :disable="isLoading" @click="loginOrSignup"/>
         </q-item-section>
       </q-item>
     </q-card>
@@ -56,6 +56,7 @@ export default defineComponent({
     const loginPW = ref('')
     const isLogin = ref(true)
     const cardHeader = computed(() => isLogin.value ? 'ログイン' : 'ユーザー登録')
+    const isLoading = ref(false)
     const toggleIsLogin = (islog: boolean) => {
       isLogin.value = islog
     }
@@ -63,6 +64,7 @@ export default defineComponent({
       isLogin.value = props.isLogin
     })
     const loginOrSignup = async () => {
+      isLoading.value = true
       if (isLogin.value) {
         try {
           await store.dispatch.domain.login({ name: loginName.value, password: loginPW.value })
@@ -78,8 +80,14 @@ export default defineComponent({
           remote.dialog.showErrorBox('既に使われている名前です', '違う名前にしてください')
         }
       }
+      isLoading.value = false
     }
-    return { close, loginName, loginPW, loginOrSignup, toggleIsLogin, cardHeader }
+    const pressEnter = async (e: KeyboardEvent) => {
+      if (e.keyCode === 13) {
+        await loginOrSignup()
+      }
+    }
+    return { close, loginName, loginPW, loginOrSignup, toggleIsLogin, cardHeader, pressEnter, isLoading }
   }
 });
 </script>

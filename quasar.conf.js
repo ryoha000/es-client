@@ -11,7 +11,6 @@
 /* eslint-env node */
 /* eslint-disable @typescript-eslint/no-var-requires */
 const { configure } = require('quasar/wrappers');
-const webpack = require('webpack');
 const fs = require('fs');
 
 const nodeModules = {};
@@ -128,10 +127,7 @@ module.exports = configure(function (ctx) {
             }
           ]
         })
-        // cfg.plugins.push(new webpack.IgnorePlugin(/canvas|jsdom/))
         cfg.externals = nodeModules
-        // cfg.node = { ...cfg.node, canvas: 'empty' }
-        console.log(cfg)
       },
     },
 
