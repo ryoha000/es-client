@@ -28,7 +28,7 @@
 import { defineComponent, computed } from '@vue/composition-api';
 import store from 'src/store';
 import GameCard from '../../GameCard.vue';
-import { LogType, MaskedTimeline } from 'src/types/root';
+import { MaskedTimeline } from 'src/types/root';
 import { CardInfo } from '../../HorizontalScroll.vue';
 import HorizontalScrollArea from '../../HorizontalScrollArea.vue';
 import TimelineSupplement from './TimelineSupplement.vue'

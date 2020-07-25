@@ -10,7 +10,7 @@
               <div class="text-h6">{{ userDetail.user.display_name }}</div>
               <q-btn
                 :disable="waiting"
-                v-if="me"
+                v-if="me && me.name !== userDetail.user.name"
                 rounded
                 icon-right="send"
                 color="primary"
@@ -27,7 +27,7 @@
                   width="16px"
                   contain
                 />
-                <div :class="$style.snsText">
+                <div :class="$style.snsText" @click="openES">
                   {{ userDetail.user.es_user_id }}
                 </div>
               </div>
@@ -37,7 +37,7 @@
                   width="16px"
                   contain
                 />
-                <div :class="$style.snsText">
+                <div :class="$style.snsText" @click="openTwitter">
                   {{
                     userDetail.user.twitter_id
                       ? userDetail.user.twitter_id
@@ -87,7 +87,7 @@ import { getUser, postFollowRequest } from 'src/lib/api';
 import UserDialogActivity from './UserDialogActivity.vue';
 import UserDialogList from './UserDialogList.vue'
 import store from 'src/store';
-import electron from 'electron';
+import electron, { remote } from 'electron';
 import DefaultIcon from 'src/statics/icons/user_pict.png'
 
 export default defineComponent({
@@ -143,6 +143,20 @@ export default defineComponent({
       userDetail.value = await getUser(props.id);
       isLoading.value = false;
     });
+    const openTwitter = async () => {
+      if (userDetail.value?.user.twitter_id) {
+        try {
+          await remote.shell.openExternal(`https://twitter.com/${userDetail.value.user.twitter_id}`)
+        } catch (e) {
+          await remote.dialog.showMessageBox({ message: 'ブラウザで開くのに失敗しました。WindowsのTwitterをアンインストールすれば直ります。'})
+        }
+      }
+    }
+    const openES = async () => {
+      if (userDetail.value?.user.es_user_id && userDetail.value?.user.es_user_id !== '内緒') {
+        await remote.shell.openExternal(`https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/user_infomation.php?user=${userDetail.value.user.es_user_id}`)
+      }
+    }
     return {
       userIcon,
       close,
@@ -151,7 +165,9 @@ export default defineComponent({
       tab,
       me,
       sendFollowRequest,
-      waiting
+      waiting,
+      openTwitter,
+      openES,
     };
   }
 });

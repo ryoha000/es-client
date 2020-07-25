@@ -9,6 +9,7 @@
           <div>
             <q-input v-model="me.display_name" label="表示名" />
             <q-input v-model="me.comment" label="一言コメント" type="textarea" />
+            <q-input v-model="me.es_user_id" label="批評空間のユーザーID" />
             <q-input v-model="me.twitter_id" label="TwitterID" />
             <q-input v-model="me.icon_url" label="アイコンのURL" />
             <q-checkbox v-model="me.show_all_users" label="(匿名化あり)全体のタイムラインに自分の履歴を流す" />

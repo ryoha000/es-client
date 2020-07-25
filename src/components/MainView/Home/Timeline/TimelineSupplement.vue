@@ -2,7 +2,7 @@
   <div :class="$style.supplements">
     <div
       :class="$style.supplementsUser"
-      @click="openUserDialog"
+      @click.stop="openUserDialog"
     >
       <q-avatar size="32px" :class="$style.avater">
         <img :src="userIcon" />
