@@ -107,8 +107,6 @@ export default defineComponent({
       )})
       ipcRenderer.on('es-review-reply', () => {
         close()
-        // console.log(event)
-        // console.log(header)
       })
     }
     return {

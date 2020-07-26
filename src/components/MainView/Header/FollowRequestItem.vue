@@ -1,6 +1,11 @@
 <template>
   <div v-if="isLoading">now loading</div>
   <div v-else :class="$style.container">
+    <q-input :class="$style.input" v-model="name" dense label="リクエストを送りたいID">
+      <template v-slot:append>
+        <q-icon :class="$style.icon" name="send" @click="sendRequest" color="primary" :disabled="name === ''" />
+      </template>
+    </q-input>
     <div v-if="followRequestsFromMe.length === 0">送信済みのフォローリクエストはありません</div>
     <div v-for="(fr, i) in followRequestsFromMe" :key="i">
       <user-list-item :user="fr.user">
@@ -22,7 +27,7 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted } from '@vue/composition-api';
 import { FollowWithUser } from '../../../types/root';
-import { getFollowRequestsFromMe } from '../../../lib/api';
+import { getFollowRequestsFromMe, postFollowRequest } from '../../../lib/api';
 import UserListItem from './UserListItem.vue'
 import moment from 'moment'
 
@@ -36,6 +41,14 @@ export default defineComponent({
   setup() {
     const isLoading = ref(true)
     const followRequestsFromMe = ref<FollowWithUser[]>([])
+    const name = ref('')
+    const sendRequest = async () => {
+      try {
+        await postFollowRequest(name.value)
+      } catch (e) {
+        console.log(e)
+      }
+    }
     onMounted(async () => {
       isLoading.value = true
       followRequestsFromMe.value = (await getFollowRequestsFromMe()).sort((a, b) => moment(b.follow.created_at).diff(a.follow.created_at))
@@ -45,7 +58,7 @@ export default defineComponent({
       const d = moment(str)
       return d.format('MM/DD hh:mm')
     }
-    return { followRequestsFromMe, makeDay, isLoading }
+    return { followRequestsFromMe, makeDay, isLoading, name, sendRequest }
   }
 });
 </script>
@@ -66,5 +79,13 @@ export default defineComponent({
 
 .day {
   margin-left: auto;
+}
+
+.input {
+  margin-bottom: 16px;
+}
+
+.icon {
+  cursor: pointer;
 }
 </style>

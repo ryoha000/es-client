@@ -1,6 +1,15 @@
 <template>
   <div v-if="isLoading">now loading</div>
   <div v-else :class="$style.container">
+    <q-input hint="Readonly" :value="me.id" :dense="dense" readonly label="あなたのリクエスト用ID">
+      <template v-slot:append>
+        <q-icon :class="$style.icon" name="content_paste" @click="copy">
+          <q-tooltip>
+            {{ copyTip }}
+          </q-tooltip>
+        </q-icon>
+      </template>
+    </q-input>
     <div v-if="followRequests.length === 0">未対応のフォローリクエストはありません</div>
     <div v-for="(fr, i) in followRequests" :key="i">
       <user-list-item :user="fr.user">
@@ -19,11 +28,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from '@vue/composition-api';
+import { defineComponent, ref, onMounted, computed } from '@vue/composition-api';
 import { FollowWithUser } from '../../../types/root';
 import { getFollowRequestsToMe, responseFollowRequest } from '../../../lib/api';
 import UserListItem from './UserListItem.vue'
 import moment from 'moment'
+import store from 'src/store'
+import { clipboard } from 'electron'
 
 export default defineComponent({
   name: 'FollowBoxItem',
@@ -33,6 +44,7 @@ export default defineComponent({
     UserListItem
   },
   setup() {
+    const me = computed(() => store.state.domain.me)
     const followRequests = ref<FollowWithUser[]>([])
     const isLoading = ref(true)
     onMounted(async () => {
@@ -53,7 +65,15 @@ export default defineComponent({
         waiting.value = false
       }
     }
-    return { followRequests, makeDay, responseFollow, isLoading, waiting }
+    const copyTip = ref('copy')
+    const copy = () => {
+      clipboard.writeText(me.value?.id ?? '')
+      copyTip.value = 'copied!'
+      setTimeout(() => {
+        copyTip.value = 'copy'
+      }, 1000);
+    }
+    return { followRequests, makeDay, responseFollow, isLoading, waiting, me, copy, copyTip }
   }
 });
 </script>
