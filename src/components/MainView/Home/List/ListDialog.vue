@@ -60,6 +60,7 @@ export default defineComponent({
         url: url.value ?? null,
         isPublic: isPublic.value
       })
+      close()
     }
 
     onMounted(() => {

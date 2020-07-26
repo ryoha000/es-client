@@ -67,15 +67,15 @@ const useIconDialog = () => {
         })
       );
 
-      menu.append(new MenuItem({ type: 'separator' }));
-      menu.append(
-        new MenuItem({
-          label: 'メッセージ',
-          click: () => {
-            console.log('message')
-          }
-        })
-      );
+      // menu.append(new MenuItem({ type: 'separator' }));
+      // menu.append(
+      //   new MenuItem({
+      //     label: 'メッセージ',
+      //     click: () => {
+      //       console.log('message')
+      //     }
+      //   })
+      // );
     }
     menu.append(new MenuItem({ type: 'separator' }));
     menu.append(

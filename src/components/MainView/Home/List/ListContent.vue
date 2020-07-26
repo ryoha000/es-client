@@ -3,10 +3,17 @@
     <q-expansion-item
       expand-separator
       :class="$style.container"
-      :label="list.list.name"
       @show="openToggle"
       @click.right.prevent="rightClick"
     >
+      <template v-slot:header>
+        <q-item-section>
+          {{ list.list.name }}
+        </q-item-section>
+        <q-item-section side>
+          <q-icon :name="listIcon" :class="$style.lnkIcon" dark size="24px" @click.stop="openURL" />
+        </q-item-section>
+      </template>
       <div :class="$style.gameCards" v-if="!isLoading" >
         <q-card dark :class="$style.cContainer">
           <q-btn icon="add" label="ゲームを追加" stack size="xl" :class="$style.addButton" @click="openAddGameDialog"/>
@@ -175,11 +182,16 @@ export default defineComponent({
     }
 
     const rightCardClick = (title: string) => {
-      console.log('aa')
       const game = games.value.find(v => v.gamename === title)
       if (game) {
         const menu = setupCardMenuList(game.gamename ?? '', async () => { await store.dispatch.domain.deleteGamesFromListInServer({ listId: props.list.list.id, gameIds: [game.id] }) })
         menu.popup()
+      }
+    }
+    const listIcon = computed(() => props.list.list.url?.includes('wishlist') ? 'card_giftcard' : 'link')
+    const openURL = async () => {
+      if (props.list.list.url) {
+        await remote.shell.openExternal(props.list.list.url)
       }
     }
     return {
@@ -201,6 +213,8 @@ export default defineComponent({
       isOpenRemoveGameDialog,
       closeRemoveGameDialog,
       rightCardClick,
+      listIcon,
+      openURL
     }
   }
 });
@@ -230,5 +244,10 @@ export default defineComponent({
 .addButton {
   width: 250px;
   height: 196px;
+}
+
+.lnkIcon {
+  cursor: pointer;
+  z-index: 5;
 }
 </style>

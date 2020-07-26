@@ -1,7 +1,7 @@
 <template>
   <div v-if="errorText">{{ errorText }}</div>
   <div v-else-if="isLoadingList">now loading...</div>
-  <div v-else :class="$style.container">
+  <div v-else>
     <user-dialog-list-content :list="list" v-for="(list, i) in lists" :key="i" />
   </div>
 </template>

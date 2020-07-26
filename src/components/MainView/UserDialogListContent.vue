@@ -2,9 +2,18 @@
   <q-expansion-item
     expand-separator
     :class="$style.expansionContainer"
-    :label="list.name"
     @show="showGames"
   >
+    <template v-slot:header>
+      <q-item-section>
+        {{ list.name }}
+      </q-item-section>
+      <q-item-section side>
+        <div class="row items-center">
+          <q-icon :name="listIcon" dark size="24px" @click.stop="openURL" />
+        </div>
+      </q-item-section>
+    </template>
     <div :class="$style.gameCards" v-if="!isLoadingGames">
       <game-card :cardInfo="createCardInfo(game)" :class="$style.gameCard" v-for="(game, i) in games" :key="i"/>
     </div>
@@ -12,8 +21,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, PropType } from '@vue/composition-api';
+import { defineComponent, ref, PropType, computed } from '@vue/composition-api';
 import { Game, ListInServer } from '../../types/root';
+import { remote } from 'electron'
 import UserDialogActivityItem from './UserDialogActivityItem.vue'
 import GameCard from 'src/components/MainView/GameCard.vue'
 import { getListInServer } from '../../lib/api';
@@ -48,7 +58,13 @@ export default defineComponent({
       games.value = (await getListInServer(props.list.id)).games
       isLoadingGames.value = false
     }
-    return { games, isLoadingGames, showGames, createCardInfo }
+    const listIcon = computed(() => props.list.url?.includes('wishlist') ? 'card_giftcard' : 'link')
+    const openURL = async () => {
+      if (props.list.url) {
+        await remote.shell.openExternal(props.list.url)
+      }
+    }
+    return { games, isLoadingGames, showGames, createCardInfo, listIcon, openURL }
   }
 });
 </script>
