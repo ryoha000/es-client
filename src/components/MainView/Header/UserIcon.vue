@@ -89,6 +89,7 @@ export default defineComponent({
       const { setupMenuList } = useIconDialog()
       const menu = setupMenuList(
         openLoginDialog,
+        async () => { await store.dispatch.domain.logout() },
         openUserEditDialog,
         openFollowDialog,
         openESLoginDialog,

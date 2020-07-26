@@ -15,7 +15,7 @@ export const mutations = defineMutations<S>()({
   setGameDetail(state, payload: GameDetail) {
     state.gameDetail = payload
   },
-  setMe(state, payload: User) {
+  setMe(state, payload: User | null) {
     state.me = payload
   },
   setSocket(state, payload: WebSocket) {

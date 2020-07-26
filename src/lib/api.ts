@@ -28,6 +28,10 @@ export const getMe = async (): Promise<User> => {
   return (await axios.get<User>('/api/me')).data
 }
 
+export const logout = async ():Promise<void> => {
+  await axios.post('/api/users/logout')
+}
+
 export const updateMe = async (user: User): Promise<User> => {
   return (await axios.put<User>('/api/users', { user: user })).data
 }

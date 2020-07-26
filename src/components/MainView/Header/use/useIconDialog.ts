@@ -10,6 +10,7 @@ const MenuItem = remote.MenuItem;
 const useIconDialog = () => {
   const setupMenuList = (
     openLoginDialog: (isLog: boolean) => void,
+    logout: () => Promise<void>,
     openUserEditDialog: () => void,
     openFollowDialog: () => void,
     openESLoginDialog: () => void,
@@ -40,8 +41,8 @@ const useIconDialog = () => {
       menu.append(
         new MenuItem({
           label: 'ログアウト',
-          click: () => {
-            console.log('logout');
+          click: async () => {
+            await logout()
           }
         })
       );

@@ -79,6 +79,13 @@ export const actions = defineActions({
     if (!me.icon_url) me.icon_url = ''
     commit.setMe(me)
   },
+  async logout(context) {
+    const { dispatch, commit } = domainActionContext(context)
+    commit.setMe(null)
+    // TODO: 並列
+    await dispatch.setListInServers()
+    await dispatch.setMaskedTimeline()
+  },
   async setMaskedTimeline(context) {
     const { commit } = domainActionContext(context)
     try {
