@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import axios from 'axios';
-import { MinimalGame, Game, Campaign, GameAndBrand, User, MaskedTimeline, Review, FollowWithUser, UserDetail, ListInServerWithGames, ListInServer, PostListStruct } from 'src/types/root';
+import { MinimalGame, Game, Campaign, GameAndBrand, User, MaskedTimeline, Review, FollowWithUser, UserDetail, ListInServerWithGames, ListInServer, PostListStruct, RecentGame } from 'src/types/root';
 
 // axios.defaults.baseURL = 'http://localhost:8088'
 
@@ -20,8 +20,8 @@ export const getCampaigns = async (): Promise<Campaign[]> => {
   return (await axios.get<Campaign[]>('/api/campaigns')).data
 }
 
-export const getSchedules = async (): Promise<Game[]> => {
-  return (await axios.get<Game[]>('/api/recentgames')).data
+export const getSchedules = async (): Promise<RecentGame[]> => {
+  return (await axios.get<RecentGame[]>('/api/recentgames')).data
 }
 
 export const getMe = async (): Promise<User> => {

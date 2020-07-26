@@ -3,6 +3,7 @@
     <q-img :src="cardInfo.image" :class="$style.image" contain />
     <q-card-section :class="$style.section" @click.stop="onClickContent">
       <div :class="$style.title">{{ cardInfo.title }}</div>
+      <div v-if="cardInfo.supplement" :class="$style.supplement">{{ cardInfo.supplement }}</div>
       <slot name="cardSupplement" />
     </q-card-section>
   </q-card>
@@ -57,6 +58,15 @@ export default defineComponent({
 .title {
   font-size: 20px;
   font-weight: bold;
+  word-wrap: none;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 240px;
+  text-overflow: ellipsis;
+}
+
+.supplement {
+  font-size: 16px;
   word-wrap: none;
   overflow: hidden;
   white-space: nowrap;

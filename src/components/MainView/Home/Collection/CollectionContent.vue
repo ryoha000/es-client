@@ -50,6 +50,7 @@ import AddGameCollectionDialog from 'src/components/CreateListDialog.vue'
 import useJson from 'src/components/use/useJson'
 import useListRightClick from '../List/use/useListRightClick';
 import CollectionArrangementDialog from './CollectionArrangementList.vue'
+import { CardInfo } from '../../HorizontalScroll.vue';
 
 export default defineComponent({
   name: 'ListContent',
@@ -62,11 +63,11 @@ export default defineComponent({
   components: { GameCard, AddGameCollectionDialog, CollectionArrangementDialog },
   setup(props) {
     const haveGames = computed(() => store.state.entities.haveGames)
-    const createCardInfo = (g: ListGame) => {
+    const createCardInfo = (g: ListGame): CardInfo => {
       const game = haveGames.value[g.id]
       return {
         title: game?.gamename ?? '',
-        supplement: 'game.brandName',
+        supplement: null,
         // image: `https://pics.dmm.co.jp/${game?.dmm_genre ?? ''}/pcgame/${game?.dmm ?? ''}/${game?.dmm ?? ''}pl.jpg`,
         image: '',
         url: `https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=${game?.id ?? 0}`,

@@ -23,17 +23,17 @@ export const actions = defineActions({
   async setSchedules(context) {
     const { commit } = domainActionContext(context)
     const schedules = await getSchedules()
-    schedules.sort((a, b) => moment(a.sellday ?? '') < moment(b.sellday ?? '') ? -1 : 1)
+    schedules.sort((a, b) => moment(a[0].sellday ?? '') < moment(b[0].sellday ?? '') ? -1 : 1)
     const sellSchedules: SellSchedule[] = []
     let lastDay: Moment = moment(new Date())
     for (const s of schedules) {
-      if (!moment(s.sellday).isSame(lastDay)) {
-        lastDay = moment(s.sellday)
+      if (!moment(s[0].sellday).isSame(lastDay)) {
+        lastDay = moment(s[0].sellday)
         sellSchedules.push({ day: `${lastDay.format('YYYY-MM-DD')}`, games: [s] })
       } else if (sellSchedules.length > 0) {
         sellSchedules[sellSchedules.length - 1].games.push(s)
       } else {
-        lastDay = moment(s.sellday)
+        lastDay = moment(s[0].sellday)
         sellSchedules.push({ day: `${lastDay.toString()}`, games: [s] })
       }
     }

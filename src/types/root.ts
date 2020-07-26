@@ -62,7 +62,7 @@ export interface DMM {
 
 export interface SellSchedule {
   day: string
-  games: Game[]
+  games: RecentGame[]
 }
 
 export interface Directory {
@@ -277,3 +277,5 @@ export interface PostListStruct {
   url: string | null,
   isPublic: boolean,
 }
+
+export type RecentGame = [ Game, Brand ]

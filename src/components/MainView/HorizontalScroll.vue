@@ -21,7 +21,7 @@ import HorizontalScrollArea from './HorizontalScrollArea.vue'
 
 export interface CardInfo {
   title: string
-  supplement: string
+  supplement: string | null
   image: string
   url?: string
   contentUrl?: string

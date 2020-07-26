@@ -68,6 +68,7 @@ import RemoveGameDialog from './RemoveGameDialog.vue'
 import ListDialog from './ListDialog.vue'
 import useListRightClick from './use/useListRightClick'
 import store from 'src/store'
+import { CardInfo } from '../../HorizontalScroll.vue';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const remote = require('electron').remote;
@@ -82,10 +83,10 @@ export default defineComponent({
   },
   components: { GameCard, AddGameToListDialog, ListDialog, ListArrangementDialog, CollectionRelationDialog, RemoveGameDialog },
   setup(props) {
-    const createCardInfo = (game: Game) => {
+    const createCardInfo = (game: Game): CardInfo => {
       return {
-        title: game.gamename,
-        supplement: 'game.brandName',
+        title: game.gamename ?? '',
+        supplement: null,
         // image: `https://pics.dmm.co.jp/${game.dmm_genre ?? ''}/pcgame/${game.dmm ?? ''}/${game.dmm ?? ''}pl.jpg`,
         image: '',
         url: `https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=${game.id}`,
