@@ -29,7 +29,7 @@ export const getMe = async (): Promise<User> => {
 }
 
 export const logout = async ():Promise<void> => {
-  await axios.post('/api/users/logout')
+  await axios.post('/api/logout')
 }
 
 export const updateMe = async (user: User): Promise<User> => {
