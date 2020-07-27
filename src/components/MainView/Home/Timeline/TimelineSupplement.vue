@@ -40,6 +40,7 @@ import HorizontalScrollArea from '../../HorizontalScrollArea.vue';
 import UserDialog from '../../UserDialog.vue';
 import Tooltip from '../../Tooltip.vue';
 import DefaultIcon from 'src/statics/icons/user_pict.png';
+import { remote } from 'electron';
 
 export default defineComponent({
   name: 'TimelineSupplement',
@@ -92,7 +93,11 @@ export default defineComponent({
     })
 
     const isOpenUserDialog = ref(false);
-    const openUserDialog = () => {
+    const openUserDialog = async () => {
+      if (props.tl.user.id === '') {
+        await remote.dialog.showMessageBox({ message: 'ランチャーにアカウントがない人です' })
+        return
+      }
       isOpenUserDialog.value = true;
     };
     const closeUserDialog = () => {
