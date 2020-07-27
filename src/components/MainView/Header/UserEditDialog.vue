@@ -12,10 +12,10 @@
             <q-input v-model="me.es_user_id" label="批評空間のユーザーID" />
             <q-input v-model="me.twitter_id" label="TwitterID" />
             <q-input v-model="me.icon_url" label="アイコンのURL" />
-            <q-checkbox v-model="me.show_all_users" label="(匿名化あり)全体のタイムラインに自分の履歴を流す" />
-            <q-checkbox v-model="me.show_detail_all_users" label="(匿名化なし)全体のタイムラインに自分の履歴を流す" />
-            <q-checkbox v-model="me.show_followers" label="(抜きゲ―なし)フォロワーのタイムラインに自分の履歴を流す" />
-            <q-checkbox v-model="me.show_followers_okazu" label="(抜きゲ―あり)フォロワーのタイムラインに自分の履歴を流す" />
+            <q-checkbox v-model="me.show_all_users" label="(匿名化あり)全体のアクティビティに自分の履歴を流す" />
+            <q-checkbox v-model="me.show_detail_all_users" label="(匿名化なし)全体のアクティビティに自分の履歴を流す" />
+            <q-checkbox v-model="me.show_followers" label="(抜きゲ―なし)フォロワーのアクティビティに自分の履歴を流す" />
+            <q-checkbox v-model="me.show_followers_okazu" label="(抜きゲ―あり)フォロワーのアクティビティに自分の履歴を流す" />
           </div>
         </q-item-section>
       </q-item>

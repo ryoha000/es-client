@@ -1,5 +1,6 @@
 <template>
   <div :class="$style.container">
+    <div :class="$style.comment">一言: {{ userDetail.user.comment ? userDetail.user.comment : '未設定'}}</div>
     <user-dialog-activity-item label="プレイしたゲーム" :timelines="userDetail.play" />
     <user-dialog-activity-item label="レビューしたゲーム" :timelines="userDetail.review" />
     <user-dialog-activity-item label="リストに入れたゲーム" :timelines="userDetail.list" />
@@ -32,17 +33,9 @@ export default defineComponent({
   overflow: hidden;
 }
 
-.iconContainer {
-  align-items: center;
-  display: flex;
-}
-
-.day {
-  margin-left: auto;
-}
-
-.icon {
-  cursor: pointer;
-  margin-left: 4px;
+.comment {
+  font-size: 1.125rem;
+  margin-left: 16px;
+  margin-bottom: 16px;
 }
 </style>

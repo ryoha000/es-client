@@ -1,7 +1,7 @@
 <template>
   <div v-if="isLoading">now loading</div>
   <div v-else :class="$style.container">
-    <q-input hint="Readonly" :value="me.id" :dense="dense" readonly label="あなたのリクエスト用ID">
+    <q-input :value="me.id" :dense="dense" readonly label="あなたのリクエスト用ID">
       <template v-slot:append>
         <q-icon :class="$style.icon" name="content_paste" @click="copy">
           <q-tooltip>

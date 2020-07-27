@@ -2,7 +2,7 @@
   <q-dialog v-model="isOpen" @before-hide="close">
     <q-card style="width: 400px" :class="$style.cardWrapper">
       <q-card-section>
-        <div class="text-h6">探索先フォルダの追加</div>
+        <div class="text-h6">探索するフォルダの変更</div>
         <div class="text-h8">.lnk ファイルがあるPathを指定してください</div>
         <div class="text-h8">追加後は「新しく追加されたものを探す」で探索できます</div>
         <div class="text-h8">必ず読み込むのは以下のPathです</div>

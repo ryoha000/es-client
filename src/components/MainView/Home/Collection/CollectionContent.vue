@@ -68,8 +68,8 @@ export default defineComponent({
       return {
         title: game?.gamename ?? '',
         supplement: null,
-        // image: `https://pics.dmm.co.jp/${game?.dmm_genre ?? ''}/pcgame/${game?.dmm ?? ''}/${game?.dmm ?? ''}pl.jpg`,
-        image: '',
+        image: `https://pics.dmm.co.jp/${game?.dmm_genre ?? ''}/pcgame/${game?.dmm ?? ''}/${game?.dmm ?? ''}pl.jpg`,
+        // image: '',
         url: `https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=${game?.id ?? 0}`,
         contain: true
       }

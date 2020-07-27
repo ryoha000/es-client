@@ -84,7 +84,7 @@ export default defineComponent({
       const menu = new Menu();
       menu.append(
         new MenuItem({
-          label: '一覧から削除',
+          label: 'コレクションから削除',
           click: async () => {
             await removeGameFromList(props.filterListId, game);
             context.emit('createList');

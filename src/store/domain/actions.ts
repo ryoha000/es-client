@@ -2,7 +2,7 @@ import { defineActions } from 'direct-vuex'
 import { moduleActionContext } from 'src/store'
 import { domain } from './index'
 import { ActionContext } from 'vuex'
-import { getCampaigns, getSchedules, getGame, getMe, updateMe, postUser, getMaskedTimeline, getMyListInServers, postListInServer, addGameToListInServer, getListInServer, putListInServer, deleteListInServer, deleteGameFromListInServer, getMaskedTimelines } from 'src/lib/api'
+import { getCampaigns, getSchedules, getGame, getMe, updateMe, postUser, getMaskedTimeline, getMyListInServers, postListInServer, addGameToListInServer, getListInServer, putListInServer, deleteListInServer, deleteGameFromListInServer, getMaskedTimelines, logout } from 'src/lib/api'
 import moment, { Moment } from 'moment'
 import { SellSchedule, User, PostListStruct } from 'src/types/root'
 
@@ -81,6 +81,7 @@ export const actions = defineActions({
   },
   async logout(context) {
     const { dispatch, commit } = domainActionContext(context)
+    await logout()
     commit.setMe(null)
     // TODO: 並列
     await dispatch.setListInServers()

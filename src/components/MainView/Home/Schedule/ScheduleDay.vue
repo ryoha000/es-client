@@ -31,8 +31,8 @@ export default defineComponent({
       return {
         title: game[0].gamename ?? '',
         supplement: game[1].brandname ?? '',
-        // image: `https://pics.dmm.co.jp/${game[0].dmm_genre ?? ''}/pcgame/${game[0].dmm ?? ''}/${game[0].dmm ?? ''}pl.jpg`,
-        image: '',
+        image: `https://pics.dmm.co.jp/${game[0].dmm_genre ?? ''}/pcgame/${game[0].dmm ?? ''}/${game[0].dmm ?? ''}pl.jpg`,
+        // image: '',
         url: `https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=${game[0].id}`,
         contain: true
       }

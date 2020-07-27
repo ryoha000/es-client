@@ -50,8 +50,8 @@ export default defineComponent({
       props.campaign.games.map(game => ({
         title: game.gamename ?? '',
         supplement: game.content ?? '',
-        // image: `https://pics.dmm.co.jp/${game.dmm_genre ?? ''}/pcgame/${game.dmm ?? ''}/${game.dmm ?? ''}pl.jpg`,
-        image: '',
+        image: `https://pics.dmm.co.jp/${game.dmm_genre ?? ''}/pcgame/${game.dmm ?? ''}/${game.dmm ?? ''}pl.jpg`,
+        // image: '',
         url: getUrl(props.campaign.store ?? 0, game),
         contentUrl: `https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=${game.id}`,
         tooltip: `中央値: ${game.median}\n標準偏差: ${game.stdev}\nデータ数: ${game.count2}`
