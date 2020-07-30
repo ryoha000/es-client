@@ -25,16 +25,18 @@ import { defineComponent, PropType } from '@vue/composition-api';
 import GameCard from './GameCard.vue';
 import { TimelineWithGame } from 'src/types/root';
 import { CardInfo } from './HorizontalScroll.vue';
-import HorizontalScrollArea from './HorizontalScrollArea.vue'
+import HorizontalScrollArea from './HorizontalScrollArea.vue';
 
 export default defineComponent({
   name: 'UserDialogActivityItem',
   props: {
     label: {
-      type: String, required: true,
+      type: String,
+      required: true
     },
     timelines: {
-      type: Array as PropType<TimelineWithGame[]>, default: [],
+      type: Array as PropType<TimelineWithGame[]>,
+      default: []
     }
   },
   components: { GameCard, HorizontalScrollArea },
@@ -45,12 +47,12 @@ export default defineComponent({
         supplement: '',
         image: `https://pics.dmm.co.jp/${tl.game.dmm_genre ?? ''}/pcgame/${tl.game.dmm ?? ''}/${tl.game.dmm ?? ''}pl.jpg`,
         // image: '',
-        url: `https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=${tl.game.id}`,
-      }
-    }
+        url: `https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=${tl.game.id}`
+      };
+    };
     return {
-      cardInfo_by_tl,
-    }
+      cardInfo_by_tl
+    };
   }
 });
 </script>

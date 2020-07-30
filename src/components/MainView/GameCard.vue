@@ -1,6 +1,7 @@
 <template>
   <q-card dark :class="$style.container" @click="onClick" @click.right.prevent="rightClick">
-    <q-img :src="cardInfo.image" :class="$style.image" contain />
+    <!-- <q-img :src="cardInfo.image" :class="$style.image" contain /> -->
+    <img :src="cardInfo.image" :class="$style.image" />
     <q-card-section :class="$style.section" @click.stop="onClickContent">
       <div :class="$style.title">{{ cardInfo.title }}</div>
       <slot name="cardSupplement" />
@@ -53,6 +54,7 @@ export default defineComponent({
 .image {
   height: 150px;
   width: 250px;
+  object-fit: contain;
 }
 .title {
   font-size: 20px;

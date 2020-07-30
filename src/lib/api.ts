@@ -2,7 +2,7 @@
 import axios from 'axios';
 import { MinimalGame, Game, Campaign, GameAndBrand, User, MaskedTimeline, Review, FollowWithUser, UserDetail, ListInServerWithGames, ListInServer, PostListStruct, RecentGame } from 'src/types/root';
 
-// axios.defaults.baseURL = 'http://localhost:8088'
+axios.defaults.baseURL = 'http://localhost:8088'
 
 export const getGamesWithoutNumByIds = async (ids: number[]): Promise<Game[]> => {
   return (await axios.post<Game[]>('/api/games', { ids: ids })).data

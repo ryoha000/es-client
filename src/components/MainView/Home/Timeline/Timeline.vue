@@ -31,7 +31,7 @@ import GameCard from '../../GameCard.vue';
 import { MaskedTimeline } from 'src/types/root';
 import { CardInfo } from '../../HorizontalScroll.vue';
 import HorizontalScrollArea from '../../HorizontalScrollArea.vue';
-import TimelineSupplement from './TimelineSupplement.vue'
+import TimelineSupplement from './TimelineSupplement.vue';
 
 export default defineComponent({
   name: 'Timeline',
@@ -49,7 +49,7 @@ export default defineComponent({
     };
     return {
       timelines,
-      cardInfo_by_tl,
+      cardInfo_by_tl
     };
   }
 });

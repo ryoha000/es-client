@@ -8,9 +8,21 @@
     >
       <div :class="$style.gameCards">
         <q-card dark :class="$style.cContainer">
-          <q-btn icon="add" label="ゲームを追加" stack size="xl" :class="$style.addButton" @click="openAddGameDialog"/>
+          <q-btn
+            icon="add"
+            label="ゲームを追加"
+            stack
+            size="xl"
+            :class="$style.addButton"
+            @click="openAddGameDialog"
+          />
         </q-card>
-        <game-card :cardInfo="createCardInfo(game)" :class="$style.gameCard" v-for="(game, i) in list.games" :key="i"/>
+        <game-card
+          :cardInfo="createCardInfo(game)"
+          :class="$style.gameCard"
+          v-for="(game, i) in list.games"
+          :key="i"
+        />
       </div>
     </q-expansion-item>
     <add-game-collection-dialog
@@ -43,13 +55,13 @@
 
 <script lang="ts">
 import { defineComponent, ref, PropType, computed } from '@vue/composition-api';
-import GameCard from '../../GameCard.vue'
+import GameCard from '../../GameCard.vue';
 import { List, ListGame } from 'src/types/root';
-import store from 'src/store'
-import AddGameCollectionDialog from 'src/components/CreateListDialog.vue'
-import useJson from 'src/components/use/useJson'
+import store from 'src/store';
+import AddGameCollectionDialog from 'src/components/CreateListDialog.vue';
+import useJson from 'src/components/use/useJson';
 import useListRightClick from '../List/use/useListRightClick';
-import CollectionArrangementDialog from './CollectionArrangementList.vue'
+import CollectionArrangementDialog from './CollectionArrangementList.vue';
 import { CardInfo } from '../../HorizontalScroll.vue';
 
 export default defineComponent({
@@ -60,63 +72,84 @@ export default defineComponent({
       required: true
     }
   },
-  components: { GameCard, AddGameCollectionDialog, CollectionArrangementDialog },
+  components: {
+    GameCard,
+    AddGameCollectionDialog,
+    CollectionArrangementDialog
+  },
   setup(props) {
-    const haveGames = computed(() => store.state.entities.haveGames)
+    const haveGames = computed(() => store.state.entities.haveGames);
     const createCardInfo = (g: ListGame): CardInfo => {
-      const game = haveGames.value[g.id]
+      const game = haveGames.value[g.id];
       return {
         title: game?.gamename ?? '',
         supplement: null,
         image: `https://pics.dmm.co.jp/${game?.dmm_genre ?? ''}/pcgame/${game?.dmm ?? ''}/${game?.dmm ?? ''}pl.jpg`,
         // image: '',
-        url: `https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=${game?.id ?? 0}`,
+        url: `https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=${game?.id ??
+          0}`,
         contain: true
-      }
-    }
+      };
+    };
 
-    const isOpenAddGameDialog = ref(false)
+    const isOpenAddGameDialog = ref(false);
     const openAddGameDialog = () => {
-      isOpenAddGameDialog.value = true
-    }
+      isOpenAddGameDialog.value = true;
+    };
     const closeAddGameDialog = () => {
-      isOpenAddGameDialog.value = false
-    }
-    const { removeList, updateOrInsertList } = useJson()
-    const editList = async (payload: { title: string, games: ListGame[] }) => {
-      await updateOrInsertList({ ...props.list, name: payload.title, games: payload.games })
+      isOpenAddGameDialog.value = false;
+    };
+    const { removeList, updateOrInsertList } = useJson();
+    const editList = async (payload: { title: string; games: ListGame[] }) => {
+      await updateOrInsertList({
+        ...props.list,
+        name: payload.title,
+        games: payload.games
+      });
       if (props.list.relation) {
-        await store.dispatch.domain.addGames({ list_id: props.list.relation, game_ids: payload.games.map(v => v.id) })
+        await store.dispatch.domain.addGames({
+          list_id: props.list.relation,
+          game_ids: payload.games.map(v => v.id)
+        });
       }
-    }
+    };
 
-    const isOpenCollectionArrangementDialog = ref(false)
+    const isOpenCollectionArrangementDialog = ref(false);
     const openCollectionArrangementDialog = () => {
-      isOpenCollectionArrangementDialog.value = true
-    }
+      isOpenCollectionArrangementDialog.value = true;
+    };
     const closeCollectionArrangementDialog = () => {
-      isOpenCollectionArrangementDialog.value = false
-    }
+      isOpenCollectionArrangementDialog.value = false;
+    };
 
-    const isOpenEditCollectionDialog = ref(false)
+    const isOpenEditCollectionDialog = ref(false);
     const openEditCollectionDialog = () => {
-      isOpenEditCollectionDialog.value = true
-    }
+      isOpenEditCollectionDialog.value = true;
+    };
     const closeEditCollectionDialog = () => {
-      isOpenEditCollectionDialog.value = false
-    }
+      isOpenEditCollectionDialog.value = false;
+    };
 
     const deleteCollection = async () => {
-      const result = window.confirm(`コレクション: 「${props.list.name}」を本当に削除しますか？`)
+      const result = window.confirm(
+        `コレクション: 「${props.list.name}」を本当に削除しますか？`
+      );
       if (result) {
-        await removeList(props.list.id)
+        await removeList(props.list.id);
       }
-    }
+    };
     const rightClick = () => {
-      const { setupMenuList } = useListRightClick()
-      const menu = setupMenuList('コレクション', openEditCollectionDialog, openCollectionArrangementDialog, async() => { await deleteCollection() })
-      menu.popup()
-    }
+      const { setupMenuList } = useListRightClick();
+      const menu = setupMenuList(
+        'コレクション',
+        openEditCollectionDialog,
+        openCollectionArrangementDialog,
+        async () => {
+          await deleteCollection();
+        }
+      );
+      menu.popup();
+    };
     return {
       createCardInfo,
       isOpenAddGameDialog,
@@ -127,8 +160,8 @@ export default defineComponent({
       closeCollectionArrangementDialog,
       rightClick,
       isOpenEditCollectionDialog,
-      closeEditCollectionDialog,
-    }
+      closeEditCollectionDialog
+    };
   }
 });
 </script>

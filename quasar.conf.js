@@ -127,7 +127,6 @@ module.exports = configure(function (ctx) {
             }
           ]
         })
-        cfg.externals = nodeModules
       },
     },
 

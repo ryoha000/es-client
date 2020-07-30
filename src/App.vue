@@ -117,10 +117,11 @@ export default defineComponent ({
         store.dispatch.entities.setAllMinimalGames(),
         store.dispatch.entities.setHaveGames(),
         store.dispatch.app.setLists(),
-        store.dispatch.domain.setCampaign(),
-        store.dispatch.domain.setSchedules(),
         store.dispatch.domain.setMaskedTimeline(),
         store.dispatch.domain.setSocket(),
+        store.dispatch.domain.setCampaign(),
+        // store.dispatch.domain.setSchedules(),
+        // store.dispatch.app.setSeiya()
         // update時はここを変える
         checkUpdate(1.5)
       ];
@@ -180,5 +181,11 @@ export default defineComponent ({
 
 .tooltip {
   position: absolute;
+}
+</style>
+
+<style>
+img {
+  
 }
 </style>

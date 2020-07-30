@@ -4,7 +4,8 @@
     <q-card v-else :class="$style.cardContainer">
       <q-card-section>
         <div :class="$style.headerContainer">
-          <q-img :src="userIcon" :class="$style.avater" />
+          <!-- <q-img :src="userIcon" :class="$style.avater" /> -->
+          <img :src="userIcon" :class="$style.avater" />
           <div :class="$style.detailContainer">
             <div :class="$style.userNameContainer">
               <div class="text-h6">{{ userDetail.user.display_name }}</div>

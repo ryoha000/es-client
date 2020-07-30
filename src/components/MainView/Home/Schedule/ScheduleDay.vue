@@ -5,15 +5,20 @@
     :label="schedule.dayAndCount"
     default-opened
   >
-    <div :class="$style.gameCards" >
-      <game-card :cardInfo="createCardInfo(game)" :class="$style.gameCard" v-for="(game, i) in schedule.games" :key="i"/>
+    <div :class="$style.gameCards">
+      <game-card
+        :cardInfo="createCardInfo(game)"
+        :class="$style.gameCard"
+        v-for="(game, i) in schedule.games"
+        :key="i"
+      />
     </div>
   </q-expansion-item>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from '@vue/composition-api';
-import GameCard from '../../GameCard.vue'
+import GameCard from '../../GameCard.vue';
 import { SellSchedule } from '../../../../types/root';
 import { CardInfo } from '../../HorizontalScroll.vue';
 
@@ -27,7 +32,14 @@ export default defineComponent({
   },
   components: { GameCard },
   setup() {
-    const createCardInfo = (game: { id: number; name: string; brandId: number; brandName: string; isMasterup: boolean; image: string; }): CardInfo => {
+    const createCardInfo = (game: {
+      id: number;
+      name: string;
+      brandId: number;
+      brandName: string;
+      isMasterup: boolean;
+      image: string;
+    }): CardInfo => {
       return {
         title: game.name,
         supplement: game.brandName,
@@ -35,9 +47,9 @@ export default defineComponent({
         // image: '',
         url: `https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=${game.id}`,
         contain: true
-      }
-    }
-    return { createCardInfo }
+      };
+    };
+    return { createCardInfo };
   }
 });
 </script>

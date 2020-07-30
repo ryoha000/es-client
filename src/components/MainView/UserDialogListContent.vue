@@ -15,7 +15,12 @@
       </q-item-section>
     </template>
     <div :class="$style.gameCards" v-if="!isLoadingGames">
-      <game-card :cardInfo="createCardInfo(game)" :class="$style.gameCard" v-for="(game, i) in games" :key="i"/>
+      <game-card
+        :cardInfo="createCardInfo(game)"
+        :class="$style.gameCard"
+        v-for="(game, i) in games"
+        :key="i"
+      />
     </div>
   </q-expansion-item>
 </template>
@@ -23,9 +28,9 @@
 <script lang="ts">
 import { defineComponent, ref, PropType, computed } from '@vue/composition-api';
 import { Game, ListInServer } from '../../types/root';
-import { remote } from 'electron'
-import UserDialogActivityItem from './UserDialogActivityItem.vue'
-import GameCard from 'src/components/MainView/GameCard.vue'
+import { remote } from 'electron';
+import UserDialogActivityItem from './UserDialogActivityItem.vue';
+import GameCard from 'src/components/MainView/GameCard.vue';
 import { getListInServer } from '../../lib/api';
 import { CardInfo } from './HorizontalScroll.vue';
 
@@ -34,7 +39,7 @@ export default defineComponent({
   props: {
     list: {
       type: Object as PropType<ListInServer>,
-      required: true,
+      required: true
     }
   },
   components: { UserDialogActivityItem, GameCard },
@@ -47,25 +52,38 @@ export default defineComponent({
         // image: '',
         url: `https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=${game.id}`,
         contain: true
-      }
-    }
+      };
+    };
 
-    const games = ref<Game[]>([])
+    const games = ref<Game[]>([]);
 
-    const isLoadingGames = ref(true)
+    const isLoadingGames = ref(true);
 
     const showGames = async () => {
-      isLoadingGames.value = true
-      games.value = (await getListInServer(props.list.id)).games
-      isLoadingGames.value = false
-    }
-    const listIcon = computed(() => props.list.url?.includes('wishlist') ? 'card_giftcard' : props.list.url ? 'link' : 'link_off')
+      isLoadingGames.value = true;
+      games.value = (await getListInServer(props.list.id)).games;
+      isLoadingGames.value = false;
+    };
+    const listIcon = computed(() =>
+      props.list.url?.includes('wishlist')
+        ? 'card_giftcard'
+        : props.list.url
+        ? 'link'
+        : 'link_off'
+    );
     const openURL = async () => {
       if (props.list.url) {
-        await remote.shell.openExternal(props.list.url)
+        await remote.shell.openExternal(props.list.url);
       }
-    }
-    return { games, isLoadingGames, showGames, createCardInfo, listIcon, openURL }
+    };
+    return {
+      games,
+      isLoadingGames,
+      showGames,
+      createCardInfo,
+      listIcon,
+      openURL
+    };
   }
 });
 </script>
