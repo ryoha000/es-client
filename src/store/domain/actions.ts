@@ -2,9 +2,9 @@ import { defineActions } from 'direct-vuex'
 import { moduleActionContext } from 'src/store'
 import { domain } from './index'
 import { ActionContext } from 'vuex'
-import { getCampaigns, getSchedules, getGame, getMe, updateMe, postUser, getMaskedTimeline, getMyListInServers, postListInServer, addGameToListInServer, getListInServer, putListInServer, deleteListInServer, deleteGameFromListInServer, getMaskedTimelines, logout } from 'src/lib/api'
-import moment, { Moment } from 'moment'
-import { SellSchedule, User, PostListStruct } from 'src/types/root'
+import { getCampaigns, getGame, getMe, updateMe, postUser, getMaskedTimeline, getMyListInServers, postListInServer, addGameToListInServer, getListInServer, putListInServer, deleteListInServer, deleteGameFromListInServer, getMaskedTimelines, logout } from 'src/lib/api'
+import { User, PostListStruct } from 'src/types/root'
+import useScraping from 'src/components/use/useScraping'
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const domainActionContext = (
@@ -21,24 +21,29 @@ export const actions = defineActions({
     commit.setCampaigns(campaigns)
   },
   async setSchedules(context) {
+    const { getSchedule } = useScraping()
     const { commit } = domainActionContext(context)
-    const schedules = await getSchedules()
-    schedules.sort((a, b) => moment(a[0].sellday ?? '') < moment(b[0].sellday ?? '') ? -1 : 1)
-    const sellSchedules: SellSchedule[] = []
-    let lastDay: Moment = moment(new Date())
-    for (const s of schedules) {
-      if (!moment(s[0].sellday).isSame(lastDay)) {
-        lastDay = moment(s[0].sellday)
-        sellSchedules.push({ day: `${lastDay.format('YYYY-MM-DD')}`, games: [s] })
-      } else if (sellSchedules.length > 0) {
-        sellSchedules[sellSchedules.length - 1].games.push(s)
-      } else {
-        lastDay = moment(s[0].sellday)
-        sellSchedules.push({ day: `${lastDay.toString()}`, games: [s] })
-      }
-    }
-    commit.setSchedules(sellSchedules)
+    commit.setSchedules(await getSchedule())
   },
+  // async setSchedules(context) {
+  //   const { commit } = domainActionContext(context)
+  //   const schedules = await getSchedules()
+  //   schedules.sort((a, b) => moment(a[0].sellday ?? '') < moment(b[0].sellday ?? '') ? -1 : 1)
+  //   const sellSchedules: SellSchedule[] = []
+  //   let lastDay: Moment = moment(new Date())
+  //   for (const s of schedules) {
+  //     if (!moment(s[0].sellday).isSame(lastDay)) {
+  //       lastDay = moment(s[0].sellday)
+  //       sellSchedules.push({ day: `${lastDay.format('YYYY-MM-DD')}`, games: [s] })
+  //     } else if (sellSchedules.length > 0) {
+  //       sellSchedules[sellSchedules.length - 1].games.push(s)
+  //     } else {
+  //       lastDay = moment(s[0].sellday)
+  //       sellSchedules.push({ day: `${lastDay.toString()}`, games: [s] })
+  //     }
+  //   }
+  //   commit.setSchedules(sellSchedules)
+  // },
   async setGame(context, id: number) {
     const { commit } = domainActionContext(context)
     const game = await getGame(id)

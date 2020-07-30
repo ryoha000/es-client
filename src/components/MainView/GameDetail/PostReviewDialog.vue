@@ -83,7 +83,7 @@ export default defineComponent({
     ]
     const hitokoto = ref('')
     const memo = ref('')
-    const netabare = ref(false)
+    const netabare = ref(true)
 
     const review = async () => {
       const { setupForm } = useReviewForm()

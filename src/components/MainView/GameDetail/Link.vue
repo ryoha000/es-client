@@ -30,7 +30,7 @@ export default defineComponent({
   },
   setup(props) {
     const open = async () => {
-      await remote.shell.openExternal(props.url)
+      await remote.shell.openExternal(props.url.replace(/ /, '&'))
     }
     const styles = useStyles(props)
     return { open, styles }

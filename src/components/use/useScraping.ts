@@ -5,7 +5,7 @@ import * as Request from 'request-promise-native';
 import * as Charset from 'chardet';
 import * as iconv   from 'iconv-lite';
 import { JSDOM }    from 'jsdom';
-import { Creator, Seiyu, GameDetail } from '../../types/root'
+import { Creator, Seiyu, GameDetail, SellSchedule } from '../../types/root'
 import { editONP } from './useEditDistance'
 
 const baseURL = 'https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki'
@@ -168,33 +168,33 @@ const useScraping = () => {
   //   }))
   //   return noImageCampaign
   // }
-  // const getSchedule = async () => {
-  //   const schedules: SellSchedule[] = []
-  //   const document = await getDocument(`${baseURL}/before_hatubai_yotei.php`)
-  //   // 両端は違う情報
-  //   const selldays = document.getElementsByTagName('h3')
-  //   const tables = document.getElementsByTagName('tbody')
-  //   for (let i = 0; i < tables.length; i++ ) {
-  //     const tableTR = tables[i]?.getElementsByTagName('tr')
-  //     const scheduleAndCount = selldays[i+1]?.innerHTML
-  //     const games: {id: number, name: string, brandId: number, brandName: string, isMasterup: boolean, image: string}[] = []
-  //     for (let j = 1; j < tableTR.length; j++ ) {
-  //       const tds = tableTR[j]?.getElementsByTagName('td')
-  //       const id = +(tds[0]?.getElementsByTagName('a')[0]?.getAttribute('href')?.replace('game.php?game=', '').replace('#ad', '') ?? '0')
-  //       const game = {
-  //         id: id,
-  //         name: tds[0]?.getElementsByTagName('a')[0]?.innerHTML,
-  //         brandId: +(tds[1]?.getElementsByTagName('a')?.[0]?.getAttribute('href')?.replace('brand.php?brand=', '') ?? '0'),
-  //         brandName: tds[1]?.getElementsByTagName('a')?.[0]?.innerHTML,
-  //         isMasterup: tds[0]?.getElementsByTagName('span')?.[1]?.innerHTML === '(マスターアップ)',
-  //         image: document.getElementsByClassName(`tooltip tooltip_gameid_${id}`)?.[0]?.getElementsByTagName('img')[0]?.getAttribute('src') ?? ''
-  //       }
-  //       games.push(game)
-  //     }
-  //     schedules.push({dayAndCount: scheduleAndCount, games: games})
-  //   }
-  //   return schedules
-  // }
+  const getSchedule = async () => {
+    const schedules: SellSchedule[] = []
+    const document = await getDocument(`${baseURL}/before_hatubai_yotei.php`)
+    // 両端は違う情報
+    const selldays = document.getElementsByTagName('h3')
+    const tables = document.getElementsByTagName('tbody')
+    for (let i = 0; i < tables.length; i++ ) {
+      const tableTR = tables[i]?.getElementsByTagName('tr')
+      const scheduleAndCount = selldays[i+1]?.innerHTML
+      const games: {id: number, name: string, brandId: number, brandName: string, isMasterup: boolean, image: string}[] = []
+      for (let j = 1; j < tableTR.length; j++ ) {
+        const tds = tableTR[j]?.getElementsByTagName('td')
+        const id = +(tds[0]?.getElementsByTagName('a')[0]?.getAttribute('href')?.replace('game.php?game=', '').replace('#ad', '') ?? '0')
+        const game = {
+          id: id,
+          name: tds[0]?.getElementsByTagName('a')[0]?.innerHTML,
+          brandId: +(tds[1]?.getElementsByTagName('a')?.[0]?.getAttribute('href')?.replace('brand.php?brand=', '') ?? '0'),
+          brandName: tds[1]?.getElementsByTagName('a')?.[0]?.innerHTML,
+          isMasterup: tds[0]?.getElementsByTagName('span')?.[1]?.innerHTML === '(マスターアップ)',
+          image: document.getElementsByClassName(`tooltip tooltip_gameid_${id}`)?.[0]?.getElementsByTagName('img')[0]?.getAttribute('src') ?? ''
+        }
+        games.push(game)
+      }
+      schedules.push({dayAndCount: scheduleAndCount, games: games})
+    }
+    return schedules
+  }
   const getSeiyaGames = async () => {
     const document = await getDocument('https://seiya-saiga.com/game/kouryaku.html')
     const trs = document.getElementsByTagName('tr')
@@ -230,7 +230,7 @@ const useScraping = () => {
     console.log(version.version)
     return version.version !== now
   }
-  return { getTitle, getSeiyaURL, getSeiyaGames, checkUpdate, getGameDetail }
+  return { getTitle, getSeiyaURL, getSeiyaGames, checkUpdate, getGameDetail, getSchedule }
 }
 
 export default useScraping

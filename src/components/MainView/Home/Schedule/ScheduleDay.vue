@@ -2,7 +2,7 @@
   <q-expansion-item
     expand-separator
     :class="$style.container"
-    :label="schedule.day + '  (' + schedule.games.length + '本)'"
+    :label="schedule.dayAndCount"
     default-opened
   >
     <div :class="$style.gameCards" >
@@ -14,7 +14,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from '@vue/composition-api';
 import GameCard from '../../GameCard.vue'
-import { SellSchedule, RecentGame } from '../../../../types/root';
+import { SellSchedule } from '../../../../types/root';
 import { CardInfo } from '../../HorizontalScroll.vue';
 
 export default defineComponent({
@@ -27,13 +27,13 @@ export default defineComponent({
   },
   components: { GameCard },
   setup() {
-    const createCardInfo = (game: RecentGame): CardInfo => {
+    const createCardInfo = (game: { id: number; name: string; brandId: number; brandName: string; isMasterup: boolean; image: string; }): CardInfo => {
       return {
-        title: game[0].gamename ?? '',
-        supplement: game[1].brandname ?? '',
-        image: `https://pics.dmm.co.jp/${game[0].dmm_genre ?? ''}/pcgame/${game[0].dmm ?? ''}/${game[0].dmm ?? ''}pl.jpg`,
+        title: game.name,
+        supplement: game.brandName,
+        image: game.image,
         // image: '',
-        url: `https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=${game[0].id}`,
+        url: `https://erogamescape.dyndns.org/~ap2/ero/toukei_kaiseki/game.php?game=${game.id}`,
         contain: true
       }
     }
