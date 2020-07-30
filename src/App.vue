@@ -1,7 +1,7 @@
 <template>
   <div
-    v-if="!isLoading"
     id="q-app"
+    v-if="!isLoading"
     :class="$style.app"
     :style="styles.app"
     @drop.prevent="dropFile"
@@ -18,7 +18,14 @@
     
     <portal-target name="tooltip" :style="styles.tooltip" :class="$style.tooltip"></portal-target>
   </div>
-  <div v-else>Now Loading...</div>
+  <div
+    id="q-app"
+    v-else
+    :class="$style.app"
+    :style="styles.app"
+  >
+    Now Loading...
+  </div>
 </template>
 
 <script lang="ts">
@@ -106,27 +113,35 @@ export default defineComponent ({
       } catch (e) {
         alert('設定ファイルを作れません\n管理者権限を与えるか、必要なさそうなところで実行してください')
       }
-      // TODO: 並列化
-      await store.dispatch.entities.setAllMinimalGames()
-      await store.dispatch.entities.setHaveGames()
-      await store.dispatch.app.setLists()
-      await store.dispatch.app.setAccessTimeMap()
-      await store.dispatch.domain.setCampaign()
-      await store.dispatch.domain.setSchedules()
-      await store.dispatch.domain.setMaskedTimeline()
-      // await store.dispatch.app.setSeiya()
-      try {
-        await store.dispatch.domain.setSocket()
-
-      } catch (e) {
-        console.error(e)
-      }
-      try {
+      const promises = [
+        store.dispatch.entities.setAllMinimalGames(),
+        store.dispatch.entities.setHaveGames(),
+        store.dispatch.app.setLists(),
+        store.dispatch.domain.setCampaign(),
+        store.dispatch.domain.setSchedules(),
+        store.dispatch.domain.setMaskedTimeline(),
+        store.dispatch.domain.setSocket(),
         // update時はここを変える
-        if (await checkUpdate(1.5)) {
-          alert('アップデートがあります\nURL: https://github.com/ryoha000/es-client/releases')
+        checkUpdate(1.5)
+      ];
+      const a = await Promise.allSettled(promises)
+      a.forEach(element => {
+        if (element.status === 'fulfilled') {
+          if (typeof element.value === 'boolean') {
+            if (element.value === true) {
+              alert('アップデートがあります\nURL: https://github.com/ryoha000/es-client/releases')
+            }
+          }
         }
-      } catch (e) {
+        if (element.status === 'rejected') {
+          console.log('nana')
+        }
+      })
+      try {
+
+        await store.dispatch.app.setAccessTimeMap()
+      } catch(e) {
+        console.log('nanaa')
         console.error(e)
       }
       isLoading.value = false

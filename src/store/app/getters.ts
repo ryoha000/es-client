@@ -13,7 +13,12 @@ export const getters = defineGetters<S>()({
   getListById(state): (id: number) => List | undefined {
     return (id: number) => {
       const list = state.lists.find(l => l.id === id)
-      if (!list) { console.error(`there is no the list has propaty of id is ${id}`)}
+      if (!list) {
+        if (id === 0) {
+          return { id: 0, name: '所持ゲーム', games: []}
+        }
+        console.error(`there is no the list has propaty of id is ${id}`)
+      }
       return list
     }
   },
@@ -21,7 +26,10 @@ export const getters = defineGetters<S>()({
     return (id: number, isSortListByLastAccess: boolean, searchString: string) => {
       const { state, rootState } = getterContext(args)
       const prevList = state.lists.find(l => l.id === id)
-      if (!prevList) { console.error(`there is no the list has propaty of id is ${id}`) ; return undefined }
+      if (!prevList) {
+        // console.error(`there is no the list has propaty of id is ${id}`)
+        return []
+      }
       let games = [...prevList.games]
       if (searchString) {
         games = games.filter(v => rootState.entities.haveGames[`${v.id}`].gamename?.includes(searchString))
@@ -49,14 +57,14 @@ export const getters = defineGetters<S>()({
       return games
     }
   },
-  getListGameByGameId(state): (id: number) => ListGame | undefined {
+  getListGameByGameId(state): (id: number) => ListGame | null {
     return (id: number) => {
       const list = state.lists.find(l => l.id === 0)
       if (!list) {
         console.error(`there is no the list has propaty of id is ${id}`)
-        return
+        return null
       }
-      return list.games.find(v => v.id === id)
+      return list.games.find(v => v.id === id) ?? null
     }
   },
   getRecord(state): () =>  Record<string, ListGame> {
