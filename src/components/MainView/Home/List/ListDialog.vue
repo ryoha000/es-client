@@ -7,7 +7,7 @@
       <q-item>
         <q-item-section>
           <q-input :class="$style.input" v-model="name" label="リスト名" />
-          <q-input :class="$style.input" v-model="comment" label="コメント" />
+          <!-- <q-input :class="$style.input" v-model="comment" label="コメント" /> -->
           <q-input :class="$style.input" v-model="url" label="関連URL" />
           <q-checkbox :class="$style.input" v-model="isPublic" label="公開する" />
         </q-item-section>

@@ -189,7 +189,7 @@ export default defineComponent({
         menu.popup()
       }
     }
-    const listIcon = computed(() => props.list.list.url?.includes('wishlist') ? 'card_giftcard' : 'link')
+    const listIcon = computed(() => props.list.list.url?.includes('wishlist') ? 'card_giftcard' : props.list.list.url ? 'link' : 'link_off')
     const openURL = async () => {
       if (props.list.list.url) {
         await remote.shell.openExternal(props.list.list.url)

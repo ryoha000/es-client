@@ -3,7 +3,6 @@
     <q-img :src="cardInfo.image" :class="$style.image" contain />
     <q-card-section :class="$style.section" @click.stop="onClickContent">
       <div :class="$style.title">{{ cardInfo.title }}</div>
-      <div v-if="cardInfo.supplement" :class="$style.supplement">{{ cardInfo.supplement }}</div>
       <slot name="cardSupplement" />
     </q-card-section>
   </q-card>

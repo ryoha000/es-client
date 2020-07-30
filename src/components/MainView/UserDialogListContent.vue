@@ -59,7 +59,7 @@ export default defineComponent({
       games.value = (await getListInServer(props.list.id)).games
       isLoadingGames.value = false
     }
-    const listIcon = computed(() => props.list.url?.includes('wishlist') ? 'card_giftcard' : 'link')
+    const listIcon = computed(() => props.list.url?.includes('wishlist') ? 'card_giftcard' : props.list.url ? 'link' : 'link_off')
     const openURL = async () => {
       if (props.list.url) {
         await remote.shell.openExternal(props.list.url)

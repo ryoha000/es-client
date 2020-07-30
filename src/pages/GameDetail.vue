@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!gameDetail">Error</div>
+  <div v-if="!gameDetail">nowloading</div>
   <q-scroll-area v-else :style="styles.container">
     <div :class="$style.container">
       <img :class="$style.image" :src="imgUrl" />

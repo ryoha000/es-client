@@ -31,8 +31,8 @@ export default defineComponent({
 <style lang="scss" module>
 .tooltip {
   width: 160px;
-  // height: 200px;
-  max-height: 200px;
+  max-height: 12.5rem;
+  overflow: hidden;
 
   border-radius: 8px;
   background: rgba(0, 0, 0, 0.7);
@@ -49,6 +49,10 @@ export default defineComponent({
 .tooltipContent {
   white-space: pre-wrap;
   padding: 8px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 9;
+  margin: 0;
 }
 
 /* CSSアニメーションの設定 */
