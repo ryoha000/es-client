@@ -120,10 +120,10 @@ export default defineComponent ({
         store.dispatch.domain.setMaskedTimeline(),
         store.dispatch.domain.setSocket(),
         store.dispatch.domain.setCampaign(),
-        // store.dispatch.domain.setSchedules(),
-        // store.dispatch.app.setSeiya()
+        store.dispatch.domain.setSchedules(),
+        store.dispatch.app.setSeiya(),
         // update時はここを変える
-        checkUpdate(1.5)
+        checkUpdate(2.0),
       ];
       const a = await Promise.allSettled(promises)
       a.forEach(element => {
@@ -186,6 +186,6 @@ export default defineComponent ({
 
 <style>
 img {
-  
+
 }
 </style>

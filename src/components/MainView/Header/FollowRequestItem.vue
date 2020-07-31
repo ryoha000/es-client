@@ -45,6 +45,8 @@ export default defineComponent({
     const sendRequest = async () => {
       try {
         await postFollowRequest(name.value)
+        followRequestsFromMe.value = (await getFollowRequestsFromMe()).sort((a, b) => moment(b.follow.created_at).diff(a.follow.created_at))
+        name.value = ''
       } catch (e) {
         console.log(e)
       }

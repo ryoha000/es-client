@@ -12,8 +12,7 @@
       >
         <q-item-section style="padding-right: 0;min-width: 0;" avatar>
           <q-avatar square>
-            <!-- <q-img :ratio="1" :src="'data:image/png;base64,' + path.icon" /> -->
-            <img :class="$style.icon" :src="'data:image/png;base64,' + path.icon" />
+            <q-img :ratio="1" :src="'data:image/png;base64,' + path.icon" />
           </q-avatar>
         </q-item-section>
         <q-item-section :class="$style.titleWrapper"
