@@ -28,7 +28,7 @@
     "@types/request-promise-native": "^1.0.17",
     "@types/tough-cookie": "^4.0.0",
     "@types/yargs": "^15.0.5",
-    "@typescript-eslint/eslint-plugin": "^3.8.0",
+    "@typescript-eslint/eslint-plugin": "^3.9.0",
     "@typescript-eslint/parser": "^3.9.0",
     "@vue/babel-preset-app": "^4.5.3",
     "axios-cookiejar-support": "^1.0.0",
