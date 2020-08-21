@@ -59,7 +59,7 @@
     "typescript": "^4.0.2",
     "vue-cli-plugin-electron-builder": "~1.4.6",
     "vue-loader": "^15.9.2",
-    "vuedraggable": "^2.24.0",
+    "vuedraggable": "^2.24.1",
     "vuex-persist": "^2.2.0",
     "webpack": "^4.44.1"
   },
