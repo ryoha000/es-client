@@ -33,7 +33,7 @@
     "@vue/babel-preset-app": "^4.5.6",
     "axios-cookiejar-support": "^1.0.0",
     "babel-eslint": "^10.0.1",
-    "chardet": "^1.2.1",
+    "chardet": "^1.2.2",
     "csstype": "^3.0.3",
     "csv": "^5.3.2",
     "devtron": "^1.4.0",
