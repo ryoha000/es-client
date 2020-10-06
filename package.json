@@ -49,7 +49,7 @@
     "iconv-lite": "^0.6.2",
     "idb-keyval": "^3.2.0",
     "jsdom": "git+https://github.com/ryoha000/jsdom.git",
-    "moment": "^2.29.0",
+    "moment": "^2.29.1",
     "node-html-parser": "^1.2.21",
     "portal-vue": "^2.1.7",
     "request": "^2.88.2",
