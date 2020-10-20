@@ -16,7 +16,7 @@
     "@vue/composition-api": "^0.6.6",
     "axios": "^0.20.0",
     "core-js": "^3.6.5",
-    "quasar": "^1.14.1"
+    "quasar": "^1.14.2"
   },
   "devDependencies": {
     "@babel/plugin-proposal-optional-chaining": "^7.12.1",
