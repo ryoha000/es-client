@@ -19,7 +19,7 @@
     "quasar": "^1.14.5"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-optional-chaining": "^7.12.1",
+    "@babel/plugin-proposal-optional-chaining": "^7.12.7",
     "@quasar/app": "2.1.8",
     "@types/chardet": "^0.8.0",
     "@types/fs-extra": "^9.0.4",
