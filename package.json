@@ -15,7 +15,7 @@
     "@quasar/extras": "^1.9.10",
     "@vue/composition-api": "^0.6.6",
     "axios": "^0.21.0",
-    "core-js": "^3.7.0",
+    "core-js": "^3.8.1",
     "quasar": "^1.14.5"
   },
   "devDependencies": {
