@@ -50,7 +50,7 @@
     "idb-keyval": "^5.0.2",
     "jsdom": "git+https://github.com/ryoha000/jsdom.git",
     "moment": "^2.29.1",
-    "node-html-parser": "^2.1.0",
+    "node-html-parser": "^3.0.3",
     "portal-vue": "^2.1.7",
     "request": "^2.88.2",
     "request-promise-native": "^1.0.9",
