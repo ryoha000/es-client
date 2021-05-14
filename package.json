@@ -22,7 +22,7 @@
     "@babel/plugin-proposal-optional-chaining": "^7.12.7",
     "@quasar/app": "2.2.5",
     "@types/chardet": "^0.8.0",
-    "@types/fs-extra": "^9.0.6",
+    "@types/fs-extra": "^9.0.11",
     "@types/jsdom": "^16.2.5",
     "@types/node": "^15.0.2",
     "@types/request-promise-native": "^1.0.17",
