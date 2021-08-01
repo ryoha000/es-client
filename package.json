@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-optional-chaining": "^7.14.2",
-    "@quasar/app": "2.2.8",
+    "@quasar/app": "3.0.3",
     "@types/chardet": "^0.8.0",
     "@types/fs-extra": "^9.0.11",
     "@types/jsdom": "^16.2.10",
