@@ -57,6 +57,7 @@ export default defineComponent({
           try {
             ids = toNumArrFromNumStr(strs)
           } catch (e) {
+            // @ts-ignore
             remote.dialog.showErrorBox('エラー', e)
             close()
             return

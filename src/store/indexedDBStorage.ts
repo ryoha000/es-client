@@ -1,12 +1,15 @@
 import { AsyncStorage } from 'vuex-persist'
+// @ts-ignore
 import { Store, get, set, del, clear, keys } from 'idb-keyval'
 
 const store = new Store('vuex', 'vuex')
 
 const indexedDBStorage: AsyncStorage = {
+  // @ts-ignore
   getItem(key) {
     return get(key, store)
   },
+  // @ts-ignore
   async setItem(key, val) {
     await set(key, val, store)
     return get(key, store)
