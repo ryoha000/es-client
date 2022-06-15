@@ -58,7 +58,7 @@
     "shvl": "^2.0.3",
     "ts-node": "^9.1.1",
     "typescript": "^4.6.3",
-    "vue-cli-plugin-electron-builder": "~1.4.6",
+    "vue-cli-plugin-electron-builder": "~2.1.1",
     "vue-loader": "^15.9.6",
     "vuedraggable": "^2.24.3",
     "vuex-persist": "^3.1.3",
