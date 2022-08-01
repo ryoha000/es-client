@@ -24,7 +24,7 @@
     "@quasar/app": "2.2.8",
     "@types/chardet": "^0.8.0",
     "@types/fs-extra": "^9.0.11",
-    "@types/jsdom": "^16.2.10",
+    "@types/jsdom": "^20.0.0",
     "@types/node": "^15.0.2",
     "@types/request-promise-native": "^1.0.17",
     "@types/tough-cookie": "^4.0.0",
